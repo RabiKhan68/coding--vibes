@@ -43,7 +43,6 @@
 
     #app-shell { display: flex; flex-direction: column; height: 100vh; }
 
-    /* ── Top Bar ── */
     #topbar {
       display: flex; align-items: center; gap: 12px;
       padding: 0 20px; height: 52px;
@@ -78,17 +77,6 @@
     .lang-pill:hover  { border-color: var(--accent); color: var(--accent); }
     .lang-pill.active { background: var(--accent); border-color: var(--accent); color: #fff; }
 
-    /* ── Plan Badge ── */
-    #planBadge {
-      padding: 3px 10px; border: 1px solid var(--border);
-      border-radius: 4px; font-size: 11px; font-family: var(--font-mono);
-      font-weight: 600; color: var(--text-muted); cursor: pointer;
-      transition: all 0.15s; white-space: nowrap;
-    }
-    #planBadge:hover { border-color: var(--accent); color: var(--accent); }
-    #planBadge.pro   { border-color: #c47d0e; color: var(--gold); }
-    #planBadge.pro:hover { border-color: var(--gold); }
-
     #runBtn {
       margin-left: auto; padding: 6px 18px; background: var(--accent); color: #fff;
       border: none; border-radius: 6px; font-weight: 700; font-size: 13px;
@@ -117,10 +105,8 @@
     }
     #leaveBtn:hover { background: var(--accent2); color: #fff; }
 
-    /* ── Main Area ── */
     #main-area { display: flex; flex: 1; overflow: hidden; }
 
-    /* ── Left Panel ── */
     #left-panel {
       width: 200px; flex-shrink: 0; background: var(--surface);
       border-right: 1px solid var(--border); display: none;
@@ -159,6 +145,8 @@
     .btn-request:hover { background: var(--accent); color: #fff; }
     .btn-reclaim { background: var(--surface2); border: 1px solid var(--accent2); color: var(--accent2); }
     .btn-reclaim:hover { background: var(--accent2); color: #fff; }
+    .btn-handback { background: var(--surface2); border: 1px solid var(--accent3); color: var(--accent3); }
+    .btn-handback:hover { background: var(--accent3); color: #000; }
 
     #notifBanner {
       display: none; background: var(--surface2); border: 1px solid var(--accent);
@@ -169,7 +157,6 @@
     .bbtn.yes { background: var(--success); color: #000; }
     .bbtn.no  { background: var(--error);   color: #fff; }
 
-    /* ── Editor Panel ── */
     #editor-panel { display: flex; flex-direction: column; flex: 1; overflow: hidden; min-width: 0; }
 
     #stdin-bar {
@@ -227,7 +214,6 @@
     #output.has-error   { color: var(--error); }
     #output.has-success { color: var(--text);  }
 
-    /* ── Right Panel ── */
     #right-panel {
       width: 200px; flex-shrink: 0; background: var(--surface);
       border-left: 1px solid var(--border); display: none;
@@ -248,7 +234,6 @@
       padding: 3px 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
 
-    /* ── Media Bar ── */
     #media-bar {
       display: none; align-items: center; gap: 6px; padding: 6px 12px;
       background: var(--surface); border-top: 1px solid var(--border); flex-shrink: 0;
@@ -262,7 +247,6 @@
     .tool-btn:hover { border-color: var(--accent); color: var(--accent); }
     .tool-btn.off   { border-color: var(--error);   color: var(--error); }
 
-    /* ── Lobby ── */
     #lobby {
       position: fixed; inset: 0; background: rgba(10,12,18,0.92);
       backdrop-filter: blur(8px); display: none;
@@ -324,7 +308,6 @@
     .share-url:hover { text-decoration: underline; }
     .lobby-error { color: var(--error); font-size: 12px; margin-top: 8px; min-height: 16px; }
 
-    /* ── Toast ── */
     #toast {
       position: fixed; bottom: 24px; left: 50%;
       transform: translateX(-50%) translateY(20px);
@@ -358,12 +341,9 @@
       <button class="lang-pill"        data-lang="java">Java</button>
     </div>
 
-    <!-- ── Plan Badge (replaces old price-pill) ── -->
-    <!-- <span id="planBadge" onclick="window.location='plans.html'">Free Plan</span> -->
-
-    <div class="documentation" style="">
+    <div class="documentation">
       <button class="mode-btn" id="docsBtn" style="background:transparent;color:var(--text-muted);border:none;font-size:12px;cursor:pointer;">
-        <a href="documentation.html" style="color: rgb(78, 93, 102);text-decoration: none;">Documentation</a>
+        <a href="documentation.html" style="color:rgb(78,93,102);text-decoration:none;">Documentation</a>
       </button>
     </div>
 
@@ -428,7 +408,6 @@
   </div>
 </div>
 
-<!-- Lobby -->
 <div id="lobby">
   <div class="lobby-card">
     <h2>CodeForge — Team Room</h2>
@@ -727,16 +706,29 @@ async function joinRoom() {
   }
 }
 
+// ════════════════════════════════════════════════════════════════════
+//  START SESSION — get media FIRST, then connect socket
+// ════════════════════════════════════════════════════════════════════
 async function startSession(rid, name, token, isHost) {
   myName   = name;
   myIsHost = isHost;
   roomId   = rid;
+
+  // ✅ FIX 1: Get camera/mic BEFORE connecting socket
+  // This ensures tracks are ready when peer connections are created
   try {
     myStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+    console.log('✅ Media stream obtained:', myStream.getTracks().map(t => t.kind));
   } catch(e) {
+    console.warn('⚠️ Camera/mic denied:', e.message);
     toast('Camera/mic denied — video disabled');
     myStream = null;
   }
+
+  // Render my own tile immediately after getting stream
+  renderMyTile();
+
+  // Now connect socket — peer connections will have myStream ready
   socket = io({ auth: { token } });
   bindSocketEvents();
   document.getElementById('lobby').classList.remove('visible');
@@ -747,7 +739,10 @@ async function startSession(rid, name, token, isHost) {
 //  SOCKET EVENTS
 // ════════════════════════════════════════════════════════════════════
 function bindSocketEvents() {
-  socket.on('connect', () => { mySocketId = socket.id; });
+  socket.on('connect', () => {
+    mySocketId = socket.id;
+    console.log('✅ Socket connected:', mySocketId);
+  });
   socket.on('connect_error', (err) => toast('Connection error: ' + err.message));
   socket.on('error', (msg) => toast('⚠️ ' + msg));
 
@@ -761,11 +756,13 @@ function bindSocketEvents() {
     updateEditorState();
   });
 
+  // ✅ FIX 2: user-joined — create peer connection with isInitiator=true
   socket.on('user-joined', async ({ socketId, name, isHost }) => {
     toast(`${name} joined`);
-    await createPeerConnection(socketId, name, true);
     roomUsers.push({ socketId, name, isHost });
     renderMembers();
+    // We are already in the room, so WE initiate the connection to the newcomer
+    await createPeerConnection(socketId, name, true);
   });
 
   socket.on('user-left', ({ socketId, name }) => {
@@ -776,7 +773,9 @@ function bindSocketEvents() {
     renderMembers();
   });
 
+  // ✅ FIX 3: rtc-offer — newcomer receives offers from existing members
   socket.on('rtc-offer', async ({ from, name, offer }) => {
+    console.log('📨 Got offer from:', from, name);
     await createPeerConnection(from, name, false);
     const pc = peers[from].pc;
     await pc.setRemoteDescription(new RTCSessionDescription(offer));
@@ -784,48 +783,121 @@ function bindSocketEvents() {
     await pc.setLocalDescription(answer);
     socket.emit('rtc-answer', { to: from, answer });
   });
+
   socket.on('rtc-answer', async ({ from, answer }) => {
-    if (peers[from]) await peers[from].pc.setRemoteDescription(new RTCSessionDescription(answer));
+    console.log('📨 Got answer from:', from);
+    if (peers[from]) {
+      await peers[from].pc.setRemoteDescription(new RTCSessionDescription(answer));
+    }
   });
+
   socket.on('rtc-ice', async ({ from, candidate }) => {
-    if (peers[from]) try { await peers[from].pc.addIceCandidate(new RTCIceCandidate(candidate)); } catch(e) {}
+    if (peers[from]) {
+      try {
+        await peers[from].pc.addIceCandidate(new RTCIceCandidate(candidate));
+      } catch(e) {
+        console.warn('ICE candidate error:', e.message);
+      }
+    }
   });
 
   socket.on('editor-assigned', ({ editorOwner: eo }) => {
-    editorOwner = eo; updateEditorState(); renderMembers();
+    editorOwner = eo;
+    updateEditorState();
+    renderMembers();
   });
+
   socket.on('editor-request', ({ fromSocketId, fromName }) => {
     pendingRequest = { fromSocketId, fromName };
     document.getElementById('notifText').textContent = `"${fromName}" wants editor access`;
     document.getElementById('notifBanner').style.display = 'block';
   });
+
   socket.on('editor-request-denied', () => {
     toast('Your editor request was denied.');
     const btn = document.getElementById('requestBtn');
     if (btn) { btn.textContent = '🙋 Request Editor Access'; btn.disabled = false; }
   });
+
   socket.on('code-update', ({ code }) => {
     if (editorOwner !== mySocketId) applyRemoteCode(code);
   });
 }
 
 // ════════════════════════════════════════════════════════════════════
-//  WebRTC
+//  WebRTC — FIXED peer connection
 // ════════════════════════════════════════════════════════════════════
-const ICE = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
+const ICE = {
+  iceServers: [
+    { urls: 'stun:stun.l.google.com:19302' },
+    { urls: 'stun:stun1.l.google.com:19302' },
+    // ✅ FIX 4: Added more STUN servers for better connectivity
+    { urls: 'stun:stun2.l.google.com:19302' },
+    { urls: 'stun:stun3.l.google.com:19302' },
+  ]
+};
 
 async function createPeerConnection(peerId, peerName, isInitiator) {
-  if (peers[peerId]) return;
+  if (peers[peerId]) {
+    console.log('Peer connection already exists for:', peerId);
+    return;
+  }
+
+  console.log(`🔗 Creating peer connection with ${peerName} (${peerId}), initiator: ${isInitiator}`);
+
   const pc = new RTCPeerConnection(ICE);
   peers[peerId] = { pc, name: peerName, stream: null };
-  if (myStream) myStream.getTracks().forEach(t => pc.addTrack(t, myStream));
-  pc.onicecandidate = (e) => { if (e.candidate) socket.emit('rtc-ice', { to: peerId, candidate: e.candidate }); };
-  pc.ontrack = (e) => { peers[peerId].stream = e.streams[0]; attachRemoteStream(peerId, e.streams[0]); };
+
+  // ✅ FIX 5: Add ALL local tracks to the peer connection
+  if (myStream) {
+    myStream.getTracks().forEach(track => {
+      console.log(`➕ Adding ${track.kind} track to peer connection`);
+      pc.addTrack(track, myStream);
+    });
+  } else {
+    console.warn('⚠️ No local stream to add to peer connection');
+  }
+
+  // ✅ FIX 6: Handle ICE candidates properly
+  pc.onicecandidate = (e) => {
+    if (e.candidate) {
+      socket.emit('rtc-ice', { to: peerId, candidate: e.candidate });
+    }
+  };
+
+  pc.oniceconnectionstatechange = () => {
+    console.log(`ICE state with ${peerName}:`, pc.iceConnectionState);
+  };
+
+  pc.onconnectionstatechange = () => {
+    console.log(`Connection state with ${peerName}:`, pc.connectionState);
+  };
+
+  // ✅ FIX 7: ontrack — properly attach remote stream
+  pc.ontrack = (e) => {
+    console.log(`📹 Got ${e.track.kind} track from ${peerName}`);
+    if (e.streams && e.streams[0]) {
+      peers[peerId].stream = e.streams[0];
+      attachRemoteStream(peerId, e.streams[0]);
+    }
+  };
+
+  // Add video tile for this peer
   addTile(peerId, peerName);
+
+  // ✅ FIX 8: Only the initiator creates the offer
   if (isInitiator) {
-    const offer = await pc.createOffer();
-    await pc.setLocalDescription(offer);
-    socket.emit('rtc-offer', { to: peerId, offer });
+    try {
+      const offer = await pc.createOffer({
+        offerToReceiveAudio: true,
+        offerToReceiveVideo: true,
+      });
+      await pc.setLocalDescription(offer);
+      socket.emit('rtc-offer', { to: peerId, offer });
+      console.log('📤 Sent offer to:', peerName);
+    } catch(e) {
+      console.error('Error creating offer:', e);
+    }
   }
 }
 
@@ -835,47 +907,77 @@ async function createPeerConnection(peerId, peerName, isInitiator) {
 function renderMyTile() {
   const existing = document.getElementById('tile-me');
   if (existing) existing.remove();
+
   const tile = document.createElement('div');
-  tile.className = 'video-tile'; tile.id = 'tile-me';
+  tile.className = 'video-tile';
+  tile.id = 'tile-me';
+
   if (myStream && camOn) {
     const video = document.createElement('video');
-    video.autoplay = true; video.muted = true; video.playsInline = true;
-    video.srcObject = myStream; tile.appendChild(video);
+    video.autoplay    = true;
+    video.muted       = true;   // always mute self to avoid echo
+    video.playsInline = true;
+    video.srcObject   = myStream;
+    tile.appendChild(video);
   } else {
     const off = document.createElement('div');
-    off.className = 'cam-off'; off.textContent = 'Cam Off'; tile.appendChild(off);
+    off.className   = 'cam-off';
+    off.textContent = myStream ? 'Cam Off' : '🚫 No Camera';
+    tile.appendChild(off);
   }
+
   const label = document.createElement('div');
-  label.className = 'tile-label';
+  label.className   = 'tile-label';
   label.textContent = myName + (myIsHost ? ' 👑' : '') + ' (you)';
   tile.appendChild(label);
+
   const grid = document.getElementById('videoGrid');
   grid.insertBefore(tile, grid.firstChild);
 }
 
 function addTile(socketId, name) {
   if (document.getElementById('tile-' + socketId)) return;
+
   const tile = document.createElement('div');
-  tile.className = 'video-tile'; tile.id = 'tile-' + socketId;
+  tile.className = 'video-tile';
+  tile.id        = 'tile-' + socketId;
+
   const off = document.createElement('div');
-  off.className = 'cam-off'; off.textContent = 'Connecting…'; tile.appendChild(off);
+  off.className   = 'cam-off';
+  off.textContent = 'Connecting…';
+  tile.appendChild(off);
+
   const label = document.createElement('div');
-  label.className = 'tile-label'; label.textContent = name; tile.appendChild(label);
+  label.className   = 'tile-label';
+  label.textContent = name;
+  tile.appendChild(label);
+
   document.getElementById('videoGrid').appendChild(tile);
 }
 
 function attachRemoteStream(socketId, stream) {
   const tile = document.getElementById('tile-' + socketId);
   if (!tile) return;
+
+  // Remove "Connecting..." placeholder
   const off = tile.querySelector('.cam-off');
   if (off) off.remove();
+
+  // Reuse or create video element
   let video = tile.querySelector('video');
   if (!video) {
-    video = document.createElement('video');
-    video.autoplay = true; video.playsInline = true;
+    video             = document.createElement('video');
+    video.autoplay    = true;
+    video.playsInline = true;
+    // ✅ FIX 9: Never mute remote peers — they need to be heard
+    video.muted       = false;
     tile.insertBefore(video, tile.querySelector('.tile-label'));
   }
+
   video.srcObject = stream;
+
+  // ✅ FIX 10: Force play — some browsers need this
+  video.play().catch(e => console.warn('Video play error:', e.message));
 }
 
 function removeTile(socketId) {
@@ -884,10 +986,11 @@ function removeTile(socketId) {
 }
 
 // ════════════════════════════════════════════════════════════════════
-//  EDITOR STATE
+//  EDITOR STATE — FIXED with hand-back option for members
 // ════════════════════════════════════════════════════════════════════
 function updateEditorState() {
   if (!cmEditor || !mySocketId) return;
+
   const isMine = editorOwner === mySocketId;
   cmEditor.setOption('readOnly', isMine ? false : 'nocursor');
   document.getElementById('lockOverlay').classList.toggle('visible', !isMine);
@@ -910,27 +1013,51 @@ function updateEditorState() {
   sec.innerHTML = '';
 
   if (myIsHost) {
+    // ✅ FIX 11: Host always sees reclaim button when someone else has editor
     if (!isMine) {
       const btn = document.createElement('button');
-      btn.className = 'btn-action btn-reclaim'; btn.id = 'reclaimBtn';
+      btn.className = 'btn-action btn-reclaim';
+      btn.id        = 'reclaimBtn';
       btn.textContent = '↩ Take Back Editor';
-      btn.addEventListener('click', () => socket.emit('reclaim-editor'));
+      btn.addEventListener('click', () => {
+        socket.emit('reclaim-editor');
+        toast('Taking back editor…');
+      });
       sec.appendChild(btn);
     }
   } else {
+    // Non-host member
     if (isMine) {
+      // ✅ FIX 12: Member who has editor can hand it back to host
       const p = document.createElement('p');
       p.style.cssText = 'font-size:11px;color:var(--accent3);text-align:center;padding:4px 0';
-      p.textContent = '✏️ You have editor access';
+      p.textContent   = '✏️ You have editor access';
       sec.appendChild(p);
+
+      const handBackBtn = document.createElement('button');
+      handBackBtn.className   = 'btn-action btn-handback';
+      handBackBtn.id          = 'handBackBtn';
+      handBackBtn.textContent = '↩ Hand Back Editor';
+      handBackBtn.addEventListener('click', () => {
+        // Find host and assign editor back to them
+        const host = roomUsers.find(u => u.isHost);
+        if (host) {
+          socket.emit('return-editor', { toSocketId: host.socketId });
+          toast('Editor returned to host');
+        }
+      });
+      sec.appendChild(handBackBtn);
+
     } else {
+      // Member doesn't have editor — can request it
       const btn = document.createElement('button');
-      btn.className = 'btn-action btn-request'; btn.id = 'requestBtn';
+      btn.className   = 'btn-action btn-request';
+      btn.id          = 'requestBtn';
       btn.textContent = '🙋 Request Editor Access';
       btn.addEventListener('click', () => {
         socket.emit('request-editor');
         btn.textContent = '⏳ Request sent…';
-        btn.disabled = true;
+        btn.disabled    = true;
         toast('Request sent to host');
       });
       sec.appendChild(btn);
@@ -944,25 +1071,57 @@ function updateEditorState() {
 function renderMembers() {
   const list = document.getElementById('membersList');
   list.innerHTML = '';
+
   const allUsers = [...roomUsers];
-  if (!allUsers.find(u => u.socketId === mySocketId))
+  if (!allUsers.find(u => u.socketId === mySocketId)) {
     allUsers.unshift({ socketId: mySocketId, name: myName, isHost: myIsHost });
+  }
 
   allUsers.forEach(u => {
     const isMe      = u.socketId === mySocketId;
     const isEditing = u.socketId === editorOwner;
+
     const div = document.createElement('div');
     div.className = 'member-item';
-    const dot = document.createElement('div'); dot.className = 'member-dot'; div.appendChild(dot);
-    const nameDiv = document.createElement('div'); nameDiv.className = 'member-name';
-    nameDiv.textContent = u.name + (u.isHost ? ' 👑' : ''); div.appendChild(nameDiv);
-    if (isMe) { const you = document.createElement('span'); you.className = 'member-you'; you.textContent = 'you'; div.appendChild(you); }
-    if (isEditing) { const ed = document.createElement('span'); ed.className = 'member-editing'; ed.textContent = '✏️'; div.appendChild(ed); }
-    if (myIsHost && !isMe && !isEditing) {
-      const btn = document.createElement('button'); btn.className = 'btn-assign'; btn.textContent = 'Give';
-      btn.addEventListener('click', () => socket.emit('assign-editor', { toSocketId: u.socketId }));
+
+    const dot = document.createElement('div');
+    dot.className = 'member-dot';
+    div.appendChild(dot);
+
+    const nameDiv = document.createElement('div');
+    nameDiv.className   = 'member-name';
+    nameDiv.textContent = u.name + (u.isHost ? ' 👑' : '');
+    div.appendChild(nameDiv);
+
+    if (isMe) {
+      const you = document.createElement('span');
+      you.className   = 'member-you';
+      you.textContent = 'you';
+      div.appendChild(you);
+    }
+
+    if (isEditing) {
+      const ed = document.createElement('span');
+      ed.className   = 'member-editing';
+      ed.textContent = '✏️';
+      div.appendChild(ed);
+    }
+
+    // ✅ FIX 13: Host can give editor to any member, including taking it from current editor
+    if (myIsHost && !isMe) {
+      const btn = document.createElement('button');
+      btn.className   = 'btn-assign';
+      btn.textContent = isEditing ? 'Take' : 'Give';
+      btn.addEventListener('click', () => {
+        if (isEditing) {
+          socket.emit('reclaim-editor');
+        } else {
+          socket.emit('assign-editor', { toSocketId: u.socketId });
+        }
+      });
       div.appendChild(btn);
     }
+
     list.appendChild(div);
   });
 }
@@ -971,27 +1130,44 @@ function renderMembers() {
 //  MIC / CAM
 // ════════════════════════════════════════════════════════════════════
 function toggleMic() {
+  if (!myStream) { toast('No microphone available'); return; }
   micOn = !micOn;
-  if (myStream) myStream.getAudioTracks().forEach(t => t.enabled = micOn);
+  myStream.getAudioTracks().forEach(t => {
+    t.enabled = micOn;
+    console.log(`🎙 Mic ${micOn ? 'ON' : 'OFF'}, track enabled:`, t.enabled);
+  });
   const btn = document.getElementById('micBtn');
   btn.textContent = micOn ? '🎙 Mic On' : '🔇 Mic Off';
   btn.classList.toggle('off', !micOn);
 }
 
 function toggleCam() {
+  if (!myStream) { toast('No camera available'); return; }
   camOn = !camOn;
-  if (myStream) myStream.getVideoTracks().forEach(t => t.enabled = camOn);
+  myStream.getVideoTracks().forEach(t => {
+    t.enabled = camOn;
+    console.log(`📹 Cam ${camOn ? 'ON' : 'OFF'}, track enabled:`, t.enabled);
+  });
   const btn = document.getElementById('camBtn');
   btn.textContent = camOn ? '📹 Cam On' : '🚫 Cam Off';
   btn.classList.toggle('off', !camOn);
-  const tile = document.getElementById('tile-me');
+
+  const tile  = document.getElementById('tile-me');
   if (!tile) return;
   const video = tile.querySelector('video');
-  let off = tile.querySelector('.cam-off');
-  if (camOn) { if (off) off.remove(); if (video) video.style.display = 'block'; }
-  else {
+  let   off   = tile.querySelector('.cam-off');
+
+  if (camOn) {
+    if (off) off.remove();
+    if (video) video.style.display = 'block';
+  } else {
     if (video) video.style.display = 'none';
-    if (!off) { off = document.createElement('div'); off.className = 'cam-off'; off.textContent = 'Cam Off'; tile.insertBefore(off, tile.querySelector('.tile-label')); }
+    if (!off) {
+      off             = document.createElement('div');
+      off.className   = 'cam-off';
+      off.textContent = 'Cam Off';
+      tile.insertBefore(off, tile.querySelector('.tile-label'));
+    }
   }
 }
 
@@ -999,25 +1175,33 @@ function toggleCam() {
 //  LEAVE
 // ════════════════════════════════════════════════════════════════════
 function performLeave() {
-  if (myStream) myStream.getTracks().forEach(t => t.stop());
+  if (myStream) {
+    myStream.getTracks().forEach(t => t.stop());
+    myStream = null;
+  }
   Object.values(peers).forEach(p => p.pc.close());
+  peers = {};
+
   if (socket) { socket.disconnect(); socket = null; }
-  peers = {}; roomUsers = []; micOn = true; camOn = true; pendingRequest = null;
-  document.getElementById('videoGrid').innerHTML = '';
+
+  roomUsers = []; micOn = true; camOn = true; pendingRequest = null;
+
+  document.getElementById('videoGrid').innerHTML   = '';
   document.getElementById('membersList').innerHTML = '';
-  document.getElementById('shareBox').style.display = 'none';
+  document.getElementById('shareBox').style.display      = 'none';
   document.getElementById('createRoomBtn').style.display = 'block';
-  document.getElementById('notifBanner').style.display = 'none';
-  document.getElementById('output').textContent = '// Run your code to see output here';
-  document.getElementById('output').style.borderTop = '';
-  document.getElementById('output').className = '';
-  document.getElementById('editor-status').textContent = '';
-  document.getElementById('roomIdBadge').textContent = 'Room: —';
-  document.getElementById('micBtn').textContent = '🎙 Mic On';
-  document.getElementById('camBtn').textContent = '📹 Cam On';
+  document.getElementById('notifBanner').style.display   = 'none';
+  document.getElementById('output').textContent          = '// Run your code to see output here';
+  document.getElementById('output').style.borderTop      = '';
+  document.getElementById('output').className            = '';
+  document.getElementById('editor-status').textContent   = '';
+  document.getElementById('roomIdBadge').textContent     = 'Room: —';
+  document.getElementById('micBtn').textContent          = '🎙 Mic On';
+  document.getElementById('camBtn').textContent          = '📹 Cam On';
   document.getElementById('micBtn').classList.remove('off');
   document.getElementById('camBtn').classList.remove('off');
   initEditor(STARTER_CODE[currentLang]);
+
   appMode = 'solo';
   document.getElementById('modeTeam').classList.remove('active');
   document.getElementById('modeSolo').classList.add('active');
