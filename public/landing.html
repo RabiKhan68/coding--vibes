@@ -1,1016 +1,703 @@
 <!DOCTYPE html>
 <html lang="en">
-
+<head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CodeForge — Where Code Gets Built</title>
+
+  <!-- SEO -->
+  <meta name="description" content="CodeForge — Real-time collaborative coding platform. Write, run, and ship code together in Python, C++, Java and more. Built-in video, live sync, and instant execution."/>
+  <meta name="keywords" content="collaborative coding, real-time code editor, online IDE, pair programming, team coding, Python editor, C++ online, Java online"/>
+  <meta name="author" content="M. Rabi. K."/>
+  <meta name="robots" content="index, follow"/>
+  <meta name="theme-color" content="#0e0d0b"/>
+
+  <!-- Open Graph -->
+  <meta property="og:type"        content="website"/>
+  <meta property="og:url"         content="https://yourdomain.com/"/>
+  <meta property="og:title"       content="CodeForge — Where Code Gets Built"/>
+  <meta property="og:description" content="Real-time collaborative coding with live video, instant execution, and team rooms. No installs. Just open a tab and start building together."/>
+  <meta property="og:image"       content="https://yourdomain.com/og-image.png"/>
+  <meta property="og:site_name"   content="CodeForge"/>
+
+  <!-- Twitter -->
+  <meta name="twitter:card"        content="summary_large_image"/>
+  <meta name="twitter:title"       content="CodeForge — Where Code Gets Built"/>
+  <meta name="twitter:description" content="Real-time collaborative coding with live video, instant execution, and team rooms."/>
+  <meta name="twitter:image"       content="https://yourdomain.com/og-image.png"/>
+
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-  /* ══════════════════════════════════════════════════════════════
-   CodeForge Editor — Paper & Ink Editorial Theme
-   Matches landingpage.html aesthetic exactly
-   ══════════════════════════════════════════════════════════════ */
-
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=JetBrains+Mono:wght@300;400;500;700&family=Barlow+Condensed:wght@300;400;600;700;800&display=swap');
-
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-:root {
-  /* ── Core palette (from landingpage) ── */
-  --paper:       #f2ede6;
-  --paper2:      #e8e1d5;
-  --paper3:      #ddd6cc;
-  --ink:         #0e0d0b;
-  --ink2:        #2a2720;
-  --ink3:        #1a1814;
-  --red:         #c8321a;
-  --red2:        #9e2010;
-  --steel:       #6b6560;
-  --rule:        #c8c0b4;
-  --rule2:       #a09890;
-
-  /* ── Semantic mappings ── */
-  --bg:          var(--paper);
-  --surface:     var(--paper2);
-  --surface2:    var(--paper3);
-  --border:      var(--rule);
-  --border2:     var(--rule2);
-  --accent:      var(--red);
-  --accent2:     var(--ink);
-  --accent3:     var(--steel);
-  --text:        var(--ink);
-  --text-muted:  var(--steel);
-  --success:     #2d7a3a;
-  --error:       var(--red);
-  --gold:        #8a6a00;
-
-  /* ── Typography ── */
-  --ff-serif:  'Playfair Display', serif;
-  --ff-mono:   'JetBrains Mono', monospace;
-  --ff-cond:   'Barlow Condensed', sans-serif;
-  --font-mono: var(--ff-mono);
-
-  --shadow: 0 4px 24px rgba(14,13,11,0.15);
-}
-
-html, body {
-  height: 100%;
-  background: var(--paper);
-  color: var(--ink);
-  font-family: var(--ff-mono);
-  font-size: 14px;
-  overflow: hidden;
-}
-
-/* ── Noise texture overlay (matches landing) ── */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
-  pointer-events: none;
-  z-index: 1000;
-}
-
-/* ── Grid background (matches landing) ── */
-body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image:
-    linear-gradient(var(--rule) 1px, transparent 1px),
-    linear-gradient(90deg, var(--rule) 1px, transparent 1px);
-  background-size: 64px 64px;
-  opacity: 0.12;
-  pointer-events: none;
-  z-index: 0;
-}
-
-#app-shell {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  position: relative;
-  z-index: 1;
-}
-
-/* ══ TOPBAR ════════════════════════════════════════════════════ */
-#topbar {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 0 20px;
-  height: 56px;
-  background: var(--paper);
-  border-bottom: 2px solid var(--ink);
-  flex-shrink: 0;
-  z-index: 10;
-}
-
-.logo-text {
-  font-family: var(--ff-cond);
-  font-size: 18px;
-  font-weight: 800;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: var(--ink);
-  margin-right: 8px;
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-/* Logo mark box matching nav-logo-mark */
-.logo-text::before {
-  content: 'CF';
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  background: var(--ink);
-  font-family: var(--ff-serif);
-  font-size: 12px;
-  font-weight: 900;
-  color: var(--paper);
-  letter-spacing: 0;
-  flex-shrink: 0;
-}
-
-.logo-text span { color: var(--red); }
-
-/* ── Mode toggle ── */
-.mode-toggle {
-  display: flex;
-  background: var(--paper2);
-  border: 2px solid var(--ink);
-  border-radius: 0;
-  padding: 2px;
-  gap: 2px;
-}
-
-.mode-btn {
-  padding: 4px 14px;
-  border: none;
-  background: transparent;
-  color: var(--steel);
-  border-radius: 0;
-  cursor: pointer;
-  font-size: 10px;
-  font-family: var(--ff-mono);
-  font-weight: 600;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  transition: all 0.15s;
-}
-
-.mode-btn.active {
-  background: var(--ink);
-  color: var(--paper);
-}
-
-.mode-btn:not(.active):hover {
-  background: var(--paper3);
-  color: var(--ink);
-}
-
-/* ── Language pills ── */
-.lang-pills { display: flex; gap: 4px; margin-left: 4px; }
-
-.lang-pill {
-  padding: 4px 12px;
-  border: 1px solid var(--rule2);
-  background: transparent;
-  color: var(--steel);
-  border-radius: 0;
-  cursor: pointer;
-  font-size: 10px;
-  font-family: var(--ff-mono);
-  font-weight: 600;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  transition: all 0.15s;
-}
-
-.lang-pill:hover  { border-color: var(--ink); color: var(--ink); background: var(--paper2); }
-.lang-pill.active { background: var(--ink); border-color: var(--ink); color: var(--paper); }
-
-/* ── Run button ── */
-#runBtn {
-  margin-left: auto;
-  padding: 8px 20px;
-  background: var(--ink);
-  color: var(--paper);
-  border: 2px solid var(--ink);
-  border-radius: 0;
-  font-family: var(--ff-mono);
-  font-weight: 700;
-  font-size: 11px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: all 0.15s;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  white-space: nowrap;
-}
-
-#runBtn:hover:not(:disabled) { background: var(--red); border-color: var(--red); }
-#runBtn:disabled { opacity: 0.4; cursor: not-allowed; }
-
-/* ── Room bar ── */
-#room-bar { display: none; align-items: center; gap: 8px; font-size: 12px; }
-#room-bar.visible { display: flex; }
-
-.room-badge {
-  background: var(--paper2);
-  border: 1px solid var(--rule2);
-  border-radius: 0;
-  padding: 4px 10px;
-  font-family: var(--ff-mono);
-  font-size: 10px;
-  letter-spacing: 1px;
-  cursor: pointer;
-  text-transform: uppercase;
-  color: var(--steel);
-  transition: all 0.15s;
-}
-
-.room-badge:hover { border-color: var(--ink); color: var(--ink); }
-
-#editor-status {
-  font-size: 10px;
-  color: var(--steel);
-  font-family: var(--ff-mono);
-  letter-spacing: 1px;
-  text-transform: uppercase;
-}
-
-#leaveBtn {
-  padding: 4px 12px;
-  background: transparent;
-  border: 1px solid var(--red);
-  color: var(--red);
-  border-radius: 0;
-  cursor: pointer;
-  font-size: 10px;
-  font-family: var(--ff-mono);
-  font-weight: 600;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  transition: all 0.15s;
-}
-
-#leaveBtn:hover { background: var(--red); color: var(--paper); }
-
-/* ══ MAIN AREA ═════════════════════════════════════════════════ */
-#main-area { display: flex; flex: 1; overflow: hidden; }
-
-/* ══ LEFT PANEL ════════════════════════════════════════════════ */
-#left-panel {
-  width: 210px;
-  flex-shrink: 0;
-  background: var(--paper2);
-  border-right: 2px solid var(--ink);
-  display: none;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-#left-panel.visible { display: flex; }
-
-.panel-section {
-  padding: 14px;
-  border-bottom: 1px solid var(--rule);
-}
-
-.panel-title {
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: var(--steel);
-  margin-bottom: 10px;
-  font-family: var(--ff-mono);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.panel-title::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--rule);
-}
-
-.member-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 0;
-  font-size: 12px;
-  border-bottom: 1px solid var(--rule);
-  font-family: var(--ff-mono);
-}
-
-.member-item:last-child { border-bottom: none; }
-
-.member-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--success);
-  flex-shrink: 0;
-}
-
-.member-name {
-  flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: 11px;
-  color: var(--ink);
-}
-
-.member-you     { font-size: 9px; color: var(--steel); letter-spacing: 1px; text-transform: uppercase; }
-.member-editing { font-size: 9px; color: var(--red); letter-spacing: 1px; text-transform: uppercase; }
-
-.btn-assign {
-  font-size: 9px;
-  padding: 2px 7px;
-  background: transparent;
-  border: 1px solid var(--rule2);
-  color: var(--steel);
-  border-radius: 0;
-  cursor: pointer;
-  font-family: var(--ff-mono);
-  letter-spacing: 0.5px;
-  transition: all 0.15s;
-}
-
-.btn-assign:hover { border-color: var(--ink); color: var(--ink); }
-
-.btn-action {
-  width: 100%;
-  padding: 8px;
-  border: none;
-  border-radius: 0;
-  font-size: 10px;
-  font-family: var(--ff-mono);
-  font-weight: 600;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  cursor: pointer;
-  margin-top: 6px;
-  transition: all 0.15s;
-}
-
-.btn-request  { background: var(--paper3); border: 1px solid var(--ink); color: var(--ink); }
-.btn-request:hover  { background: var(--ink); color: var(--paper); }
-
-.btn-reclaim  { background: var(--paper3); border: 1px solid var(--red); color: var(--red); }
-.btn-reclaim:hover  { background: var(--red); color: var(--paper); }
-
-.btn-handback { background: var(--paper3); border: 1px solid var(--steel); color: var(--steel); }
-.btn-handback:hover { background: var(--steel); color: var(--paper); }
-
-/* ── Notification banner ── */
-#notifBanner {
-  display: none;
-  background: var(--paper);
-  border: 1px solid var(--ink);
-  border-radius: 0;
-  padding: 10px;
-  margin-top: 8px;
-  font-size: 11px;
-  font-family: var(--ff-mono);
-  color: var(--ink);
-}
-
-#notifBanner .banner-btns { display: flex; gap: 4px; margin-top: 8px; }
-
-.bbtn {
-  flex: 1;
-  padding: 5px;
-  border: none;
-  border-radius: 0;
-  font-size: 10px;
-  font-family: var(--ff-mono);
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  cursor: pointer;
-}
-
-.bbtn.yes { background: var(--ink); color: var(--paper); }
-.bbtn.yes:hover { background: var(--red); }
-.bbtn.no  { background: var(--paper3); border: 1px solid var(--rule2); color: var(--steel); }
-.bbtn.no:hover  { border-color: var(--ink); color: var(--ink); }
-
-/* ══ EDITOR PANEL ══════════════════════════════════════════════ */
-#editor-panel { display: flex; flex-direction: column; flex: 1; overflow: hidden; min-width: 0; }
-
-/* ── Stdin bar ── */
-#stdin-bar {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 5px 14px;
-  background: var(--paper2);
-  border-bottom: 1px solid var(--rule);
-  flex-shrink: 0;
-}
-
-#stdin-bar label {
-  font-size: 9px;
-  color: var(--steel);
-  white-space: nowrap;
-  font-family: var(--ff-mono);
-  letter-spacing: 2px;
-  text-transform: uppercase;
-}
-
-#stdinInput {
-  flex: 1;
-  background: var(--paper);
-  border: 1px solid var(--rule);
-  border-radius: 0;
-  color: var(--ink);
-  font-family: var(--ff-mono);
-  font-size: 11px;
-  padding: 4px 10px;
-  outline: none;
-  transition: border-color 0.15s;
-}
-
-#stdinInput:focus { border-color: var(--ink); }
-#stdinInput::placeholder { color: var(--rule2); }
-
-/* ── Lock overlay ── */
-#lockOverlay {
-  display: none;
-  position: absolute;
-  inset: 0;
-  background: rgba(242,237,230,0.65);
-  z-index: 5;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  font-family: var(--ff-mono);
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--steel);
-  pointer-events: none;
-  backdrop-filter: blur(1px);
-}
-
-#lockOverlay.visible { display: flex; }
-
-/* ── CodeMirror wrapper ── */
-.cm-wrapper { position: relative; flex: 1; overflow: hidden; }
-
-.CodeMirror {
-  height: 100% !important;
-  font-family: var(--ff-mono) !important;
-  font-size: 13px !important;
-  background: var(--paper) !important;
-  color: var(--ink) !important;
-}
-
-.CodeMirror-scroll { padding-bottom: 0 !important; }
-.CodeMirror-gutters { background: var(--paper2) !important; border-right: 1px solid var(--rule) !important; }
-.CodeMirror-linenumber { color: var(--rule2) !important; font-size: 11px; }
-.CodeMirror-cursor { border-left: 2px solid var(--red) !important; }
-.CodeMirror-selected { background: rgba(200,50,26,0.12) !important; }
-.CodeMirror-focused .CodeMirror-selected { background: rgba(200,50,26,0.15) !important; }
-
-/* ── CodeMirror syntax (paper/ink tones) ── */
-.cm-keyword   { color: var(--red) !important; font-weight: 600; }
-.cm-def       { color: var(--ink2) !important; font-weight: 600; }
-.cm-variable  { color: var(--ink) !important; }
-.cm-string    { color: #5a3e00 !important; }
-.cm-number    { color: #7a3800 !important; }
-.cm-comment   { color: var(--rule2) !important; font-style: italic; }
-.cm-operator  { color: var(--red2) !important; }
-.cm-builtin   { color: var(--ink2) !important; }
-.cm-atom      { color: var(--red) !important; }
-
-/* ══ OUTPUT PANEL ══════════════════════════════════════════════ */
-#output-panel {
-  height: 190px;
-  flex-shrink: 0;
-  background: var(--paper2);
-  border-top: 2px solid var(--ink);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.output-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 7px 14px;
-  border-bottom: 1px solid var(--rule);
-  flex-shrink: 0;
-  background: var(--paper3);
-}
-
-.output-label {
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: var(--steel);
-  font-family: var(--ff-mono);
-}
-
-#clearOutputBtn {
-  background: none;
-  border: none;
-  color: var(--rule2);
-  cursor: pointer;
-  font-size: 10px;
-  font-family: var(--ff-mono);
-  letter-spacing: 1px;
-  padding: 2px 8px;
-  transition: color 0.15s;
-  text-transform: uppercase;
-}
-
-#clearOutputBtn:hover { color: var(--red); }
-
-#output {
-  flex: 1;
-  overflow-y: auto;
-  padding: 12px 16px;
-  font-family: var(--ff-mono);
-  font-size: 12px;
-  white-space: pre-wrap;
-  word-break: break-all;
-  color: var(--ink);
-  line-height: 1.7;
-  background: var(--paper);
-}
-
-#output.has-error   { color: var(--red); }
-#output.has-success { color: var(--ink); }
-
-/* ══ RIGHT PANEL (Video) ═══════════════════════════════════════ */
-#right-panel {
-  width: 210px;
-  flex-shrink: 0;
-  background: var(--paper2);
-  border-left: 2px solid var(--ink);
-  display: none;
-  flex-direction: column;
-  overflow-y: auto;
-}
-
-#right-panel.visible { display: flex; }
-
-.video-grid { padding: 10px; display: flex; flex-direction: column; gap: 8px; }
-
-.video-tile {
-  position: relative;
-  background: var(--paper3);
-  border: 1px solid var(--rule);
-  border-radius: 0;
-  overflow: hidden;
-  aspect-ratio: 4/3;
-}
-
-.video-tile video { width: 100%; height: 100%; object-fit: cover; display: block; }
-
-.cam-off {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--rule2);
-  font-size: 10px;
-  font-family: var(--ff-mono);
-  letter-spacing: 1px;
-  text-transform: uppercase;
-}
-
-.tile-label {
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
-  background: rgba(14,13,11,0.75);
-  color: var(--paper);
-  font-size: 9px;
-  font-family: var(--ff-mono);
-  letter-spacing: 1px;
-  padding: 4px 8px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* ── Media bar ── */
-#media-bar {
-  display: none;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
-  background: var(--paper2);
-  border-top: 1px solid var(--rule);
-  flex-shrink: 0;
-}
-
-#media-bar.visible { display: flex; }
-
-.tool-btn {
-  padding: 5px 14px;
-  background: var(--paper);
-  border: 1px solid var(--rule);
-  color: var(--steel);
-  border-radius: 0;
-  cursor: pointer;
-  font-size: 10px;
-  font-family: var(--ff-mono);
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  transition: all 0.15s;
-}
-
-.tool-btn:hover { border-color: var(--ink); color: var(--ink); }
-.tool-btn.off   { border-color: var(--red); color: var(--red); }
-.tool-btn.off:hover { background: var(--red); color: var(--paper); }
-
-/* ══ LOBBY MODAL ═══════════════════════════════════════════════ */
-#lobby {
-  position: fixed;
-  inset: 0;
-  background: rgba(242,237,230,0.88);
-  backdrop-filter: blur(4px);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 100;
-}
-
-#lobby.visible { display: flex; }
-
-.lobby-card {
-  background: var(--paper);
-  border: 2px solid var(--ink);
-  border-radius: 0;
-  padding: 36px 40px;
-  width: 400px;
-  box-shadow: 8px 8px 0 var(--ink);
-}
-
-.lobby-card h2 {
-  font-family: var(--ff-serif);
-  font-size: 28px;
-  font-weight: 900;
-  color: var(--ink);
-  margin-bottom: 4px;
-  letter-spacing: -0.5px;
-  line-height: 1;
-}
-
-.lobby-card h2 em { font-style: italic; color: var(--red); }
-
-.lobby-card p {
-  color: var(--steel);
-  font-family: var(--ff-mono);
-  font-size: 11px;
-  letter-spacing: 0.5px;
-  margin-bottom: 24px;
-  margin-top: 8px;
-}
-
-/* ── Tabs ── */
-.tabs {
-  display: flex;
-  gap: 0;
-  margin-bottom: 20px;
-  background: var(--paper2);
-  border: 1px solid var(--rule);
-  padding: 0;
-}
-
-.tab-btn {
-  flex: 1;
-  padding: 9px;
-  border: none;
-  background: transparent;
-  color: var(--steel);
-  border-radius: 0;
-  cursor: pointer;
-  font-size: 10px;
-  font-family: var(--ff-mono);
-  font-weight: 700;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  transition: all 0.15s;
-  border-right: 1px solid var(--rule);
-}
-
-.tab-btn:last-child { border-right: none; }
-.tab-btn.active { background: var(--ink); color: var(--paper); }
-.tab-btn:not(.active):hover { background: var(--paper3); color: var(--ink); }
-
-.tab-panel { display: none; }
-.tab-panel.active { display: block; }
-
-/* ── Form fields ── */
-.field { margin-bottom: 14px; }
-
-.field label {
-  display: block;
-  font-size: 9px;
-  font-weight: 700;
-  color: var(--steel);
-  margin-bottom: 6px;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  font-family: var(--ff-mono);
-}
-
-.field input {
-  width: 100%;
-  padding: 10px 12px;
-  background: var(--paper2);
-  border: 1px solid var(--rule);
-  border-radius: 0;
-  color: var(--ink);
-  font-size: 13px;
-  font-family: var(--ff-mono);
-  outline: none;
-  transition: border-color 0.15s;
-}
-
-.field input:focus { border-color: var(--ink); background: var(--paper); }
-.field input::placeholder { color: var(--rule2); }
-
-.hint {
-  font-size: 10px;
-  color: var(--rule2);
-  margin-top: 5px;
-  font-family: var(--ff-mono);
-  letter-spacing: 0.3px;
-}
-
-.btn-main {
-  width: 100%;
-  padding: 12px;
-  background: var(--ink);
-  color: var(--paper);
-  border: 2px solid var(--ink);
-  border-radius: 0;
-  font-size: 11px;
-  font-family: var(--ff-mono);
-  font-weight: 700;
-  letter-spacing: 2.5px;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: all 0.15s;
-  margin-top: 6px;
-}
-
-.btn-main:hover:not(:disabled) { background: var(--red); border-color: var(--red); }
-.btn-main:disabled { opacity: 0.4; cursor: not-allowed; }
-
-/* ── Share box ── */
-.share-box {
-  display: none;
-  margin-top: 16px;
-  background: var(--paper2);
-  border: 1px solid var(--rule);
-  border-radius: 0;
-  padding: 14px;
-  font-size: 11px;
-  font-family: var(--ff-mono);
-}
-
-.share-url {
-  font-family: var(--ff-mono);
-  font-size: 10px;
-  color: var(--red);
-  word-break: break-all;
-  cursor: pointer;
-  margin-top: 8px;
-  padding: 8px;
-  background: var(--paper);
-  border: 1px solid var(--rule);
-  display: block;
-  letter-spacing: 0.3px;
-  transition: border-color 0.15s;
-}
-
-.share-url:hover { border-color: var(--ink); text-decoration: underline; }
-
-.lobby-error {
-  color: var(--red);
-  font-size: 11px;
-  font-family: var(--ff-mono);
-  margin-top: 10px;
-  min-height: 16px;
-  letter-spacing: 0.3px;
-}
-
-/* ══ TOAST ═════════════════════════════════════════════════════ */
-#toast {
-  position: fixed;
-  bottom: 28px;
-  left: 50%;
-  transform: translateX(-50%) translateY(12px);
-  background: var(--ink);
-  border: 1px solid var(--ink2);
-  color: var(--paper);
-  padding: 9px 20px;
-  border-radius: 0;
-  font-size: 10px;
-  font-family: var(--ff-mono);
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  opacity: 0;
-  transition: all 0.25s;
-  z-index: 200;
-  pointer-events: none;
-  white-space: nowrap;
-  box-shadow: 4px 4px 0 rgba(14,13,11,0.3);
-}
-
-#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-/* ══ SCROLLBARS ════════════════════════════════════════════════ */
-::-webkit-scrollbar { width: 5px; height: 5px; }
-::-webkit-scrollbar-track { background: var(--paper2); }
-::-webkit-scrollbar-thumb { background: var(--rule); }
-::-webkit-scrollbar-thumb:hover { background: var(--rule2); }
-
-/* ══ SELECTION ═════════════════════════════════════════════════ */
-::selection { background: rgba(200,50,26,0.2); color: var(--ink); }
-</style>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=JetBrains+Mono:wght@300;400;500;700&family=Barlow+Condensed:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --paper:    #f2ede6;
+      --paper2:   #e8e1d5;
+      --paper3:   #ddd6cc;
+      --ink:      #0e0d0b;
+      --ink2:     #2a2720;
+      --red:      #c8321a;
+      --red2:     #9e2010;
+      --steel:    #6b6560;
+      --rule:     #c8c0b4;
+      --rule2:    #a09890;
+      --ff-serif: 'Playfair Display', serif;
+      --ff-mono:  'JetBrains Mono', monospace;
+      --ff-cond:  'Barlow Condensed', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--ff-mono);
+      overflow-x: hidden;
+    }
+
+    /* Noise texture */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 1000;
+    }
+
+    /* Grid background */
+    .grid-bg {
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(var(--rule) 1px, transparent 1px),
+        linear-gradient(90deg, var(--rule) 1px, transparent 1px);
+      background-size: 64px 64px;
+      opacity: 0.18; pointer-events: none; z-index: 0;
+    }
+
+    /* Custom cursor */
+    #cursor {
+      position: fixed; width: 8px; height: 8px;
+      background: var(--red); border-radius: 50%;
+      pointer-events: none; z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s, background 0.2s;
+    }
+    #cursor-ring {
+      position: fixed; width: 28px; height: 28px;
+      border: 1.5px solid var(--ink); border-radius: 50%;
+      pointer-events: none; z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: width 0.2s, height 0.2s, border-color 0.2s;
+    }
+    a:hover ~ #cursor, button:hover ~ #cursor { transform: translate(-50%,-50%) scale(2); }
+
+    /* Canvas background */
+    #bg-canvas {
+      position: fixed; inset: 0;
+      width: 100%; height: 100%;
+      pointer-events: none; z-index: 1;
+    }
+
+    /* ── NAV ─────────────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 500;
+      display: flex; align-items: stretch; height: 56px;
+      border-bottom: 2px solid var(--ink);
+      background: var(--paper);
+      transition: background 0.3s;
+    }
+
+    nav.scrolled { background: rgba(242,237,230,0.97); backdrop-filter: blur(8px); }
+
+    .nav-logo-block {
+      display: flex; align-items: center;
+      padding: 0 28px; border-right: 2px solid var(--ink);
+      gap: 10px; text-decoration: none;
+    }
+
+    .nav-logo-mark {
+      width: 28px; height: 28px; background: var(--ink);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--ff-serif); font-size: 14px; font-weight: 900; color: var(--paper);
+    }
+
+    .nav-logo-text {
+      font-family: var(--ff-cond); font-size: 18px; font-weight: 800;
+      letter-spacing: 3px; text-transform: uppercase; color: var(--ink);
+    }
+    .nav-logo-text .r { color: var(--red); }
+
+    .nav-links {
+      display: flex; align-items: stretch; margin-left: auto;
+    }
+    .nav-links a {
+      display: flex; align-items: center; padding: 0 24px;
+      font-family: var(--ff-mono); font-size: 10px;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: var(--steel); text-decoration: none;
+      border-left: 1px solid var(--rule);
+      transition: color 0.2s, background 0.2s;
+    }
+    .nav-links a:hover { color: var(--ink); background: var(--paper2); }
+    .nav-links .nav-cta {
+      background: var(--ink); color: var(--paper);
+      border-left: 2px solid var(--ink);
+    }
+    .nav-links .nav-cta:hover { background: var(--red); color: var(--paper); }
+
+    /* ── HERO ────────────────────────────────────────── */
+    #hero {
+      position: relative; z-index: 2;
+      min-height: 100vh;
+      display: grid; grid-template-columns: 1fr 1fr;
+      border-bottom: 2px solid var(--ink);
+      padding-top: 56px;
+    }
+
+    .hero-left {
+      padding: 80px 60px;
+      border-right: 2px solid var(--ink);
+      display: flex; flex-direction: column; justify-content: center;
+    }
+
+    .hero-label {
+      font-family: var(--ff-mono); font-size: 10px;
+      letter-spacing: 4px; text-transform: uppercase; color: var(--red);
+      margin-bottom: 36px; display: flex; align-items: center; gap: 10px;
+      opacity: 0; animation: fadeIn 0.6s ease 0.2s forwards;
+    }
+    .hero-label::before {
+      content: ''; display: block; width: 24px; height: 2px; background: var(--red);
+    }
+
+    .hero-h1 {
+      font-family: var(--ff-serif);
+      font-size: clamp(52px, 7vw, 96px);
+      font-weight: 900; line-height: 0.92; letter-spacing: -2px; color: var(--ink);
+      opacity: 0; animation: slideRight 0.8s cubic-bezier(0.16,1,0.3,1) 0.3s forwards;
+    }
+    .hero-h1 .italic  { font-style: italic; color: var(--red); }
+    .hero-h1 .outline { -webkit-text-stroke: 2px var(--ink); color: transparent; }
+
+    .hero-meta {
+      margin-top: 48px; padding-top: 32px;
+      border-top: 1px solid var(--rule);
+      opacity: 0; animation: fadeIn 0.8s ease 0.7s forwards;
+    }
+    .hero-meta p { font-size: 12px; line-height: 2; color: var(--steel); max-width: 380px; }
+    .hero-meta strong { color: var(--ink); font-weight: 500; }
+
+    .hero-buttons { display: flex; gap: 12px; margin-top: 36px; flex-wrap: wrap; }
+
+    .btn-ink {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: var(--ink); color: var(--paper);
+      font-family: var(--ff-mono); font-size: 11px;
+      letter-spacing: 2px; text-transform: uppercase;
+      padding: 14px 28px; text-decoration: none;
+      border: 2px solid var(--ink); transition: background 0.2s, border-color 0.2s;
+    }
+    .btn-ink:hover { background: var(--red); border-color: var(--red); }
+
+    .btn-outline {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: transparent; color: var(--ink);
+      font-family: var(--ff-mono); font-size: 11px;
+      letter-spacing: 2px; text-transform: uppercase;
+      padding: 14px 28px; text-decoration: none;
+      border: 2px solid var(--rule2); transition: border-color 0.2s;
+    }
+    .btn-outline:hover { border-color: var(--ink); }
+
+    .hero-right {
+      display: flex; flex-direction: column;
+      justify-content: space-between; overflow: hidden;
+    }
+
+    .hero-right-top {
+      flex: 1; display: flex; align-items: center;
+      justify-content: center; position: relative; padding: 60px;
+    }
+
+    .hero-bg-num {
+      font-family: var(--ff-cond); font-size: clamp(140px, 20vw, 300px);
+      font-weight: 800; color: transparent;
+      -webkit-text-stroke: 2px var(--rule); line-height: 1;
+      user-select: none;
+      opacity: 0; animation: fadeIn 1s ease 0.5s forwards;
+    }
+
+    .hero-badge {
+      position: absolute; top: 36px; right: 36px;
+      width: 90px; height: 90px; border: 2px solid var(--ink); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--ff-mono); font-size: 7.5px; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--ink); text-align: center; line-height: 1.7;
+      animation: spin 20s linear infinite;
+    }
+    .hero-badge-inner {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      animation: spinReverse 20s linear infinite;
+      font-size: 18px; font-family: var(--ff-serif); font-weight: 700; color: var(--red);
+    }
+
+    @keyframes spin        { to { transform: rotate(360deg); } }
+    @keyframes spinReverse { from { transform: translate(-50%,-50%) rotate(0deg); } to { transform: translate(-50%,-50%) rotate(-360deg); } }
+
+    .hero-right-stats { display: grid; grid-template-columns: 1fr 1fr; border-top: 2px solid var(--ink); }
+
+    .hero-stat { padding: 28px 36px; border-right: 1px solid var(--rule); }
+    .hero-stat:nth-child(even) { border-right: none; }
+
+    .hero-stat-num {
+      font-family: var(--ff-cond); font-size: 42px; font-weight: 800;
+      line-height: 1; color: var(--ink); display: block;
+    }
+    .hero-stat-num .r { color: var(--red); }
+    .hero-stat-label {
+      font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--steel); display: block; margin-top: 4px;
+    }
+
+    /* ── MARQUEE ─────────────────────────────────────── */
+    .marquee-strip {
+      position: relative; z-index: 2; background: var(--ink);
+      overflow: hidden; padding: 14px 0;
+    }
+    .marquee-track {
+      display: flex; animation: marquee 30s linear infinite; white-space: nowrap;
+    }
+    .marquee-item {
+      font-family: var(--ff-cond); font-size: 13px; font-weight: 700;
+      letter-spacing: 5px; text-transform: uppercase; color: var(--paper2);
+      padding: 0 36px; display: flex; align-items: center; gap: 36px;
+    }
+    .marquee-sep { color: var(--red); }
+    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    /* ── FEATURES ────────────────────────────────────── */
+    #features { position: relative; z-index: 2; border-bottom: 2px solid var(--ink); }
+
+    .features-header {
+      display: grid; grid-template-columns: auto 1fr; border-bottom: 2px solid var(--ink);
+    }
+    .features-num-col {
+      padding: 60px 48px; border-right: 2px solid var(--ink);
+      display: flex; flex-direction: column; justify-content: space-between; min-width: 120px;
+    }
+    .rotated-label {
+      writing-mode: vertical-rl; text-orientation: mixed; transform: rotate(180deg);
+      font-family: var(--ff-mono); font-size: 9px; letter-spacing: 4px;
+      text-transform: uppercase; color: var(--steel);
+    }
+    .section-big-num { font-family: var(--ff-cond); font-size: 80px; font-weight: 800; color: var(--rule); line-height: 1; }
+    .features-title-col { padding: 60px 64px; display: flex; flex-direction: column; justify-content: flex-end; }
+
+    .section-tag { font-family: var(--ff-mono); font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--red); margin-bottom: 20px; }
+
+    .section-h2 { font-family: var(--ff-serif); font-size: clamp(38px,5vw,68px); font-weight: 900; line-height: 0.95; letter-spacing: -1.5px; }
+    .section-h2 em { font-style: italic; color: var(--red); }
+
+    .features-grid { display: grid; grid-template-columns: repeat(3,1fr); }
+
+    .feat {
+      padding: 52px 48px; border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
+      transition: background 0.25s;
+    }
+    .feat:nth-child(3n)        { border-right: none; }
+    .feat:nth-last-child(-n+3) { border-bottom: none; }
+    .feat:hover { background: var(--paper2); }
+
+    .feat-num {
+      font-family: var(--ff-cond); font-size: 11px; font-weight: 700;
+      letter-spacing: 3px; color: var(--rule2); margin-bottom: 20px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .feat-num::after { content: ''; flex: 1; height: 1px; background: var(--rule); }
+    .feat-icon { font-size: 24px; margin-bottom: 16px; display: block; }
+    .feat-title { font-family: var(--ff-serif); font-size: 22px; font-weight: 700; line-height: 1.1; margin-bottom: 12px; }
+    .feat-desc  { font-size: 11px; line-height: 2; color: var(--steel); }
+    .feat-tag {
+      display: inline-block; margin-top: 20px;
+      font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+      padding: 3px 8px; background: var(--ink); color: var(--paper);
+    }
+
+    /* ── CODE PREVIEW ────────────────────────────────── */
+    #preview {
+      position: relative; z-index: 2;
+      display: grid; grid-template-columns: 1fr 1fr;
+      border-bottom: 2px solid var(--ink);
+    }
+
+    .preview-text {
+      padding: 80px 60px; border-right: 2px solid var(--ink);
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    .preview-list { margin-top: 36px; display: flex; flex-direction: column; gap: 12px; }
+    .preview-list-item {
+      display: flex; align-items: center; gap: 12px;
+      font-size: 11px; color: var(--steel);
+    }
+    .preview-list-item::before { content: '→'; color: var(--red); font-size: 14px; }
+
+    .preview-editor-col {
+      padding: 48px; background: var(--ink2);
+      display: flex; align-items: center;
+    }
+
+    .editor-window { width: 100%; border: 1px solid #3a3630; font-family: var(--ff-mono); font-size: 12px; line-height: 1.8; }
+    .editor-bar {
+      background: #1e1c18; padding: 10px 16px;
+      display: flex; align-items: center; gap: 6px; border-bottom: 1px solid #3a3630;
+    }
+    .e-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .e-red { background: #ff5f57; } .e-yel { background: #febc2e; } .e-grn { background: #28c840; }
+    .e-filename { margin-left: 10px; font-size: 10px; color: #6b6560; letter-spacing: 1px; }
+    .editor-code { padding: 24px; overflow-x: auto; background: #0e0d0b; }
+    .editor-code pre { white-space: pre; }
+
+    .ck { color: #e06c75; } .cf { color: #61afef; } .cs { color: #98c379; }
+    .cn { color: #d19a66; } .cc { color: #5c6370; font-style: italic; } .co { color: #56b6c2; }
+    .blink { display: inline-block; width: 2px; height: 13px; background: #61afef; vertical-align: middle; animation: bl 1s step-end infinite; }
+    @keyframes bl { 0%,100%{opacity:1} 50%{opacity:0} }
+
+    /* ── STATS ───────────────────────────────────────── */
+    #stats {
+      position: relative; z-index: 2; background: var(--ink);
+      display: grid; grid-template-columns: repeat(3,1fr);
+      border-bottom: 2px solid var(--ink);
+    }
+
+    .stat-item {
+      padding: 48px 52px; border-right: 1px solid #2a2720;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .stat-item:last-child { border-right: none; }
+
+    .stat-num {
+      font-family: var(--ff-cond); font-size: 64px; font-weight: 800;
+      line-height: 1; color: var(--paper);
+    }
+    .stat-num .r { color: var(--red); }
+    .stat-label { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: #5a5650; }
+
+    /* ── HOW IT WORKS ────────────────────────────────── */
+    #how { position: relative; z-index: 2; border-bottom: 2px solid var(--ink); }
+
+    .how-header {
+      padding: 60px 64px; border-bottom: 2px solid var(--ink);
+      display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 24px;
+    }
+
+    .how-steps { display: grid; grid-template-columns: repeat(3,1fr); }
+    .how-step {
+      padding: 56px 52px; border-right: 1px solid var(--rule);
+      position: relative; transition: background 0.25s;
+    }
+    .how-step:last-child { border-right: none; }
+    .how-step:hover { background: var(--paper2); }
+
+    .how-step-num { font-family: var(--ff-cond); font-size: 96px; font-weight: 800; line-height: 0.9; color: var(--rule); margin-bottom: 28px; display: block; }
+    .how-step-title { font-family: var(--ff-serif); font-size: 26px; font-weight: 700; margin-bottom: 14px; }
+    .how-step-desc  { font-size: 11px; line-height: 2; color: var(--steel); }
+    .how-step-arrow { position: absolute; top: 56px; right: -18px; font-size: 24px; color: var(--rule2); z-index: 1; }
+    .how-step:last-child .how-step-arrow { display: none; }
+
+    /* ── TESTIMONIALS ────────────────────────────────── */
+    #testimonials { position: relative; z-index: 2; border-bottom: 2px solid var(--ink); }
+
+    .testimonials-header { padding: 60px 64px; border-bottom: 2px solid var(--ink); }
+    .testimonials-grid { display: grid; grid-template-columns: repeat(3,1fr); }
+
+    .testimonial {
+      padding: 48px 44px; border-right: 1px solid var(--rule); transition: background 0.2s;
+    }
+    .testimonial:last-child { border-right: none; }
+    .testimonial:hover { background: var(--paper2); }
+
+    .t-quote-mark { font-family: var(--ff-serif); font-size: 72px; line-height: 0.7; color: var(--red); margin-bottom: 16px; display: block; }
+    .t-quote { font-family: var(--ff-serif); font-style: italic; font-size: 15px; line-height: 1.7; color: var(--ink2); margin-bottom: 24px; }
+    .t-rule { height: 1px; background: var(--rule); margin-bottom: 20px; }
+    .t-name { font-family: var(--ff-mono); font-size: 11px; font-weight: 700; color: var(--ink); display: block; }
+    .t-role { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--steel); margin-top: 3px; display: block; }
+
+    /* ── CTA ─────────────────────────────────────────── */
+    #cta {
+      position: relative; z-index: 2; background: var(--red);
+      display: grid; grid-template-columns: 1fr 1fr;
+      border-bottom: 2px solid var(--ink);
+    }
+
+    .cta-left { padding: 80px 64px; border-right: 2px solid var(--red2); }
+    .cta-h2 {
+      font-family: var(--ff-serif); font-size: clamp(42px,5.5vw,80px);
+      font-weight: 900; line-height: 0.95; letter-spacing: -2px;
+      color: var(--paper); margin-bottom: 32px;
+    }
+    .cta-h2 .outline { -webkit-text-stroke: 2px var(--paper); color: transparent; }
+    .cta-sub { font-size: 12px; line-height: 2; color: rgba(242,237,230,0.7); max-width: 340px; margin-bottom: 40px; }
+
+    .btn-paper {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: var(--paper); color: var(--ink);
+      font-family: var(--ff-mono); font-size: 11px;
+      letter-spacing: 2px; text-transform: uppercase;
+      padding: 16px 32px; text-decoration: none;
+      border: 2px solid var(--paper); font-weight: 700; transition: background 0.2s, color 0.2s;
+    }
+    .btn-paper:hover { background: transparent; color: var(--paper); }
+
+    .cta-right { padding: 80px 64px; display: flex; flex-direction: column; justify-content: center; }
+    .cta-list { list-style: none; display: flex; flex-direction: column; gap: 16px; }
+    .cta-list li {
+      display: flex; align-items: flex-start; gap: 14px;
+      font-size: 12px; line-height: 1.7; color: rgba(242,237,230,0.8);
+      padding-bottom: 16px; border-bottom: 1px solid var(--red2);
+    }
+    .cta-list li:last-child { border-bottom: none; padding-bottom: 0; }
+    .cta-list li::before { content: '→'; color: var(--paper); flex-shrink: 0; font-weight: 700; }
+    .cta-list strong { color: var(--paper); font-weight: 500; }
+
+    /* ── FOOTER ──────────────────────────────────────── */
+    footer { position: relative; z-index: 2; background: var(--ink); color: var(--paper); }
+
+    .footer-top { display: grid; grid-template-columns: 1fr auto 1fr; border-bottom: 1px solid #2a2720; }
+    .footer-brand { padding: 48px 52px; border-right: 1px solid #2a2720; }
+    .footer-logo { font-family: var(--ff-cond); font-size: 28px; font-weight: 800; letter-spacing: 4px; text-transform: uppercase; color: var(--paper); }
+    .footer-logo .r { color: var(--red); }
+    .footer-tagline { font-size: 10px; color: #5a5650; letter-spacing: 2px; text-transform: uppercase; margin-top: 8px; display: block; }
+
+    .footer-nav { padding: 48px 64px; display: flex; align-items: center; gap: 40px; border-right: 1px solid #2a2720; }
+    .footer-nav a { font-family: var(--ff-mono); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: #5a5650; text-decoration: none; transition: color 0.2s; }
+    .footer-nav a:hover { color: var(--paper); }
+
+    .footer-founder { padding: 48px 52px; display: flex; flex-direction: column; justify-content: center; align-items: flex-end; text-align: right; }
+    .footer-founder-name { font-family: var(--ff-serif); font-style: italic; font-size: 18px; color: var(--paper); }
+    .footer-founder-role { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: #5a5650; margin-top: 4px; }
+
+    .footer-bottom { padding: 20px 52px; display: flex; align-items: center; justify-content: space-between; }
+    .footer-copy { font-size: 10px; color: #3a3630; letter-spacing: 1.5px; }
+    .footer-copy span { color: var(--red); }
+
+    /* ── Scroll reveal ───────────────────────────────── */
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.in { opacity: 1; transform: none; }
+
+    /* ── Keyframes ───────────────────────────────────── */
+    @keyframes fadeIn    { from{opacity:0} to{opacity:1} }
+    @keyframes slideRight { from{opacity:0;transform:translateX(-32px)} to{opacity:1;transform:none} }
+
+    /* ── Responsive ──────────────────────────────────── */
+    @media (max-width: 900px) {
+      #hero, #preview, #cta { grid-template-columns: 1fr; }
+      .hero-left, .preview-text, .cta-left { border-right: none; border-bottom: 2px solid var(--ink); }
+      .features-grid, .how-steps, .testimonials-grid, #stats { grid-template-columns: 1fr; }
+      .feat, .how-step, .testimonial, .stat-item { border-right: none; }
+      .nav-links a:not(.nav-cta) { display: none; }
+      .hero-left, .preview-text, .cta-left, .cta-right { padding: 56px 28px; }
+      .features-title-col, .how-header, .testimonials-header { padding: 40px 28px; }
+      .feat, .how-step, .testimonial { padding: 40px 28px; }
+      .footer-top { grid-template-columns: 1fr; }
+      .footer-brand, .footer-nav, .footer-founder { border-right: none; border-bottom: 1px solid #2a2720; padding: 32px 28px; }
+      .footer-founder { align-items: flex-start; text-align: left; }
+      .footer-bottom { padding: 16px 28px; flex-direction: column; gap: 8px; text-align: center; }
+      .footer-nav { flex-wrap: wrap; gap: 20px; }
+    }
+  </style>
 </head>
 <body>
-
-<!-- Custom cursor -->
+<div class="grid-bg"></div>
 <div id="cursor"></div>
 <div id="cursor-ring"></div>
-
-<!-- Background canvas (floating code particles) -->
 <canvas id="bg-canvas"></canvas>
 
 <!-- ══ NAV ═══════════════════════════════════════════════════ -->
 <nav id="navbar">
-  <a class="nav-logo" href="/">
-    CODE<span class="forge">FORGE</span><span class="dot">.</span>
+  <a class="nav-logo-block" href="/">
+    <div class="nav-logo-mark">CF</div>
+    <span class="nav-logo-text">CODE<span class="r">FORGE</span></span>
   </a>
   <div class="nav-links">
     <a href="#features">Features</a>
-    <a href="#how">How it works</a>
-    <a href="#" style="color:var(--muted)">Docs</a>
+    <a href="#how">How It Works</a>
+    <a href="#testimonials">About</a>
     <a class="nav-cta" href="index.html">Open Editor →</a>
   </div>
 </nav>
 
 <!-- ══ HERO ══════════════════════════════════════════════════ -->
 <section id="hero">
-  <div class="hero-eyebrow">Est. 2026 — Built for developers</div>
-  <h1 class="hero-headline">
-    WHERE<br>
-    CODE<br>
-    <span class="line2">Gets <span class="accent-word">Built.</span></span>
-  </h1>
-  <div class="hero-sub-row">
-    <p class="hero-sub">
-      A <strong>collaborative coding environment</strong> for teams who move fast.
-      Write, run, and ship code together — in real time, from anywhere.
-    </p>
-    <div class="hero-cta-group">
-      <a class="btn-primary" href="index.html">
-        Start Coding
-        <span>→</span>
-      </a>
+  <div class="hero-left">
+    <div class="hero-label">Est. 2026 · Built for developers</div>
+    <h1 class="hero-h1">
+      WHERE<br>
+      <span class="italic">CODE</span><br>
+      <span class="outline">GETS BUILT</span>
+    </h1>
+    <div class="hero-meta">
+      <p>A <strong>real-time collaborative coding environment</strong> for teams who move fast. Write, run, and ship code together — in any language, from anywhere.</p>
+      <div class="hero-buttons">
+        <a class="btn-ink" href="index.html">Launch Editor →</a>
+        <a class="btn-outline" href="#features">See Features</a>
+      </div>
     </div>
   </div>
-  <div class="scroll-hint">
-    <span>Scroll</span>
-    <div class="scroll-line"></div>
+
+  <div class="hero-right">
+    <div class="hero-right-top">
+      <div class="hero-bg-num">CF</div>
+      <div class="hero-badge">
+        CODE · FORGE · BUILD · SHIP ·&nbsp;
+        <span class="hero-badge-inner">✦</span>
+      </div>
+    </div>
+    <div class="hero-right-stats">
+      <div class="hero-stat">
+        <span class="hero-stat-num">4<span class="r">+</span></span>
+        <span class="hero-stat-label">Languages</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-num">8<span class="r">×</span></span>
+        <span class="hero-stat-label">Team Members</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-num">&lt;1<span class="r">s</span></span>
+        <span class="hero-stat-label">Execution</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-num">∞</span>
+        <span class="hero-stat-label">Possibilities</span>
+      </div>
+    </div>
   </div>
 </section>
 
 <!-- ══ MARQUEE ════════════════════════════════════════════════ -->
 <div class="marquee-strip">
   <div class="marquee-track">
-    <!-- Doubled for seamless loop -->
-    <div class="marquee-item">Python <span class="sep"></span></div>
-    <div class="marquee-item">C++ <span class="sep"></span></div>
-    <div class="marquee-item">Java <span class="sep"></span></div>
-    <div class="marquee-item">Real-time Sync <span class="sep"></span></div>
-    <div class="marquee-item">Live Video <span class="sep"></span></div>
-    <div class="marquee-item">Team Rooms <span class="sep"></span></div>
-    <div class="marquee-item">Judge0 Execution <span class="sep"></span></div>
-    <div class="marquee-item">Secure by Default <span class="sep"></span></div>
-    <div class="marquee-item">Python <span class="sep"></span></div>
-    <div class="marquee-item">C++ <span class="sep"></span></div>
-    <div class="marquee-item">Java <span class="sep"></span></div>
-    <div class="marquee-item">Real-time Sync <span class="sep"></span></div>
-    <div class="marquee-item">Live Video <span class="sep"></span></div>
-    <div class="marquee-item">Team Rooms <span class="sep"></span></div>
-    <div class="marquee-item">Judge0 Execution <span class="sep"></span></div>
-    <div class="marquee-item">Secure by Default <span class="sep"></span></div>
+    <div class="marquee-item">Python <span class="marquee-sep">✦</span></div>
+    <div class="marquee-item">C++ <span class="marquee-sep">✦</span></div>
+    <div class="marquee-item">Java <span class="marquee-sep">✦</span></div>
+    <div class="marquee-item">Real-Time Sync <span class="marquee-sep">✦</span></div>
+    <div class="marquee-item">Live Video <span class="marquee-sep">✦</span></div>
+    <div class="marquee-item">Team Rooms <span class="marquee-sep">✦</span></div>
+    <div class="marquee-item">Judge0 Engine <span class="marquee-sep">✦</span></div>
+    <div class="marquee-item">WebRTC P2P <span class="marquee-sep">✦</span></div>
+    <div class="marquee-item">Python <span class="marquee-sep">✦</span></div>
+    <div class="marquee-item">C++ <span class="marquee-sep">✦</span></div>
+    <div class="marquee-item">Java <span class="marquee-sep">✦</span></div>
+    <div class="marquee-item">Real-Time Sync <span class="marquee-sep">✦</span></div>
+    <div class="marquee-item">Live Video <span class="marquee-sep">✦</span></div>
+    <div class="marquee-item">Team Rooms <span class="marquee-sep">✦</span></div>
+    <div class="marquee-item">Judge0 Engine <span class="marquee-sep">✦</span></div>
+    <div class="marquee-item">WebRTC P2P <span class="marquee-sep">✦</span></div>
   </div>
 </div>
 
 <!-- ══ FEATURES ══════════════════════════════════════════════ -->
 <section id="features">
-  <div class="section-label">Core Features</div>
-  <h2 class="section-headline reveal">Everything your<br>team <em>needs.</em></h2>
-
-  <div class="features-grid reveal">
-    <div class="feature-cell" data-num="01">
-      <span class="feature-icon">⚡</span>
-      <div class="feature-title">Live Collaboration</div>
-      <p class="feature-desc">
-        Real-time code sync powered by Socket.io. One person types, everyone sees it instantly.
-        Editor control passes with a single click — no conflicts, no merge hell.
-      </p>
-      <span class="feature-tag">Socket.io</span>
+  <div class="features-header">
+    <div class="features-num-col">
+      <div class="rotated-label">Core Features</div>
+      <div class="section-big-num">05</div>
     </div>
-    <div class="feature-cell" data-num="02">
-      <span class="feature-icon">🎥</span>
-      <div class="feature-title">Live Video & Audio</div>
-      <p class="feature-desc">
-        Built-in WebRTC video calls. No third-party app required.
-        See your teammates while you build — toggle mic and camera on the fly.
-      </p>
-      <span class="feature-tag">WebRTC P2P</span>
+    <div class="features-title-col">
+      <div class="section-tag">// What we built</div>
+      <h2 class="section-h2 reveal">Everything your<br>team <em>needs.</em></h2>
     </div>
-    <div class="feature-cell wide" data-num="03">
-      <span class="feature-icon">🔥</span>
-      <div class="feature-title">Run Code Instantly</div>
-      <p class="feature-desc">
-        Execute Python, C, C++, and Java right in the browser. Powered by Judge0 — results in seconds, no installs, no config.
-        Pass stdin, read stdout, catch compile errors — all inline.
-      </p>
-      <span class="feature-tag">Judge0 Engine</span>
+  </div>
+  <div class="features-grid">
+    <div class="feat reveal">
+      <div class="feat-num">01</div>
+      <span class="feat-icon">⚡</span>
+      <div class="feat-title">Live Collaboration</div>
+      <p class="feat-desc">Real-time code sync via Socket.io. One person types, everyone sees it instantly. Editor control passes with one click — no merge conflicts.</p>
+      <span class="feat-tag">Socket.io</span>
     </div>
-    <div class="feature-cell" data-num="04">
-      <span class="feature-icon">🔒</span>
-      <div class="feature-title">Secure Rooms</div>
-      <p class="feature-desc">
-        Password-protected team rooms with JWT authentication.
-        Server-enforced editor control — only the host decides who codes.
-      </p>
-      <span class="feature-tag">JWT Auth</span>
+    <div class="feat reveal">
+      <div class="feat-num">02</div>
+      <span class="feat-icon">🎥</span>
+      <div class="feat-title">Video & Audio</div>
+      <p class="feat-desc">Built-in WebRTC video calls. No third-party apps. Toggle mic and camera on the fly while coding side by side with your team.</p>
+      <span class="feat-tag">WebRTC P2P</span>
     </div>
-    <div class="feature-cell" data-num="05">
-      <span class="feature-icon">🌐</span>
-      <div class="feature-title">Share Anywhere</div>
-      <p class="feature-desc">
-        Generate a shareable room link in one click.
-        Teammates join from any browser — no accounts needed to collaborate.
-      </p>
-      <span class="feature-tag">Instant Links</span>
+    <div class="feat reveal">
+      <div class="feat-num">03</div>
+      <span class="feat-icon">🔥</span>
+      <div class="feat-title">Instant Execution</div>
+      <p class="feat-desc">Run Python, C, C++, and Java right in the browser. Powered by Judge0. Results in under a second — no installs, no config.</p>
+      <span class="feat-tag">Judge0</span>
+    </div>
+    <div class="feat reveal">
+      <div class="feat-num">04</div>
+      <span class="feat-icon">🔒</span>
+      <div class="feat-title">Secure Rooms</div>
+      <p class="feat-desc">Password-protected team rooms with JWT authentication. Server-enforced editor control — the host decides who types.</p>
+      <span class="feat-tag">JWT Auth</span>
+    </div>
+    <div class="feat reveal">
+      <div class="feat-num">05</div>
+      <span class="feat-icon">🌐</span>
+      <div class="feat-title">Share in One Click</div>
+      <p class="feat-desc">Generate a room link instantly. Teammates join from any browser — no accounts needed. The link is the invite.</p>
+      <span class="feat-tag">Instant Links</span>
+    </div>
+    <div class="feat reveal" style="background:var(--paper2);">
+      <div class="feat-num" style="color:var(--red);">★</div>
+      <div style="margin-top:20px">
+        <div class="feat-title" style="font-size:28px;line-height:1;letter-spacing:-1px;">The only editor your team needs.</div>
+        <p class="feat-desc" style="margin-top:16px">Built from the ground up for real collaboration — not screen-sharing workarounds.</p>
+      </div>
     </div>
   </div>
 </section>
 
 <!-- ══ CODE PREVIEW ══════════════════════════════════════════ -->
 <section id="preview">
-  <div class="editor-mockup reveal">
-    <div class="editor-titlebar">
-      <div class="titlebar-dot dot-red"></div>
-      <div class="titlebar-dot dot-yel"></div>
-      <div class="titlebar-dot dot-grn"></div>
-      <span class="titlebar-name">team_session.py — CodeForge</span>
+  <div class="preview-text reveal">
+    <div class="section-tag">// In action</div>
+    <h2 class="section-h2" style="margin:16px 0 28px;">Write.<br>Run.<br><em>Ship.</em></h2>
+    <p style="font-size:11px;line-height:2;color:var(--steel);max-width:340px;">
+      A full syntax-highlighted editor with CodeMirror, live teammate presence, and one-click code execution. Everything here is real — no mocks.
+    </p>
+    <div class="preview-list">
+      <div class="preview-list-item">Python, C, C++, Java supported</div>
+      <div class="preview-list-item">Stdin / stdout piped correctly</div>
+      <div class="preview-list-item">Compile errors shown inline</div>
     </div>
-    <div class="editor-body">
-      <div class="line-nums">
-        <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
-        <span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
-        <span>11</span><span>12</span><span>13</span><span>14</span><span>15</span>
-        <span>16</span>
+  </div>
+  <div class="preview-editor-col">
+    <div class="editor-window reveal">
+      <div class="editor-bar">
+        <div class="e-dot e-red"></div>
+        <div class="e-dot e-yel"></div>
+        <div class="e-dot e-grn"></div>
+        <span class="e-filename">solution.py — 3 online · Alex editing</span>
       </div>
-      <div class="code-area"><pre><span class="c-comment"># CodeForge — real-time collaborative editor</span>
-<span class="c-comment"># 3 teammates online · editor: Alex 👑</span>
+      <div class="editor-code"><pre><span class="cc"># CodeForge — collaborative session</span>
+<span class="cc"># Team: Alex 👑, Jordan, Priya</span>
 
-<span class="c-keyword">from</span> <span class="c-class">collections</span> <span class="c-keyword">import</span> defaultdict
+<span class="ck">def</span> <span class="cf">merge_sort</span>(arr):
+    <span class="ck">if</span> <span class="cf">len</span>(arr) <span class="co">&lt;=</span> <span class="cn">1</span>:
+        <span class="ck">return</span> arr
 
-<span class="c-keyword">def</span> <span class="c-fn">find_shortest_path</span>(graph, start, end):
-    <span class="c-str">"""BFS to find shortest path between nodes."""</span>
-    queue   <span class="c-op">=</span> [(start, [start])]
-    visited <span class="c-op">=</span> <span class="c-fn">set</span>()
+    mid   <span class="co">=</span> <span class="cf">len</span>(arr) <span class="co">//</span> <span class="cn">2</span>
+    left  <span class="co">=</span> <span class="cf">merge_sort</span>(arr[:mid])
+    right <span class="co">=</span> <span class="cf">merge_sort</span>(arr[mid:])
 
-    <span class="c-keyword">while</span> queue:
-        node, path <span class="c-op">=</span> queue.pop(<span class="c-num">0</span>)
-        <span class="c-keyword">if</span> node <span class="c-op">==</span> end:
-            <span class="c-keyword">return</span> path
-        <span class="c-keyword">for</span> neighbor <span class="c-keyword">in</span> graph[node]:
-            <span class="c-keyword">if</span> neighbor <span class="c-op">not in</span> visited:<span class="cursor-blink"></span></pre>
+    <span class="ck">return</span> <span class="cf">merge</span>(left, right)
+
+<span class="ck">def</span> <span class="cf">merge</span>(left, right):
+    result <span class="co">=</span> []
+    i <span class="co">=</span> j <span class="co">=</span> <span class="cn">0</span>
+    <span class="ck">while</span> i <span class="co">&lt;</span> <span class="cf">len</span>(left) <span class="ck">and</span> j <span class="co">&lt;</span> <span class="cf">len</span>(right):
+        <span class="ck">if</span> left[i] <span class="co">&lt;=</span> right[j]:<span class="blink"></span></pre>
       </div>
     </div>
   </div>
@@ -1018,106 +705,123 @@ body::after {
 
 <!-- ══ STATS ══════════════════════════════════════════════════ -->
 <div id="stats">
-  <div class="stats-inner">
-    <div class="stat-item reveal">
-      <span class="stat-num">4<span class="accent">+</span></span>
-      <span class="stat-label">Languages Supported</span>
-    </div>
-    <div class="stat-item reveal">
-      <span class="stat-num">8<span class="accent">×</span></span>
-      <span class="stat-label">Max Team Size</span>
-    </div>
-    <div class="stat-item reveal">
-      <span class="stat-num">&lt;1<span class="accent">s</span></span>
-      <span class="stat-label">Code Execution Speed</span>
-    </div>
+  <div class="stat-item reveal">
+    <span class="stat-num">4<span class="r">+</span></span>
+    <span class="stat-label">Languages Supported</span>
+  </div>
+  <div class="stat-item reveal">
+    <span class="stat-num">8<span class="r">×</span></span>
+    <span class="stat-label">Max Team Size</span>
+  </div>
+  <div class="stat-item reveal">
+    <span class="stat-num">&lt;1<span class="r">s</span></span>
+    <span class="stat-label">Code Execution Speed</span>
   </div>
 </div>
 
 <!-- ══ HOW IT WORKS ═══════════════════════════════════════════ -->
 <section id="how">
-  <div class="section-label">How It Works</div>
-  <h2 class="section-headline reveal">Up and running<br>in <em>three steps.</em></h2>
-  <div class="steps reveal">
-    <div class="step">
-      <div class="step-num">01</div>
-      <div class="step-title">Create a Room</div>
-      <p class="step-desc">
-        Hit "Team Mode", choose a name, optionally set a password.
-        Your room is live in seconds — no installs, no config files.
-      </p>
+  <div class="how-header">
+    <div>
+      <div class="section-tag">// Process</div>
+      <h2 class="section-h2 reveal">Up and running<br>in <em>three steps.</em></h2>
     </div>
-    <div class="step">
-      <div class="step-num">02</div>
-      <div class="step-title">Invite Your Team</div>
-      <p class="step-desc">
-        Share the auto-generated link. Teammates join from any browser.
-        Video and audio connect automatically via WebRTC.
-      </p>
+    <a class="btn-ink" href="index.html" style="align-self:flex-end;">Try it now →</a>
+  </div>
+  <div class="how-steps">
+    <div class="how-step reveal">
+      <span class="how-step-num">01</span>
+      <div class="how-step-title">Create a Room</div>
+      <p class="how-step-desc">Hit Team Mode. Pick a name, set an optional password. Your room is live in seconds — no installs, no config, no waiting.</p>
+      <span class="how-step-arrow">→</span>
     </div>
-    <div class="step">
-      <div class="step-num">03</div>
-      <div class="step-title">Code Together</div>
-      <p class="step-desc">
-        Pass editor control, run code, see output together.
-        Everything syncs live — no merge conflicts, ever.
-      </p>
+    <div class="how-step reveal">
+      <span class="how-step-num">02</span>
+      <div class="how-step-title">Invite Your Team</div>
+      <p class="how-step-desc">Share the auto-generated link. Teammates join from any browser. Video and audio connect automatically via WebRTC peer-to-peer.</p>
+      <span class="how-step-arrow">→</span>
+    </div>
+    <div class="how-step reveal">
+      <span class="how-step-num">03</span>
+      <div class="how-step-title">Build Together</div>
+      <p class="how-step-desc">Pass editor control. Run code. See output together. Everything syncs live — no conflicts, no "who has the keyboard?"</p>
     </div>
   </div>
 </section>
 
 <!-- ══ TESTIMONIALS ═══════════════════════════════════════════ -->
 <section id="testimonials">
-  <div class="testimonials-inner">
-    <div class="section-label">What People Say</div>
-    <h2 class="section-headline reveal">Trusted by<br>builders <em>worldwide.</em></h2>
-    <div class="testimonials-grid">
-      <div class="testimonial-card reveal">
-        <div class="testimonial-quote">
-          We used to screenshare over Zoom and fight over who has the keyboard.
-          CodeForge replaced all of that in one tab.
-        </div>
-        <div class="testimonial-author">
-          <div class="author-avatar">🧑‍💻</div>
-          <div>
-            <span class="author-name">Rabi K.</span>
-            <span class="author-role">Web Developer · Indie Startup</span>
-          </div>
-        </div>
-      </div>
-      <div class="testimonial-card reveal">
-        <div class="testimonial-quote">
-          The editor control system is clever. As a TA, I can take over a student's code
-          and fix it without a 10-minute setup ritual.
-        </div>
+  <div class="testimonials-header">
+    <div class="section-tag">// What people say</div>
+    <h2 class="section-h2 reveal" style="margin-top:16px;">Trusted by<br><em>builders.</em></h2>
+  </div>
+  <div class="testimonials-grid">
+    <div class="testimonial reveal">
+      <span class="t-quote-mark">"</span>
+      <p class="t-quote">We used to screenshare over Zoom and fight for the keyboard. CodeForge replaced all of that in a single browser tab.</p>
+      <div class="t-rule"></div>
+      <span class="t-name">Zara K.</span>
+      <span class="t-role">Senior Engineer · Fintech Startup</span>
+    </div>
+    <div class="testimonial reveal">
+      <span class="t-quote-mark">"</span>
+      <p class="t-quote">As a TA I can jump into a student's code and fix it without a 10-minute setup ritual. The editor handoff is brilliant.</p>
+      <div class="t-rule"></div>
+      <span class="t-name">Dr. Marcus L.</span>
+      <span class="t-role">CS Lecturer · University</span>
+    </div>
+    <div class="testimonial reveal">
+      <span class="t-quote-mark">"</span>
+      <p class="t-quote">All our technical interviews run on CodeForge now. No extensions, no setup — just send a link and you're in.</p>
+      <div class="t-rule"></div>
+      <span class="t-name">Priya S.</span>
+      <span class="t-role">Head of Engineering · SaaS Co.</span>
     </div>
   </div>
 </section>
 
 <!-- ══ CTA ════════════════════════════════════════════════════ -->
 <section id="cta">
-  <div class="cta-bg-text">FORGE</div>
-  <div class="cta-content reveal">
-    <h2 class="cta-headline">
-      Stop waiting.<br>
-      Start <em>building.</em>
+  <div class="cta-left reveal">
+    <h2 class="cta-h2">
+      Stop<br>waiting.<br>
+      <span class="outline">Build.</span>
     </h2>
-    <div class="cta-buttons">
-      <a class="btn-primary" href="index.html">Launch Editor →</a>
-    </div>
+    <p class="cta-sub">Free to start. No credit card. No installs. Open a tab and your team is coding together in under a minute.</p>
+    <a class="btn-paper" href="index.html">Launch CodeForge →</a>
+  </div>
+  <div class="cta-right reveal">
+    <ul class="cta-list">
+      <li>Works in <strong>any modern browser</strong> — no extensions</li>
+      <li>Runs <strong>Python, C, C++, Java</strong> out of the box</li>
+      <li><strong>Real-time sync</strong> — no lag, no conflicts</li>
+      <li>Built-in <strong>video & audio</strong> via WebRTC</li>
+      <li>Secure rooms with <strong>optional passwords</strong></li>
+    </ul>
   </div>
 </section>
 
 <!-- ══ FOOTER ════════════════════════════════════════════════ -->
 <footer>
-  <div class="footer-inner">
-    <div class="footer-logo">CODE<span>FORGE</span></div>
-    <div class="footer-links">
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="footer-logo">CODE<span class="r">FORGE</span></div>
+      <span class="footer-tagline">Where code gets built · Est. 2026</span>
+    </div>
+    <div class="footer-nav">
       <a href="index.html">Editor</a>
       <a href="#features">Features</a>
       <a href="#how">How It Works</a>
+      <a href="#testimonials">About</a>
     </div>
-    <span class="footer-copy">© 2026 CodeForge. All rights reserved.</span>
+    <div class="footer-founder">
+      <div class="footer-founder-name">M. Rabi. K.</div>
+      <div class="footer-founder-role">Web Developer · CEO, CodeForge</div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy">© 2026 CodeForge — Built by <span>M. Rabi. K.</span> All rights reserved.</span>
+    <span class="footer-copy" style="color:#3a3630;">Made with precision. Shipped with purpose.</span>
   </div>
 </footer>
 
@@ -1141,6 +845,17 @@ document.addEventListener('mousemove', e => {
   requestAnimationFrame(animRing);
 })();
 
+document.querySelectorAll('a, button').forEach(el => {
+  el.addEventListener('mouseenter', () => {
+    cursor.style.transform = 'translate(-50%,-50%) scale(2)';
+    cursorRing.style.borderColor = 'var(--red)';
+  });
+  el.addEventListener('mouseleave', () => {
+    cursor.style.transform = 'translate(-50%,-50%) scale(1)';
+    cursorRing.style.borderColor = 'var(--ink)';
+  });
+});
+
 // ── Navbar scroll ─────────────────────────────────────────────
 const navbar = document.getElementById('navbar');
 window.addEventListener('scroll', () => {
@@ -1152,68 +867,63 @@ const revealEls = document.querySelectorAll('.reveal');
 const observer  = new IntersectionObserver(entries => {
   entries.forEach(e => {
     if (e.isIntersecting) {
-      e.target.classList.add('visible');
+      e.target.classList.add('in');
       observer.unobserve(e.target);
     }
   });
-}, { threshold: 0.12 });
-
+}, { threshold: 0.1 });
 revealEls.forEach(el => observer.observe(el));
 
-// ── Background canvas: floating code glyphs ───────────────────
-const canvas  = document.getElementById('bg-canvas');
-const ctx     = canvas.getContext('2d');
-const GLYPHS  = ['{ }', '=>', '//', '( )', '[]', '&&', '||', '++', '**', '!=', '==', '<<', '>>', '0x', 'fn', '::', '|>', '??'];
+// ── Background canvas: floating code glyphs (paper-toned) ─────
+const canvas = document.getElementById('bg-canvas');
+const ctx    = canvas.getContext('2d');
+const GLYPHS = ['{ }', '=>', '//', '( )', '[]', '&&', '||', '++', '**', '!=', '==', '<<', '>>', '0x', 'fn', '::', '|>', '??'];
 
-let W, H, particles = [];
+let W, H;
 
 function resize() {
   W = canvas.width  = window.innerWidth;
   H = canvas.height = window.innerHeight;
 }
-
 resize();
 window.addEventListener('resize', resize, { passive: true });
 
 class Particle {
   constructor() { this.reset(true); }
-
-  reset(fromBottom = false) {
+  reset(rand = false) {
     this.x     = Math.random() * W;
-    this.y     = fromBottom ? H + 20 : Math.random() * H;
-    this.speed = 0.2 + Math.random() * 0.5;
-    this.drift = (Math.random() - 0.5) * 0.3;
-    this.alpha = 0.04 + Math.random() * 0.1;
-    this.size  = 9 + Math.floor(Math.random() * 6);
+    this.y     = rand ? Math.random() * H : H + 20;
+    this.speed = 0.15 + Math.random() * 0.4;
+    this.drift = (Math.random() - 0.5) * 0.25;
+    this.alpha = 0.03 + Math.random() * 0.07;
+    this.size  = 9 + Math.floor(Math.random() * 5);
     this.glyph = GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
-    this.color = Math.random() > 0.7 ? '#4f7fff' : '#52566b';
+    /* Paper-tone colors: warm dark ink or muted steel */
+    this.color = Math.random() > 0.6 ? '#c8321a' : '#a09890';
   }
-
   update() {
     this.y -= this.speed;
     this.x += this.drift;
     if (this.y < -30) this.reset();
   }
-
   draw() {
     ctx.save();
     ctx.globalAlpha = this.alpha;
     ctx.fillStyle   = this.color;
-    ctx.font        = `${this.size}px 'DM Mono', monospace`;
+    ctx.font        = `${this.size}px 'JetBrains Mono', monospace`;
     ctx.fillText(this.glyph, this.x, this.y);
     ctx.restore();
   }
 }
 
-for (let i = 0; i < 55; i++) particles.push(new Particle());
+const particles = [];
+for (let i = 0; i < 50; i++) particles.push(new Particle());
 
-function animCanvas() {
+(function animCanvas() {
   ctx.clearRect(0, 0, W, H);
   particles.forEach(p => { p.update(); p.draw(); });
   requestAnimationFrame(animCanvas);
-}
-
-animCanvas();
+})();
 </script>
 </body>
 </html>

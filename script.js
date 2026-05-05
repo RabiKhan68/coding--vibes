@@ -263,6 +263,16 @@ io.on('connection', (socket) => {
   });
 });
 
+// Serve landing page at root
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'landing.html'));
+});
+
+// Catch-all still serves index.html for the editor
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 // ════════════════════════════════════════════════════════
 server.listen(PORT, () => {
   console.log(`✅ CodeForge running → ${BASE_URL}`);
