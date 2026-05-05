@@ -1,9 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- ══ Primary Meta ══════════════════════════════════════════ -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+    content="CodeForge — Real-time collaborative coding platform. Write, run, and ship code together in Python, C++, Java and more. Built-in video, live sync, and instant execution." />
+  <meta name="keywords"
+    content="collaborative coding, real-time code editor, online IDE, pair programming, code together, Python editor, C++ online, Java online, team coding, WebRTC coding" />
+  <meta name="author" content="M. Rabi. K." />
+  <meta name="robots" content="index, follow" />
+  <meta name="theme-color" content="#0e0d0b" />
+  <link rel="canonical" href="https://coding-vibes.onrender.com/" />
+
+  <!-- ══ Open Graph (Facebook, LinkedIn, WhatsApp) ════════════ -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://coding-vibes.onrender.com/" />
+  <meta property="og:title" content="CodeForge — Where Code Gets Built" />
+  <meta property="og:description"
+    content="Real-time collaborative coding with live video, instant execution, and team rooms. No installs. Just open a tab and start building together." />
+  <meta property="og:image" content="https://coding-vibes.onrender.com/logo.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:site_name" content="CodeForge" />
+  <meta property="og:locale" content="en_US" />
+
+  <!-- ══ Twitter / X Card ════════════════════════════════════ -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content="https://coding-vibes.onrender.com/" />
+  <meta name="twitter:title" content="CodeForge — Where Code Gets Built" />
+  <meta name="twitter:description"
+    content="Real-time collaborative coding with live video, instant execution, and team rooms. No installs. Just open a tab and start building together." />
+  <meta name="twitter:image" content="https://coding-vibes.onrender.com/logo.png" />
+  <meta name="twitter:creator" content="@yourhandle" />
+
   <title>Code Forge</title>
+
+  <link rel="icon" type="image/png" href="logo.png" />
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.20/codemirror.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.20/theme/dracula.min.css">
@@ -13,26 +49,33 @@
   <script src="/socket.io/socket.io.js"></script>
 
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --bg:         #0f1117;
-      --surface:    #181c27;
-      --surface2:   #1f2433;
-      --border:     #2a3044;
-      --accent:     #5b8eff;
-      --accent2:    #ff6b6b;
-      --accent3:    #4ecdc4;
-      --text:       #e2e8f0;
-      --text-muted: #6b7a99;
-      --success:    #4ade80;
-      --error:      #f87171;
-      --gold:       #f5a623;
-      --font-mono:  'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
-      --shadow:     0 4px 24px rgba(0,0,0,0.4);
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
-    html, body {
+    :root {
+      --bg: #0f1117;
+      --surface: #181c27;
+      --surface2: #1f2433;
+      --border: #2a3044;
+      --accent: #5b8eff;
+      --accent2: #ff6b6b;
+      --accent3: #4ecdc4;
+      --text: #e2e8f0;
+      --text-muted: #6b7a99;
+      --success: #4ade80;
+      --error: #f87171;
+      --gold: #f5a623;
+      --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+      --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+    }
+
+    html,
+    body {
       height: 100%;
       background: var(--bg);
       color: var(--text);
@@ -41,1234 +84,1746 @@
       overflow: hidden;
     }
 
-    #app-shell { display: flex; flex-direction: column; height: 100vh; }
+    #app-shell {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
 
     #topbar {
-      display: flex; align-items: center; gap: 12px;
-      padding: 0 20px; height: 52px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 20px;
+      height: 52px;
       background: var(--surface);
       border-bottom: 1px solid var(--border);
-      flex-shrink: 0; z-index: 10;
+      flex-shrink: 0;
+      z-index: 10;
     }
 
     .logo-text {
-      font-family: var(--font-mono); font-size: 16px; font-weight: 700;
-      color: var(--accent); letter-spacing: -0.5px; margin-right: 8px; white-space: nowrap;
+      font-family: var(--font-mono);
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: -0.5px;
+      margin-right: 8px;
+      white-space: nowrap;
     }
-    .logo-text span { color: var(--accent2); }
+
+    .logo-text span {
+      color: var(--accent2);
+    }
 
     .mode-toggle {
-      display: flex; background: var(--bg);
-      border: 1px solid var(--border); border-radius: 6px; padding: 3px; gap: 2px;
+      display: flex;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 3px;
+      gap: 2px;
     }
-    .mode-btn {
-      padding: 4px 14px; border: none; background: transparent;
-      color: var(--text-muted); border-radius: 4px; cursor: pointer;
-      font-size: 12px; font-weight: 600; letter-spacing: 0.3px; transition: all 0.15s;
-    }
-    .mode-btn.active { background: var(--accent); color: #fff; }
 
-    .lang-pills { display: flex; gap: 4px; margin-left: 4px; }
-    .lang-pill {
-      padding: 3px 10px; border: 1px solid var(--border); background: transparent;
-      color: var(--text-muted); border-radius: 4px; cursor: pointer;
-      font-size: 11px; font-family: var(--font-mono); font-weight: 600; transition: all 0.15s;
+    .mode-btn {
+      padding: 4px 14px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      transition: all 0.15s;
     }
-    .lang-pill:hover  { border-color: var(--accent); color: var(--accent); }
-    .lang-pill.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+    .mode-btn.active {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .lang-pills {
+      display: flex;
+      gap: 4px;
+      margin-left: 4px;
+    }
+
+    .lang-pill {
+      padding: 3px 10px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-muted);
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 11px;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      transition: all 0.15s;
+    }
+
+    .lang-pill:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .lang-pill.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
 
     #runBtn {
-      margin-left: auto; padding: 6px 18px; background: var(--accent); color: #fff;
-      border: none; border-radius: 6px; font-weight: 700; font-size: 13px;
-      cursor: pointer; transition: all 0.15s; display: flex; align-items: center;
-      gap: 6px; white-space: nowrap;
+      margin-left: auto;
+      padding: 6px 18px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
     }
-    #runBtn:hover:not(:disabled) { background: #4070ee; transform: translateY(-1px); }
-    #runBtn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-    #room-bar { display: none; align-items: center; gap: 8px; margin-left: auto; font-size: 12px; }
-    #room-bar.visible { display: flex; }
+    #runBtn:hover:not(:disabled) {
+      background: #4070ee;
+      transform: translateY(-1px);
+    }
+
+    #runBtn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    #room-bar {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      margin-left: auto;
+      font-size: 12px;
+    }
+
+    #room-bar.visible {
+      display: flex;
+    }
 
     .room-badge {
-      background: var(--surface2); border: 1px solid var(--border);
-      border-radius: 4px; padding: 3px 8px;
-      font-family: var(--font-mono); font-size: 11px; cursor: pointer;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 3px 8px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      cursor: pointer;
     }
-    .room-badge:hover { border-color: var(--accent); }
 
-    #editor-status { font-size: 11px; color: var(--text-muted); }
+    .room-badge:hover {
+      border-color: var(--accent);
+    }
+
+    #editor-status {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
 
     #leaveBtn {
-      padding: 4px 10px; background: transparent;
-      border: 1px solid var(--accent2); color: var(--accent2);
-      border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: 600; transition: all 0.15s;
+      padding: 4px 10px;
+      background: transparent;
+      border: 1px solid var(--accent2);
+      color: var(--accent2);
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 600;
+      transition: all 0.15s;
     }
-    #leaveBtn:hover { background: var(--accent2); color: #fff; }
 
-    #main-area { display: flex; flex: 1; overflow: hidden; }
+    #leaveBtn:hover {
+      background: var(--accent2);
+      color: #fff;
+    }
+
+    #main-area {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
 
     #left-panel {
-      width: 200px; flex-shrink: 0; background: var(--surface);
-      border-right: 1px solid var(--border); display: none;
-      flex-direction: column; overflow: hidden;
+      width: 200px;
+      flex-shrink: 0;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
     }
-    #left-panel.visible { display: flex; }
 
-    .panel-section { padding: 12px; border-bottom: 1px solid var(--border); }
+    #left-panel.visible {
+      display: flex;
+    }
+
+    .panel-section {
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
     .panel-title {
-      font-size: 10px; font-weight: 700; letter-spacing: 1px;
-      text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 8px;
     }
 
     .member-item {
-      display: flex; align-items: center; gap: 6px;
-      padding: 5px 0; font-size: 12px; border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 0;
+      font-size: 12px;
+      border-bottom: 1px solid var(--border);
     }
-    .member-item:last-child { border-bottom: none; }
-    .member-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--success); flex-shrink: 0; }
-    .member-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .member-you     { font-size: 10px; color: var(--text-muted); }
-    .member-editing { font-size: 10px; color: var(--accent3); }
+
+    .member-item:last-child {
+      border-bottom: none;
+    }
+
+    .member-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--success);
+      flex-shrink: 0;
+    }
+
+    .member-name {
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .member-you {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .member-editing {
+      font-size: 10px;
+      color: var(--accent3);
+    }
 
     .btn-assign {
-      font-size: 10px; padding: 2px 6px; background: transparent;
-      border: 1px solid var(--border); color: var(--text-muted);
-      border-radius: 3px; cursor: pointer; transition: all 0.15s;
+      font-size: 10px;
+      padding: 2px 6px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      border-radius: 3px;
+      cursor: pointer;
+      transition: all 0.15s;
     }
-    .btn-assign:hover { border-color: var(--accent3); color: var(--accent3); }
+
+    .btn-assign:hover {
+      border-color: var(--accent3);
+      color: var(--accent3);
+    }
 
     .btn-action {
-      width: 100%; padding: 7px; border: none; border-radius: 5px;
-      font-size: 11px; font-weight: 600; cursor: pointer; margin-top: 6px; transition: all 0.15s;
+      width: 100%;
+      padding: 7px;
+      border: none;
+      border-radius: 5px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 6px;
+      transition: all 0.15s;
     }
-    .btn-request { background: var(--surface2); border: 1px solid var(--accent); color: var(--accent); }
-    .btn-request:hover { background: var(--accent); color: #fff; }
-    .btn-reclaim { background: var(--surface2); border: 1px solid var(--accent2); color: var(--accent2); }
-    .btn-reclaim:hover { background: var(--accent2); color: #fff; }
-    .btn-handback { background: var(--surface2); border: 1px solid var(--accent3); color: var(--accent3); }
-    .btn-handback:hover { background: var(--accent3); color: #000; }
+
+    .btn-request {
+      background: var(--surface2);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+    }
+
+    .btn-request:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .btn-reclaim {
+      background: var(--surface2);
+      border: 1px solid var(--accent2);
+      color: var(--accent2);
+    }
+
+    .btn-reclaim:hover {
+      background: var(--accent2);
+      color: #fff;
+    }
+
+    .btn-handback {
+      background: var(--surface2);
+      border: 1px solid var(--accent3);
+      color: var(--accent3);
+    }
+
+    .btn-handback:hover {
+      background: var(--accent3);
+      color: #000;
+    }
 
     #notifBanner {
-      display: none; background: var(--surface2); border: 1px solid var(--accent);
-      border-radius: 6px; padding: 8px; margin-top: 6px; font-size: 11px;
+      display: none;
+      background: var(--surface2);
+      border: 1px solid var(--accent);
+      border-radius: 6px;
+      padding: 8px;
+      margin-top: 6px;
+      font-size: 11px;
     }
-    #notifBanner .banner-btns { display: flex; gap: 4px; margin-top: 6px; }
-    .bbtn { flex: 1; padding: 4px; border: none; border-radius: 4px; font-size: 11px; font-weight: 700; cursor: pointer; }
-    .bbtn.yes { background: var(--success); color: #000; }
-    .bbtn.no  { background: var(--error);   color: #fff; }
 
-    #editor-panel { display: flex; flex-direction: column; flex: 1; overflow: hidden; min-width: 0; }
+    #notifBanner .banner-btns {
+      display: flex;
+      gap: 4px;
+      margin-top: 6px;
+    }
+
+    .bbtn {
+      flex: 1;
+      padding: 4px;
+      border: none;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .bbtn.yes {
+      background: var(--success);
+      color: #000;
+    }
+
+    .bbtn.no {
+      background: var(--error);
+      color: #fff;
+    }
+
+    #editor-panel {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      overflow: hidden;
+      min-width: 0;
+    }
 
     #stdin-bar {
-      display: flex; align-items: center; gap: 8px; padding: 4px 12px;
-      background: var(--surface); border-bottom: 1px solid var(--border); flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 12px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
     }
-    #stdin-bar label { font-size: 11px; color: var(--text-muted); white-space: nowrap; font-family: var(--font-mono); }
+
+    #stdin-bar label {
+      font-size: 11px;
+      color: var(--text-muted);
+      white-space: nowrap;
+      font-family: var(--font-mono);
+    }
+
     #stdinInput {
-      flex: 1; background: var(--bg); border: 1px solid var(--border);
-      border-radius: 4px; color: var(--text); font-family: var(--font-mono);
-      font-size: 11px; padding: 3px 8px; outline: none; transition: border-color 0.15s;
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 3px 8px;
+      outline: none;
+      transition: border-color 0.15s;
     }
-    #stdinInput:focus { border-color: var(--accent); }
+
+    #stdinInput:focus {
+      border-color: var(--accent);
+    }
 
     #lockOverlay {
-      display: none; position: absolute; inset: 0;
-      background: rgba(15,17,23,0.7); z-index: 5;
-      align-items: center; justify-content: center;
-      font-size: 13px; color: var(--text-muted); pointer-events: none;
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 17, 23, 0.7);
+      z-index: 5;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      color: var(--text-muted);
+      pointer-events: none;
     }
-    #lockOverlay.visible { display: flex; }
 
-    .cm-wrapper { position: relative; flex: 1; overflow: hidden; }
+    #lockOverlay.visible {
+      display: flex;
+    }
+
+    .cm-wrapper {
+      position: relative;
+      flex: 1;
+      overflow: hidden;
+    }
 
     .CodeMirror {
-      height: 100% !important; font-family: var(--font-mono) !important;
-      font-size: 13px !important; background: var(--bg) !important;
+      height: 100% !important;
+      font-family: var(--font-mono) !important;
+      font-size: 13px !important;
+      background: var(--bg) !important;
     }
-    .CodeMirror-scroll { padding-bottom: 0 !important; }
+
+    .CodeMirror-scroll {
+      padding-bottom: 0 !important;
+    }
 
     #output-panel {
-      height: 180px; flex-shrink: 0; background: var(--surface);
-      border-top: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden;
+      height: 180px;
+      flex-shrink: 0;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
     }
+
     .output-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 6px 12px; border-bottom: 1px solid var(--border); flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 12px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
     }
+
     .output-label {
-      font-size: 10px; font-weight: 700; letter-spacing: 1px;
-      text-transform: uppercase; color: var(--text-muted); font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
     }
+
     #clearOutputBtn {
-      background: none; border: none; color: var(--text-muted);
-      cursor: pointer; font-size: 11px; padding: 2px 6px; border-radius: 3px; transition: color 0.15s;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: 3px;
+      transition: color 0.15s;
     }
-    #clearOutputBtn:hover { color: var(--text); }
+
+    #clearOutputBtn:hover {
+      color: var(--text);
+    }
 
     #output {
-      flex: 1; overflow-y: auto; padding: 10px 14px;
-      font-family: var(--font-mono); font-size: 12px;
-      white-space: pre-wrap; word-break: break-all;
-      color: var(--text); line-height: 1.6;
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px 14px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      white-space: pre-wrap;
+      word-break: break-all;
+      color: var(--text);
+      line-height: 1.6;
     }
-    #output.has-error   { color: var(--error); }
-    #output.has-success { color: var(--text);  }
+
+    #output.has-error {
+      color: var(--error);
+    }
+
+    #output.has-success {
+      color: var(--text);
+    }
 
     #right-panel {
-      width: 200px; flex-shrink: 0; background: var(--surface);
-      border-left: 1px solid var(--border); display: none;
-      flex-direction: column; overflow-y: auto;
+      width: 200px;
+      flex-shrink: 0;
+      background: var(--surface);
+      border-left: 1px solid var(--border);
+      display: none;
+      flex-direction: column;
+      overflow-y: auto;
     }
-    #right-panel.visible { display: flex; }
 
-    .video-grid { padding: 8px; display: flex; flex-direction: column; gap: 6px; }
-    .video-tile {
-      position: relative; background: var(--surface2);
-      border: 1px solid var(--border); border-radius: 6px; overflow: hidden; aspect-ratio: 4/3;
+    #right-panel.visible {
+      display: flex;
     }
-    .video-tile video { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .cam-off { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 11px; }
+
+    .video-grid {
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .video-tile {
+      position: relative;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      aspect-ratio: 4/3;
+    }
+
+    .video-tile video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .cam-off {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      font-size: 11px;
+    }
+
     .tile-label {
-      position: absolute; bottom: 0; left: 0; right: 0;
-      background: rgba(0,0,0,0.6); color: #fff; font-size: 10px;
-      padding: 3px 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0, 0, 0, 0.6);
+      color: #fff;
+      font-size: 10px;
+      padding: 3px 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     #media-bar {
-      display: none; align-items: center; gap: 6px; padding: 6px 12px;
-      background: var(--surface); border-top: 1px solid var(--border); flex-shrink: 0;
+      display: none;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
     }
-    #media-bar.visible { display: flex; }
+
+    #media-bar.visible {
+      display: flex;
+    }
+
     .tool-btn {
-      padding: 5px 12px; background: var(--surface2);
-      border: 1px solid var(--border); color: var(--text);
-      border-radius: 5px; cursor: pointer; font-size: 12px; transition: all 0.15s;
+      padding: 5px 12px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.15s;
     }
-    .tool-btn:hover { border-color: var(--accent); color: var(--accent); }
-    .tool-btn.off   { border-color: var(--error);   color: var(--error); }
+
+    .tool-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .tool-btn.off {
+      border-color: var(--error);
+      color: var(--error);
+    }
 
     #lobby {
-      position: fixed; inset: 0; background: rgba(10,12,18,0.92);
-      backdrop-filter: blur(8px); display: none;
-      align-items: center; justify-content: center; z-index: 100;
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 12, 18, 0.92);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
     }
-    #lobby.visible { display: flex; }
+
+    #lobby.visible {
+      display: flex;
+    }
 
     .lobby-card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 12px; padding: 28px 32px; width: 380px; box-shadow: var(--shadow);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px 32px;
+      width: 380px;
+      box-shadow: var(--shadow);
     }
-    .lobby-card h2 { font-family: var(--font-mono); font-size: 18px; color: var(--accent); margin-bottom: 4px; }
-    .lobby-card p  { color: var(--text-muted); font-size: 13px; margin-bottom: 20px; }
+
+    .lobby-card h2 {
+      font-family: var(--font-mono);
+      font-size: 18px;
+      color: var(--accent);
+      margin-bottom: 4px;
+    }
+
+    .lobby-card p {
+      color: var(--text-muted);
+      font-size: 13px;
+      margin-bottom: 20px;
+    }
 
     .tabs {
-      display: flex; gap: 4px; margin-bottom: 18px;
-      background: var(--bg); border-radius: 6px; padding: 3px;
+      display: flex;
+      gap: 4px;
+      margin-bottom: 18px;
+      background: var(--bg);
+      border-radius: 6px;
+      padding: 3px;
     }
+
     .tab-btn {
-      flex: 1; padding: 7px; border: none; background: transparent;
-      color: var(--text-muted); border-radius: 4px; cursor: pointer;
-      font-size: 13px; font-weight: 600; transition: all 0.15s;
+      flex: 1;
+      padding: 7px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all 0.15s;
     }
-    .tab-btn.active { background: var(--accent); color: #fff; }
 
-    .tab-panel { display: none; }
-    .tab-panel.active { display: block; }
+    .tab-btn.active {
+      background: var(--accent);
+      color: #fff;
+    }
 
-    .field { margin-bottom: 12px; }
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    .field {
+      margin-bottom: 12px;
+    }
+
     .field label {
-      display: block; font-size: 11px; font-weight: 600; color: var(--text-muted);
-      margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px;
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 5px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
+
     .field input {
-      width: 100%; padding: 8px 10px; background: var(--bg);
-      border: 1px solid var(--border); border-radius: 5px;
-      color: var(--text); font-size: 13px; outline: none; transition: border-color 0.15s;
+      width: 100%;
+      padding: 8px 10px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      color: var(--text);
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.15s;
     }
-    .field input:focus { border-color: var(--accent); }
-    .hint { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+
+    .field input:focus {
+      border-color: var(--accent);
+    }
+
+    .hint {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
 
     .btn-main {
-      width: 100%; padding: 10px; background: var(--accent); color: #fff;
-      border: none; border-radius: 6px; font-size: 14px; font-weight: 700;
-      cursor: pointer; transition: all 0.15s; margin-top: 4px;
+      width: 100%;
+      padding: 10px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+      margin-top: 4px;
     }
-    .btn-main:hover:not(:disabled) { background: #4070ee; }
-    .btn-main:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .btn-main:hover:not(:disabled) {
+      background: #4070ee;
+    }
+
+    .btn-main:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
 
     .share-box {
-      display: none; margin-top: 14px; background: var(--bg);
-      border: 1px solid var(--border); border-radius: 6px; padding: 12px; font-size: 12px;
+      display: none;
+      margin-top: 14px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 12px;
+      font-size: 12px;
     }
+
     .share-url {
-      font-family: var(--font-mono); font-size: 11px; color: var(--accent3);
-      word-break: break-all; cursor: pointer; margin-top: 6px;
-      padding: 6px; background: var(--surface); border-radius: 4px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--accent3);
+      word-break: break-all;
+      cursor: pointer;
+      margin-top: 6px;
+      padding: 6px;
+      background: var(--surface);
+      border-radius: 4px;
     }
-    .share-url:hover { text-decoration: underline; }
-    .lobby-error { color: var(--error); font-size: 12px; margin-top: 8px; min-height: 16px; }
+
+    .share-url:hover {
+      text-decoration: underline;
+    }
+
+    .lobby-error {
+      color: var(--error);
+      font-size: 12px;
+      margin-top: 8px;
+      min-height: 16px;
+    }
 
     #toast {
-      position: fixed; bottom: 24px; left: 50%;
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
       transform: translateX(-50%) translateY(20px);
-      background: var(--surface2); border: 1px solid var(--border); color: var(--text);
-      padding: 8px 18px; border-radius: 20px; font-size: 12px;
-      opacity: 0; transition: all 0.25s; z-index: 200;
-      pointer-events: none; white-space: nowrap;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 18px;
+      border-radius: 20px;
+      font-size: 12px;
+      opacity: 0;
+      transition: all 0.25s;
+      z-index: 200;
+      pointer-events: none;
+      white-space: nowrap;
     }
-    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-    ::-webkit-scrollbar { width: 5px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    #toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    ::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 3px;
+    }
   </style>
 </head>
+
 <body>
 
-<div id="app-shell">
-  <div id="topbar">
-    <span class="logo-text">Code<span>Forge</span></span>
+  <div id="app-shell">
+    <div id="topbar">
+      <span class="logo-text">Code<span>Forge</span></span>
 
-    <div class="mode-toggle">
-      <button class="mode-btn active" id="modeSolo">Solo</button>
-      <button class="mode-btn"        id="modeTeam">Team</button>
-    </div>
-
-    <div class="lang-pills">
-      <button class="lang-pill active" data-lang="python">Python</button>
-      <button class="lang-pill"        data-lang="cpp">C++</button>
-      <button class="lang-pill"        data-lang="c">C</button>
-      <button class="lang-pill"        data-lang="java">Java</button>
-    </div>
-
-    <div class="documentation">
-      <button class="mode-btn" id="docsBtn" style="background:transparent;color:var(--text-muted);border:none;font-size:12px;cursor:pointer;">
-        <a href="documentation.html" style="color:rgb(78,93,102);text-decoration:none;">Documentation</a>
-      </button>
-    </div>
-
-    <div id="room-bar">
-      <span id="editor-status"></span>
-      <span class="room-badge" id="roomIdBadge" title="Click to copy">Room: —</span>
-      <button id="leaveBtn">Leave</button>
-    </div>
-
-    <button id="runBtn">▶ Run</button>
-  </div>
-
-  <div id="main-area">
-    <div id="left-panel">
-      <div class="panel-section">
-        <div class="panel-title">Members</div>
-        <div id="membersList"></div>
+      <div class="mode-toggle">
+        <button class="mode-btn active" id="modeSolo">Solo</button>
+        <button class="mode-btn" id="modeTeam">Team</button>
       </div>
-      <div class="panel-section">
-        <div id="requestSection"></div>
-        <div id="notifBanner">
-          <div id="notifText" style="font-size:11px;line-height:1.4"></div>
-          <div class="banner-btns">
-            <button class="bbtn yes" id="grantBtn">Grant</button>
-            <button class="bbtn no"  id="denyBtn">Deny</button>
+
+      <div class="lang-pills">
+        <button class="lang-pill active" data-lang="python">Python</button>
+        <button class="lang-pill" data-lang="cpp">C++</button>
+        <button class="lang-pill" data-lang="c">C</button>
+        <button class="lang-pill" data-lang="java">Java</button>
+      </div>
+
+      <div class="documentation">
+        <button class="mode-btn" id="docsBtn"
+          style="background:transparent;color:var(--text-muted);border:none;font-size:12px;cursor:pointer;">
+          <a href="documentation.html" style="color:rgb(78,93,102);text-decoration:none;">Documentation</a>
+        </button>
+      </div>
+
+      <div id="room-bar">
+        <span id="editor-status"></span>
+        <span class="room-badge" id="roomIdBadge" title="Click to copy">Room: —</span>
+        <button id="leaveBtn">Leave</button>
+      </div>
+
+      <button id="runBtn">▶ Run</button>
+    </div>
+
+    <div id="main-area">
+      <div id="left-panel">
+        <div class="panel-section">
+          <div class="panel-title">Members</div>
+          <div id="membersList"></div>
+        </div>
+        <div class="panel-section">
+          <div id="requestSection"></div>
+          <div id="notifBanner">
+            <div id="notifText" style="font-size:11px;line-height:1.4"></div>
+            <div class="banner-btns">
+              <button class="bbtn yes" id="grantBtn">Grant</button>
+              <button class="bbtn no" id="denyBtn">Deny</button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <div id="editor-panel">
-      <div id="stdin-bar">
-        <label>stdin:</label>
-        <input id="stdinInput" type="text" placeholder="Input for your program (optional)…" autocomplete="off"/>
-      </div>
-      <div class="cm-wrapper">
-        <div id="lockOverlay">
-          <span id="lockMsg">🔒 Another member is editing</span>
+      <div id="editor-panel">
+        <div id="stdin-bar">
+          <label>stdin:</label>
+          <input id="stdinInput" type="text" placeholder="Input for your program (optional)…" autocomplete="off" />
         </div>
-        <textarea id="editor"></textarea>
-      </div>
-      <div id="output-panel">
-        <div class="output-header">
-          <span class="output-label">Output</span>
-          <button id="clearOutputBtn">Clear</button>
+        <div class="cm-wrapper">
+          <div id="lockOverlay">
+            <span id="lockMsg">🔒 Another member is editing</span>
+          </div>
+          <textarea id="editor"></textarea>
         </div>
-        <pre id="output">// Run your code to see output here</pre>
+        <div id="output-panel">
+          <div class="output-header">
+            <span class="output-label">Output</span>
+            <button id="clearOutputBtn">Clear</button>
+          </div>
+          <pre id="output">// Run your code to see output here</pre>
+        </div>
+      </div>
+
+      <div id="right-panel">
+        <div class="panel-section">
+          <div class="panel-title">Live Video</div>
+        </div>
+        <div class="video-grid" id="videoGrid"></div>
       </div>
     </div>
 
-    <div id="right-panel">
-      <div class="panel-section">
-        <div class="panel-title">Live Video</div>
+    <div id="media-bar">
+      <button class="tool-btn" id="micBtn">🎙 Mic On</button>
+      <button class="tool-btn" id="camBtn">📹 Cam On</button>
+    </div>
+  </div>
+
+  <div id="lobby">
+    <div class="lobby-card">
+      <h2>CodeForge — Team Room</h2>
+      <p>Create a room or join an existing one.</p>
+      <div class="tabs">
+        <button class="tab-btn active" id="tabBtnCreate">Create Room</button>
+        <button class="tab-btn" id="tabBtnJoin">Join Room</button>
       </div>
-      <div class="video-grid" id="videoGrid"></div>
+      <div class="tab-panel active" id="tab-create">
+        <div class="field">
+          <label>Your Name</label>
+          <input id="createName" type="text" placeholder="e.g. Alex" autocomplete="off" maxlength="32" />
+        </div>
+        <div class="field">
+          <label>Room Password <span style="color:#6b7a99;font-weight:normal">(optional)</span></label>
+          <input id="createPassword" type="password" placeholder="Leave blank for open room" maxlength="128" />
+          <div class="hint">Teammates must enter this to join.</div>
+        </div>
+        <button class="btn-main" id="createRoomBtn">Create Room</button>
+        <div class="share-box" id="shareBox">
+          <strong>Room created! Share this link:</strong>
+          <div class="share-url" id="shareUrl"></div>
+          <div style="font-size:11px;color:#6b7a99;margin-top:6px">Click to copy · Then click Enter below</div>
+          <button class="btn-main" style="margin-top:10px" id="enterRoomBtn">Enter Room →</button>
+        </div>
+        <div class="lobby-error" id="createError"></div>
+      </div>
+      <div class="tab-panel" id="tab-join">
+        <div class="field">
+          <label>Your Name</label>
+          <input id="joinName" type="text" placeholder="e.g. Jordan" autocomplete="off" maxlength="32" />
+        </div>
+        <div class="field">
+          <label>Room ID</label>
+          <input id="joinRoomId" type="text" placeholder="Paste room ID here" autocomplete="off" />
+        </div>
+        <div class="field">
+          <label>Password <span style="color:#6b7a99;font-weight:normal">(if required)</span></label>
+          <input id="joinPassword" type="password" placeholder="Leave blank if none" maxlength="128" />
+        </div>
+        <button class="btn-main" id="joinRoomBtn">Join Room</button>
+        <div class="lobby-error" id="joinError"></div>
+      </div>
     </div>
   </div>
 
-  <div id="media-bar">
-    <button class="tool-btn" id="micBtn">🎙 Mic On</button>
-    <button class="tool-btn" id="camBtn">📹 Cam On</button>
-  </div>
-</div>
+  <div id="toast"></div>
 
-<div id="lobby">
-  <div class="lobby-card">
-    <h2>CodeForge — Team Room</h2>
-    <p>Create a room or join an existing one.</p>
-    <div class="tabs">
-      <button class="tab-btn active" id="tabBtnCreate">Create Room</button>
-      <button class="tab-btn"        id="tabBtnJoin">Join Room</button>
-    </div>
-    <div class="tab-panel active" id="tab-create">
-      <div class="field">
-        <label>Your Name</label>
-        <input id="createName" type="text" placeholder="e.g. Alex" autocomplete="off" maxlength="32"/>
-      </div>
-      <div class="field">
-        <label>Room Password <span style="color:#6b7a99;font-weight:normal">(optional)</span></label>
-        <input id="createPassword" type="password" placeholder="Leave blank for open room" maxlength="128"/>
-        <div class="hint">Teammates must enter this to join.</div>
-      </div>
-      <button class="btn-main" id="createRoomBtn">Create Room</button>
-      <div class="share-box" id="shareBox">
-        <strong>Room created! Share this link:</strong>
-        <div class="share-url" id="shareUrl"></div>
-        <div style="font-size:11px;color:#6b7a99;margin-top:6px">Click to copy · Then click Enter below</div>
-        <button class="btn-main" style="margin-top:10px" id="enterRoomBtn">Enter Room →</button>
-      </div>
-      <div class="lobby-error" id="createError"></div>
-    </div>
-    <div class="tab-panel" id="tab-join">
-      <div class="field">
-        <label>Your Name</label>
-        <input id="joinName" type="text" placeholder="e.g. Jordan" autocomplete="off" maxlength="32"/>
-      </div>
-      <div class="field">
-        <label>Room ID</label>
-        <input id="joinRoomId" type="text" placeholder="Paste room ID here" autocomplete="off"/>
-      </div>
-      <div class="field">
-        <label>Password <span style="color:#6b7a99;font-weight:normal">(if required)</span></label>
-        <input id="joinPassword" type="password" placeholder="Leave blank if none" maxlength="128"/>
-      </div>
-      <button class="btn-main" id="joinRoomBtn">Join Room</button>
-      <div class="lobby-error" id="joinError"></div>
-    </div>
-  </div>
-</div>
+  <script>
+    // ════════════════════════════════════════════════════════════════════
+    //  CONFIG
+    // ════════════════════════════════════════════════════════════════════
+    const SERVER_URL = '';
 
-<div id="toast"></div>
+    const LANG_MODE = {
+      python: 'python',
+      cpp: 'text/x-c++src',
+      c: 'text/x-csrc',
+      java: 'text/x-java',
+    };
 
-<script>
-// ════════════════════════════════════════════════════════════════════
-//  CONFIG
-// ════════════════════════════════════════════════════════════════════
-const SERVER_URL = '';
+    const STARTER_CODE = {
+      python: '# Python\nprint("Hello, World!")\n',
+      cpp: '#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "Hello, World!" << endl;\n    return 0;\n}\n',
+      c: '#include <stdio.h>\n\nint main() {\n    printf("Hello, World!\\n");\n    return 0;\n}\n',
+      java: 'public class Main {\n    public static void main(String[] args) {\n        System.out.println("Hello, World!");\n    }\n}\n',
+    };
 
-const LANG_MODE = {
-  python: 'python',
-  cpp:    'text/x-c++src',
-  c:      'text/x-csrc',
-  java:   'text/x-java',
-};
+    // ════════════════════════════════════════════════════════════════════
+    //  STATE
+    // ════════════════════════════════════════════════════════════════════
+    let appMode = 'solo';
+    let currentLang = 'python';
+    let cmEditor = null;
+    let suppressSync = false;
 
-const STARTER_CODE = {
-  python: '# Python\nprint("Hello, World!")\n',
-  cpp:    '#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "Hello, World!" << endl;\n    return 0;\n}\n',
-  c:      '#include <stdio.h>\n\nint main() {\n    printf("Hello, World!\\n");\n    return 0;\n}\n',
-  java:   'public class Main {\n    public static void main(String[] args) {\n        System.out.println("Hello, World!");\n    }\n}\n',
-};
+    let socket = null;
+    let mySocketId = null;
+    let myName = '';
+    let myIsHost = false;
+    let roomId = '';
+    let editorOwner = null;
+    let myStream = null;
+    let micOn = true;
+    let camOn = true;
+    let peers = {};
+    let roomUsers = [];
+    let pendingRequest = null;
+    let pendingHostToken = null;
+    let pendingRoomId = null;
 
-// ════════════════════════════════════════════════════════════════════
-//  STATE
-// ════════════════════════════════════════════════════════════════════
-let appMode      = 'solo';
-let currentLang  = 'python';
-let cmEditor     = null;
-let suppressSync = false;
-
-let socket           = null;
-let mySocketId       = null;
-let myName           = '';
-let myIsHost         = false;
-let roomId           = '';
-let editorOwner      = null;
-let myStream         = null;
-let micOn            = true;
-let camOn            = true;
-let peers            = {};
-let roomUsers        = [];
-let pendingRequest   = null;
-let pendingHostToken = null;
-let pendingRoomId    = null;
-
-// ════════════════════════════════════════════════════════════════════
-//  UTILS
-// ════════════════════════════════════════════════════════════════════
-let toastTimer;
-function toast(msg) {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
-}
-
-function escapeOutput(text) {
-  return String(text).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
-// ════════════════════════════════════════════════════════════════════
-//  CODEMIRROR
-// ════════════════════════════════════════════════════════════════════
-function destroyEditor() {
-  if (cmEditor) {
-    const wrap  = cmEditor.getWrapperElement();
-    const fresh = document.createElement('textarea');
-    fresh.id = 'editor';
-    wrap.parentNode.replaceChild(fresh, wrap);
-    cmEditor = null;
-  }
-}
-
-function initEditor(initialCode) {
-  destroyEditor();
-  cmEditor = CodeMirror.fromTextArea(document.getElementById('editor'), {
-    lineNumbers: true, mode: LANG_MODE[currentLang] || 'python',
-    theme: 'dracula', indentUnit: 4, tabSize: 4,
-    indentWithTabs: false, lineWrapping: true,
-  });
-  suppressSync = true;
-  cmEditor.setValue(initialCode !== undefined ? initialCode : STARTER_CODE[currentLang]);
-  suppressSync = false;
-  cmEditor.setSize('100%', '100%');
-  cmEditor.on('change', (cm) => {
-    if (suppressSync) return;
-    if (appMode === 'team' && editorOwner !== mySocketId) return;
-    if (appMode === 'team' && socket) socket.emit('code-change', { code: cm.getValue() });
-  });
-}
-
-function setLanguage(lang) {
-  const prev = currentLang;
-  currentLang = lang;
-  if (cmEditor) {
-    cmEditor.setOption('mode', LANG_MODE[lang] || 'python');
-    const cur = cmEditor.getValue();
-    if (!cur.trim() || cur === STARTER_CODE[prev]) {
-      suppressSync = true;
-      cmEditor.setValue(STARTER_CODE[lang]);
-      suppressSync = false;
+    // ════════════════════════════════════════════════════════════════════
+    //  UTILS
+    // ════════════════════════════════════════════════════════════════════
+    let toastTimer;
+    function toast(msg) {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
     }
-  }
-  document.querySelectorAll('.lang-pill').forEach(b =>
-    b.classList.toggle('active', b.dataset.lang === lang));
-}
 
-function applyRemoteCode(code) {
-  if (!cmEditor) return;
-  suppressSync = true;
-  const cursor = cmEditor.getCursor();
-  const scroll = cmEditor.getScrollInfo();
-  cmEditor.setValue(code);
-  cmEditor.setCursor(cursor);
-  cmEditor.scrollTo(scroll.left, scroll.top);
-  suppressSync = false;
-}
-
-// ════════════════════════════════════════════════════════════════════
-//  MODE SWITCHING
-// ════════════════════════════════════════════════════════════════════
-function setMode(mode) {
-  appMode = mode;
-  const isTeam = mode === 'team';
-  document.getElementById('modeTeam').classList.toggle('active',  isTeam);
-  document.getElementById('modeSolo').classList.toggle('active', !isTeam);
-  document.getElementById('left-panel').classList.toggle('visible',  isTeam);
-  document.getElementById('right-panel').classList.toggle('visible', isTeam);
-  document.getElementById('media-bar').classList.toggle('visible',   isTeam);
-  document.getElementById('room-bar').classList.toggle('visible',    isTeam);
-  if (isTeam) {
-    document.getElementById('lobby').classList.add('visible');
-  } else {
-    if (socket) performLeave();
-    document.getElementById('lobby').classList.remove('visible');
-    document.getElementById('room-bar').classList.remove('visible');
-  }
-}
-
-// ════════════════════════════════════════════════════════════════════
-//  RUN CODE
-// ════════════════════════════════════════════════════════════════════
-async function runCode() {
-  const code     = cmEditor ? cmEditor.getValue().trim() : '';
-  const stdin    = document.getElementById('stdinInput').value;
-  const outputEl = document.getElementById('output');
-  const runBtn   = document.getElementById('runBtn');
-
-  if (!code) { toast('No code to run'); return; }
-
-  runBtn.disabled = true;
-  runBtn.textContent = '⏳';
-  outputEl.textContent = 'Running…';
-  outputEl.className = '';
-  outputEl.style.borderTop = '';
-
-  try {
-    const res = await fetch('/api/run', {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ code, language: currentLang, stdin }),
-    });
-    const text = await res.text();
-    outputEl.innerHTML = escapeOutput(text || '(No output)');
-    if (res.ok) {
-      outputEl.className = 'has-success';
-      outputEl.style.borderTop = '2px solid var(--success)';
-    } else {
-      outputEl.className = 'has-error';
-      outputEl.style.borderTop = '2px solid var(--error)';
+    function escapeOutput(text) {
+      return String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
-  } catch (e) {
-    outputEl.innerHTML = escapeOutput('❌ Could not reach the server.');
-    outputEl.className = 'has-error';
-    outputEl.style.borderTop = '2px solid var(--error)';
-  } finally {
-    runBtn.disabled = false;
-    runBtn.textContent = '▶ Run';
-  }
-}
 
-// ════════════════════════════════════════════════════════════════════
-//  LOBBY
-// ════════════════════════════════════════════════════════════════════
-function switchTab(tab) {
-  const isCreate = tab === 'create';
-  document.getElementById('tabBtnCreate').classList.toggle('active',  isCreate);
-  document.getElementById('tabBtnJoin').classList.toggle('active',   !isCreate);
-  document.getElementById('tab-create').classList.toggle('active',    isCreate);
-  document.getElementById('tab-join').classList.toggle('active',     !isCreate);
-}
-
-async function createRoom() {
-  const name     = document.getElementById('createName').value.trim();
-  const password = document.getElementById('createPassword').value;
-  const errEl    = document.getElementById('createError');
-  errEl.textContent = '';
-  if (!name) { errEl.textContent = 'Enter your name.'; return; }
-
-  const btn = document.getElementById('createRoomBtn');
-  btn.disabled = true; btn.textContent = 'Creating…';
-  try {
-    const res  = await fetch('/api/create-room', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, password: password || undefined }),
-    });
-    const data = await res.json();
-    if (!res.ok) { errEl.textContent = data.error || 'Server error.'; return; }
-    pendingHostToken = data.token;
-    pendingRoomId    = data.roomId;
-    document.getElementById('shareUrl').textContent = data.shareUrl;
-    document.getElementById('shareBox').style.display = 'block';
-    btn.style.display = 'none';
-  } catch(e) {
-    errEl.textContent = 'Could not reach server.';
-  } finally {
-    btn.disabled = false; btn.textContent = 'Create Room';
-  }
-}
-
-async function enterAsHost() {
-  const name = document.getElementById('createName').value.trim();
-  await startSession(pendingRoomId, name, pendingHostToken, true);
-}
-
-async function joinRoom() {
-  const name     = document.getElementById('joinName').value.trim();
-  const rid      = document.getElementById('joinRoomId').value.trim();
-  const password = document.getElementById('joinPassword').value;
-  const errEl    = document.getElementById('joinError');
-  errEl.textContent = '';
-  if (!name) { errEl.textContent = 'Enter your name.'; return; }
-  if (!rid)  { errEl.textContent = 'Enter a room ID.'; return; }
-
-  const btn = document.getElementById('joinRoomBtn');
-  btn.disabled = true; btn.textContent = 'Joining…';
-  try {
-    const res  = await fetch('/api/join-room', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ roomId: rid, name, password: password || undefined }),
-    });
-    const data = await res.json();
-    if (!res.ok) { errEl.textContent = data.error || 'Could not join.'; return; }
-    await startSession(rid, name, data.token, false);
-  } catch(e) {
-    errEl.textContent = 'Could not reach server.';
-  } finally {
-    btn.disabled = false; btn.textContent = 'Join Room';
-  }
-}
-
-// ════════════════════════════════════════════════════════════════════
-//  START SESSION — get media FIRST, then connect socket
-// ════════════════════════════════════════════════════════════════════
-async function startSession(rid, name, token, isHost) {
-  myName   = name;
-  myIsHost = isHost;
-  roomId   = rid;
-
-  // ✅ FIX 1: Get camera/mic BEFORE connecting socket
-  // This ensures tracks are ready when peer connections are created
-  try {
-    myStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-    console.log('✅ Media stream obtained:', myStream.getTracks().map(t => t.kind));
-  } catch(e) {
-    console.warn('⚠️ Camera/mic denied:', e.message);
-    toast('Camera/mic denied — video disabled');
-    myStream = null;
-  }
-
-  // Render my own tile immediately after getting stream
-  renderMyTile();
-
-  // Now connect socket — peer connections will have myStream ready
-  socket = io({ auth: { token } });
-  bindSocketEvents();
-  document.getElementById('lobby').classList.remove('visible');
-  document.getElementById('roomIdBadge').textContent = `Room: ${rid.slice(0,8)}…`;
-}
-
-// ════════════════════════════════════════════════════════════════════
-//  SOCKET EVENTS
-// ════════════════════════════════════════════════════════════════════
-function bindSocketEvents() {
-  socket.on('connect', () => {
-    mySocketId = socket.id;
-    console.log('✅ Socket connected:', mySocketId);
-  });
-  socket.on('connect_error', (err) => toast('Connection error: ' + err.message));
-  socket.on('error', (msg) => toast('⚠️ ' + msg));
-
-  socket.on('room-state', ({ users, editorOwner: eo, code, yourSocketId }) => {
-    mySocketId  = yourSocketId;
-    roomUsers   = users;
-    editorOwner = eo;
-    initEditor(code);
-    renderMyTile();
-    renderMembers();
-    updateEditorState();
-  });
-
-  // ✅ FIX 2: user-joined — create peer connection with isInitiator=true
-  socket.on('user-joined', async ({ socketId, name, isHost }) => {
-    toast(`${name} joined`);
-    roomUsers.push({ socketId, name, isHost });
-    renderMembers();
-    // We are already in the room, so WE initiate the connection to the newcomer
-    await createPeerConnection(socketId, name, true);
-  });
-
-  socket.on('user-left', ({ socketId, name }) => {
-    toast(`${name} left`);
-    if (peers[socketId]) { peers[socketId].pc.close(); delete peers[socketId]; }
-    removeTile(socketId);
-    roomUsers = roomUsers.filter(u => u.socketId !== socketId);
-    renderMembers();
-  });
-
-  // ✅ FIX 3: rtc-offer — newcomer receives offers from existing members
-  socket.on('rtc-offer', async ({ from, name, offer }) => {
-    console.log('📨 Got offer from:', from, name);
-    await createPeerConnection(from, name, false);
-    const pc = peers[from].pc;
-    await pc.setRemoteDescription(new RTCSessionDescription(offer));
-    const answer = await pc.createAnswer();
-    await pc.setLocalDescription(answer);
-    socket.emit('rtc-answer', { to: from, answer });
-  });
-
-  socket.on('rtc-answer', async ({ from, answer }) => {
-    console.log('📨 Got answer from:', from);
-    if (peers[from]) {
-      await peers[from].pc.setRemoteDescription(new RTCSessionDescription(answer));
-    }
-  });
-
-  socket.on('rtc-ice', async ({ from, candidate }) => {
-    if (peers[from]) {
-      try {
-        await peers[from].pc.addIceCandidate(new RTCIceCandidate(candidate));
-      } catch(e) {
-        console.warn('ICE candidate error:', e.message);
+    // ════════════════════════════════════════════════════════════════════
+    //  CODEMIRROR
+    // ════════════════════════════════════════════════════════════════════
+    function destroyEditor() {
+      if (cmEditor) {
+        const wrap = cmEditor.getWrapperElement();
+        const fresh = document.createElement('textarea');
+        fresh.id = 'editor';
+        wrap.parentNode.replaceChild(fresh, wrap);
+        cmEditor = null;
       }
     }
-  });
 
-  socket.on('editor-assigned', ({ editorOwner: eo }) => {
-    editorOwner = eo;
-    updateEditorState();
-    renderMembers();
-  });
-
-  socket.on('editor-request', ({ fromSocketId, fromName }) => {
-    pendingRequest = { fromSocketId, fromName };
-    document.getElementById('notifText').textContent = `"${fromName}" wants editor access`;
-    document.getElementById('notifBanner').style.display = 'block';
-  });
-
-  socket.on('editor-request-denied', () => {
-    toast('Your editor request was denied.');
-    const btn = document.getElementById('requestBtn');
-    if (btn) { btn.textContent = '🙋 Request Editor Access'; btn.disabled = false; }
-  });
-
-  socket.on('code-update', ({ code }) => {
-    if (editorOwner !== mySocketId) applyRemoteCode(code);
-  });
-}
-
-// ════════════════════════════════════════════════════════════════════
-//  WebRTC — FIXED peer connection
-// ════════════════════════════════════════════════════════════════════
-const ICE = {
-  iceServers: [
-    { urls: 'stun:stun.l.google.com:19302' },
-    { urls: 'stun:stun1.l.google.com:19302' },
-    // ✅ FIX 4: Added more STUN servers for better connectivity
-    { urls: 'stun:stun2.l.google.com:19302' },
-    { urls: 'stun:stun3.l.google.com:19302' },
-  ]
-};
-
-async function createPeerConnection(peerId, peerName, isInitiator) {
-  if (peers[peerId]) {
-    console.log('Peer connection already exists for:', peerId);
-    return;
-  }
-
-  console.log(`🔗 Creating peer connection with ${peerName} (${peerId}), initiator: ${isInitiator}`);
-
-  const pc = new RTCPeerConnection(ICE);
-  peers[peerId] = { pc, name: peerName, stream: null };
-
-  // ✅ FIX 5: Add ALL local tracks to the peer connection
-  if (myStream) {
-    myStream.getTracks().forEach(track => {
-      console.log(`➕ Adding ${track.kind} track to peer connection`);
-      pc.addTrack(track, myStream);
-    });
-  } else {
-    console.warn('⚠️ No local stream to add to peer connection');
-  }
-
-  // ✅ FIX 6: Handle ICE candidates properly
-  pc.onicecandidate = (e) => {
-    if (e.candidate) {
-      socket.emit('rtc-ice', { to: peerId, candidate: e.candidate });
-    }
-  };
-
-  pc.oniceconnectionstatechange = () => {
-    console.log(`ICE state with ${peerName}:`, pc.iceConnectionState);
-  };
-
-  pc.onconnectionstatechange = () => {
-    console.log(`Connection state with ${peerName}:`, pc.connectionState);
-  };
-
-  // ✅ FIX 7: ontrack — properly attach remote stream
-  pc.ontrack = (e) => {
-    console.log(`📹 Got ${e.track.kind} track from ${peerName}`);
-    if (e.streams && e.streams[0]) {
-      peers[peerId].stream = e.streams[0];
-      attachRemoteStream(peerId, e.streams[0]);
-    }
-  };
-
-  // Add video tile for this peer
-  addTile(peerId, peerName);
-
-  // ✅ FIX 8: Only the initiator creates the offer
-  if (isInitiator) {
-    try {
-      const offer = await pc.createOffer({
-        offerToReceiveAudio: true,
-        offerToReceiveVideo: true,
+    function initEditor(initialCode) {
+      destroyEditor();
+      cmEditor = CodeMirror.fromTextArea(document.getElementById('editor'), {
+        lineNumbers: true, mode: LANG_MODE[currentLang] || 'python',
+        theme: 'dracula', indentUnit: 4, tabSize: 4,
+        indentWithTabs: false, lineWrapping: true,
       });
-      await pc.setLocalDescription(offer);
-      socket.emit('rtc-offer', { to: peerId, offer });
-      console.log('📤 Sent offer to:', peerName);
-    } catch(e) {
-      console.error('Error creating offer:', e);
-    }
-  }
-}
-
-// ════════════════════════════════════════════════════════════════════
-//  VIDEO TILES
-// ════════════════════════════════════════════════════════════════════
-function renderMyTile() {
-  const existing = document.getElementById('tile-me');
-  if (existing) existing.remove();
-
-  const tile = document.createElement('div');
-  tile.className = 'video-tile';
-  tile.id = 'tile-me';
-
-  if (myStream && camOn) {
-    const video = document.createElement('video');
-    video.autoplay    = true;
-    video.muted       = true;   // always mute self to avoid echo
-    video.playsInline = true;
-    video.srcObject   = myStream;
-    tile.appendChild(video);
-  } else {
-    const off = document.createElement('div');
-    off.className   = 'cam-off';
-    off.textContent = myStream ? 'Cam Off' : '🚫 No Camera';
-    tile.appendChild(off);
-  }
-
-  const label = document.createElement('div');
-  label.className   = 'tile-label';
-  label.textContent = myName + (myIsHost ? ' 👑' : '') + ' (you)';
-  tile.appendChild(label);
-
-  const grid = document.getElementById('videoGrid');
-  grid.insertBefore(tile, grid.firstChild);
-}
-
-function addTile(socketId, name) {
-  if (document.getElementById('tile-' + socketId)) return;
-
-  const tile = document.createElement('div');
-  tile.className = 'video-tile';
-  tile.id        = 'tile-' + socketId;
-
-  const off = document.createElement('div');
-  off.className   = 'cam-off';
-  off.textContent = 'Connecting…';
-  tile.appendChild(off);
-
-  const label = document.createElement('div');
-  label.className   = 'tile-label';
-  label.textContent = name;
-  tile.appendChild(label);
-
-  document.getElementById('videoGrid').appendChild(tile);
-}
-
-function attachRemoteStream(socketId, stream) {
-  const tile = document.getElementById('tile-' + socketId);
-  if (!tile) return;
-
-  // Remove "Connecting..." placeholder
-  const off = tile.querySelector('.cam-off');
-  if (off) off.remove();
-
-  // Reuse or create video element
-  let video = tile.querySelector('video');
-  if (!video) {
-    video             = document.createElement('video');
-    video.autoplay    = true;
-    video.playsInline = true;
-    // ✅ FIX 9: Never mute remote peers — they need to be heard
-    video.muted       = false;
-    tile.insertBefore(video, tile.querySelector('.tile-label'));
-  }
-
-  video.srcObject = stream;
-
-  // ✅ FIX 10: Force play — some browsers need this
-  video.play().catch(e => console.warn('Video play error:', e.message));
-}
-
-function removeTile(socketId) {
-  const t = document.getElementById('tile-' + socketId);
-  if (t) t.remove();
-}
-
-// ════════════════════════════════════════════════════════════════════
-//  EDITOR STATE — FIXED with hand-back option for members
-// ════════════════════════════════════════════════════════════════════
-function updateEditorState() {
-  if (!cmEditor || !mySocketId) return;
-
-  const isMine = editorOwner === mySocketId;
-  cmEditor.setOption('readOnly', isMine ? false : 'nocursor');
-  document.getElementById('lockOverlay').classList.toggle('visible', !isMine);
-
-  const statusEl = document.getElementById('editor-status');
-  if (isMine) {
-    statusEl.textContent = '✏️ You are editing';
-    statusEl.style.color = 'var(--accent3)';
-  } else {
-    const owner = roomUsers.find(u => u.socketId === editorOwner);
-    statusEl.textContent = owner ? `🔒 ${owner.name} is editing` : '🔒 Locked';
-    statusEl.style.color = 'var(--text-muted)';
-  }
-
-  const owner = roomUsers.find(u => u.socketId === editorOwner);
-  document.getElementById('lockMsg').textContent =
-    owner ? `🔒 ${owner.name} is editing — you are read-only` : '🔒 Editor locked';
-
-  const sec = document.getElementById('requestSection');
-  sec.innerHTML = '';
-
-  if (myIsHost) {
-    // ✅ FIX 11: Host always sees reclaim button when someone else has editor
-    if (!isMine) {
-      const btn = document.createElement('button');
-      btn.className = 'btn-action btn-reclaim';
-      btn.id        = 'reclaimBtn';
-      btn.textContent = '↩ Take Back Editor';
-      btn.addEventListener('click', () => {
-        socket.emit('reclaim-editor');
-        toast('Taking back editor…');
+      suppressSync = true;
+      cmEditor.setValue(initialCode !== undefined ? initialCode : STARTER_CODE[currentLang]);
+      suppressSync = false;
+      cmEditor.setSize('100%', '100%');
+      cmEditor.on('change', (cm) => {
+        if (suppressSync) return;
+        if (appMode === 'team' && editorOwner !== mySocketId) return;
+        if (appMode === 'team' && socket) socket.emit('code-change', { code: cm.getValue() });
       });
-      sec.appendChild(btn);
     }
-  } else {
-    // Non-host member
-    if (isMine) {
-      // ✅ FIX 12: Member who has editor can hand it back to host
-      const p = document.createElement('p');
-      p.style.cssText = 'font-size:11px;color:var(--accent3);text-align:center;padding:4px 0';
-      p.textContent   = '✏️ You have editor access';
-      sec.appendChild(p);
 
-      const handBackBtn = document.createElement('button');
-      handBackBtn.className   = 'btn-action btn-handback';
-      handBackBtn.id          = 'handBackBtn';
-      handBackBtn.textContent = '↩ Hand Back Editor';
-      handBackBtn.addEventListener('click', () => {
-        // Find host and assign editor back to them
-        const host = roomUsers.find(u => u.isHost);
-        if (host) {
-          socket.emit('return-editor', { toSocketId: host.socketId });
-          toast('Editor returned to host');
+    function setLanguage(lang) {
+      const prev = currentLang;
+      currentLang = lang;
+      if (cmEditor) {
+        cmEditor.setOption('mode', LANG_MODE[lang] || 'python');
+        const cur = cmEditor.getValue();
+        if (!cur.trim() || cur === STARTER_CODE[prev]) {
+          suppressSync = true;
+          cmEditor.setValue(STARTER_CODE[lang]);
+          suppressSync = false;
         }
-      });
-      sec.appendChild(handBackBtn);
-
-    } else {
-      // Member doesn't have editor — can request it
-      const btn = document.createElement('button');
-      btn.className   = 'btn-action btn-request';
-      btn.id          = 'requestBtn';
-      btn.textContent = '🙋 Request Editor Access';
-      btn.addEventListener('click', () => {
-        socket.emit('request-editor');
-        btn.textContent = '⏳ Request sent…';
-        btn.disabled    = true;
-        toast('Request sent to host');
-      });
-      sec.appendChild(btn);
-    }
-  }
-}
-
-// ════════════════════════════════════════════════════════════════════
-//  MEMBERS LIST
-// ════════════════════════════════════════════════════════════════════
-function renderMembers() {
-  const list = document.getElementById('membersList');
-  list.innerHTML = '';
-
-  const allUsers = [...roomUsers];
-  if (!allUsers.find(u => u.socketId === mySocketId)) {
-    allUsers.unshift({ socketId: mySocketId, name: myName, isHost: myIsHost });
-  }
-
-  allUsers.forEach(u => {
-    const isMe      = u.socketId === mySocketId;
-    const isEditing = u.socketId === editorOwner;
-
-    const div = document.createElement('div');
-    div.className = 'member-item';
-
-    const dot = document.createElement('div');
-    dot.className = 'member-dot';
-    div.appendChild(dot);
-
-    const nameDiv = document.createElement('div');
-    nameDiv.className   = 'member-name';
-    nameDiv.textContent = u.name + (u.isHost ? ' 👑' : '');
-    div.appendChild(nameDiv);
-
-    if (isMe) {
-      const you = document.createElement('span');
-      you.className   = 'member-you';
-      you.textContent = 'you';
-      div.appendChild(you);
+      }
+      document.querySelectorAll('.lang-pill').forEach(b =>
+        b.classList.toggle('active', b.dataset.lang === lang));
     }
 
-    if (isEditing) {
-      const ed = document.createElement('span');
-      ed.className   = 'member-editing';
-      ed.textContent = '✏️';
-      div.appendChild(ed);
+    function applyRemoteCode(code) {
+      if (!cmEditor) return;
+      suppressSync = true;
+      const cursor = cmEditor.getCursor();
+      const scroll = cmEditor.getScrollInfo();
+      cmEditor.setValue(code);
+      cmEditor.setCursor(cursor);
+      cmEditor.scrollTo(scroll.left, scroll.top);
+      suppressSync = false;
     }
 
-    // ✅ FIX 13: Host can give editor to any member, including taking it from current editor
-    if (myIsHost && !isMe) {
-      const btn = document.createElement('button');
-      btn.className   = 'btn-assign';
-      btn.textContent = isEditing ? 'Take' : 'Give';
-      btn.addEventListener('click', () => {
-        if (isEditing) {
-          socket.emit('reclaim-editor');
+    // ════════════════════════════════════════════════════════════════════
+    //  MODE SWITCHING
+    // ════════════════════════════════════════════════════════════════════
+    function setMode(mode) {
+      appMode = mode;
+      const isTeam = mode === 'team';
+      document.getElementById('modeTeam').classList.toggle('active', isTeam);
+      document.getElementById('modeSolo').classList.toggle('active', !isTeam);
+      document.getElementById('left-panel').classList.toggle('visible', isTeam);
+      document.getElementById('right-panel').classList.toggle('visible', isTeam);
+      document.getElementById('media-bar').classList.toggle('visible', isTeam);
+      document.getElementById('room-bar').classList.toggle('visible', isTeam);
+      if (isTeam) {
+        document.getElementById('lobby').classList.add('visible');
+      } else {
+        if (socket) performLeave();
+        document.getElementById('lobby').classList.remove('visible');
+        document.getElementById('room-bar').classList.remove('visible');
+      }
+    }
+
+    // ════════════════════════════════════════════════════════════════════
+    //  RUN CODE
+    // ════════════════════════════════════════════════════════════════════
+    async function runCode() {
+      const code = cmEditor ? cmEditor.getValue().trim() : '';
+      const stdin = document.getElementById('stdinInput').value;
+      const outputEl = document.getElementById('output');
+      const runBtn = document.getElementById('runBtn');
+
+      if (!code) { toast('No code to run'); return; }
+
+      runBtn.disabled = true;
+      runBtn.textContent = '⏳';
+      outputEl.textContent = 'Running…';
+      outputEl.className = '';
+      outputEl.style.borderTop = '';
+
+      try {
+        const res = await fetch('/api/run', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code, language: currentLang, stdin }),
+        });
+        const text = await res.text();
+        outputEl.innerHTML = escapeOutput(text || '(No output)');
+        if (res.ok) {
+          outputEl.className = 'has-success';
+          outputEl.style.borderTop = '2px solid var(--success)';
         } else {
-          socket.emit('assign-editor', { toSocketId: u.socketId });
+          outputEl.className = 'has-error';
+          outputEl.style.borderTop = '2px solid var(--error)';
+        }
+      } catch (e) {
+        outputEl.innerHTML = escapeOutput('❌ Could not reach the server.');
+        outputEl.className = 'has-error';
+        outputEl.style.borderTop = '2px solid var(--error)';
+      } finally {
+        runBtn.disabled = false;
+        runBtn.textContent = '▶ Run';
+      }
+    }
+
+    // ════════════════════════════════════════════════════════════════════
+    //  LOBBY
+    // ════════════════════════════════════════════════════════════════════
+    function switchTab(tab) {
+      const isCreate = tab === 'create';
+      document.getElementById('tabBtnCreate').classList.toggle('active', isCreate);
+      document.getElementById('tabBtnJoin').classList.toggle('active', !isCreate);
+      document.getElementById('tab-create').classList.toggle('active', isCreate);
+      document.getElementById('tab-join').classList.toggle('active', !isCreate);
+    }
+
+    async function createRoom() {
+      const name = document.getElementById('createName').value.trim();
+      const password = document.getElementById('createPassword').value;
+      const errEl = document.getElementById('createError');
+      errEl.textContent = '';
+      if (!name) { errEl.textContent = 'Enter your name.'; return; }
+
+      const btn = document.getElementById('createRoomBtn');
+      btn.disabled = true; btn.textContent = 'Creating…';
+      try {
+        const res = await fetch('/api/create-room', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, password: password || undefined }),
+        });
+        const data = await res.json();
+        if (!res.ok) { errEl.textContent = data.error || 'Server error.'; return; }
+        pendingHostToken = data.token;
+        pendingRoomId = data.roomId;
+        document.getElementById('shareUrl').textContent = data.shareUrl;
+        document.getElementById('shareBox').style.display = 'block';
+        btn.style.display = 'none';
+      } catch (e) {
+        errEl.textContent = 'Could not reach server.';
+      } finally {
+        btn.disabled = false; btn.textContent = 'Create Room';
+      }
+    }
+
+    async function enterAsHost() {
+      const name = document.getElementById('createName').value.trim();
+      await startSession(pendingRoomId, name, pendingHostToken, true);
+    }
+
+    async function joinRoom() {
+      const name = document.getElementById('joinName').value.trim();
+      const rid = document.getElementById('joinRoomId').value.trim();
+      const password = document.getElementById('joinPassword').value;
+      const errEl = document.getElementById('joinError');
+      errEl.textContent = '';
+      if (!name) { errEl.textContent = 'Enter your name.'; return; }
+      if (!rid) { errEl.textContent = 'Enter a room ID.'; return; }
+
+      const btn = document.getElementById('joinRoomBtn');
+      btn.disabled = true; btn.textContent = 'Joining…';
+      try {
+        const res = await fetch('/api/join-room', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ roomId: rid, name, password: password || undefined }),
+        });
+        const data = await res.json();
+        if (!res.ok) { errEl.textContent = data.error || 'Could not join.'; return; }
+        await startSession(rid, name, data.token, false);
+      } catch (e) {
+        errEl.textContent = 'Could not reach server.';
+      } finally {
+        btn.disabled = false; btn.textContent = 'Join Room';
+      }
+    }
+
+    // ════════════════════════════════════════════════════════════════════
+    //  START SESSION — get media FIRST, then connect socket
+    // ════════════════════════════════════════════════════════════════════
+    async function startSession(rid, name, token, isHost) {
+      myName = name;
+      myIsHost = isHost;
+      roomId = rid;
+
+      // ✅ FIX 1: Get camera/mic BEFORE connecting socket
+      // This ensures tracks are ready when peer connections are created
+      try {
+        myStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        console.log('✅ Media stream obtained:', myStream.getTracks().map(t => t.kind));
+      } catch (e) {
+        console.warn('⚠️ Camera/mic denied:', e.message);
+        toast('Camera/mic denied — video disabled');
+        myStream = null;
+      }
+
+      // Render my own tile immediately after getting stream
+      renderMyTile();
+
+      // Now connect socket — peer connections will have myStream ready
+      socket = io({ auth: { token } });
+      bindSocketEvents();
+      document.getElementById('lobby').classList.remove('visible');
+      document.getElementById('roomIdBadge').textContent = `Room: ${rid.slice(0, 8)}…`;
+    }
+
+    // ════════════════════════════════════════════════════════════════════
+    //  SOCKET EVENTS
+    // ════════════════════════════════════════════════════════════════════
+    function bindSocketEvents() {
+      socket.on('connect', () => {
+        mySocketId = socket.id;
+        console.log('✅ Socket connected:', mySocketId);
+      });
+      socket.on('connect_error', (err) => toast('Connection error: ' + err.message));
+      socket.on('error', (msg) => toast('⚠️ ' + msg));
+
+      socket.on('room-state', ({ users, editorOwner: eo, code, yourSocketId }) => {
+        mySocketId = yourSocketId;
+        roomUsers = users;
+        editorOwner = eo;
+        initEditor(code);
+        renderMyTile();
+        renderMembers();
+        updateEditorState();
+      });
+
+      // ✅ FIX 2: user-joined — create peer connection with isInitiator=true
+      socket.on('user-joined', async ({ socketId, name, isHost }) => {
+        toast(`${name} joined`);
+        roomUsers.push({ socketId, name, isHost });
+        renderMembers();
+        // We are already in the room, so WE initiate the connection to the newcomer
+        await createPeerConnection(socketId, name, true);
+      });
+
+      socket.on('user-left', ({ socketId, name }) => {
+        toast(`${name} left`);
+        if (peers[socketId]) { peers[socketId].pc.close(); delete peers[socketId]; }
+        removeTile(socketId);
+        roomUsers = roomUsers.filter(u => u.socketId !== socketId);
+        renderMembers();
+      });
+
+      // ✅ FIX 3: rtc-offer — newcomer receives offers from existing members
+      socket.on('rtc-offer', async ({ from, name, offer }) => {
+        console.log('📨 Got offer from:', from, name);
+        await createPeerConnection(from, name, false);
+        const pc = peers[from].pc;
+        await pc.setRemoteDescription(new RTCSessionDescription(offer));
+        const answer = await pc.createAnswer();
+        await pc.setLocalDescription(answer);
+        socket.emit('rtc-answer', { to: from, answer });
+      });
+
+      socket.on('rtc-answer', async ({ from, answer }) => {
+        console.log('📨 Got answer from:', from);
+        if (peers[from]) {
+          await peers[from].pc.setRemoteDescription(new RTCSessionDescription(answer));
         }
       });
-      div.appendChild(btn);
+
+      socket.on('rtc-ice', async ({ from, candidate }) => {
+        if (peers[from]) {
+          try {
+            await peers[from].pc.addIceCandidate(new RTCIceCandidate(candidate));
+          } catch (e) {
+            console.warn('ICE candidate error:', e.message);
+          }
+        }
+      });
+
+      socket.on('editor-assigned', ({ editorOwner: eo }) => {
+        editorOwner = eo;
+        updateEditorState();
+        renderMembers();
+      });
+
+      socket.on('editor-request', ({ fromSocketId, fromName }) => {
+        pendingRequest = { fromSocketId, fromName };
+        document.getElementById('notifText').textContent = `"${fromName}" wants editor access`;
+        document.getElementById('notifBanner').style.display = 'block';
+      });
+
+      socket.on('editor-request-denied', () => {
+        toast('Your editor request was denied.');
+        const btn = document.getElementById('requestBtn');
+        if (btn) { btn.textContent = '🙋 Request Editor Access'; btn.disabled = false; }
+      });
+
+      socket.on('code-update', ({ code }) => {
+        if (editorOwner !== mySocketId) applyRemoteCode(code);
+      });
     }
 
-    list.appendChild(div);
-  });
-}
+    // ════════════════════════════════════════════════════════════════════
+    //  WebRTC — FIXED peer connection
+    // ════════════════════════════════════════════════════════════════════
+    const ICE = {
+      iceServers: [
+        { urls: 'stun:stun.l.google.com:19302' },
+        { urls: 'stun:stun1.l.google.com:19302' },
+        // ✅ FIX 4: Added more STUN servers for better connectivity
+        { urls: 'stun:stun2.l.google.com:19302' },
+        { urls: 'stun:stun3.l.google.com:19302' },
+      ]
+    };
 
-// ════════════════════════════════════════════════════════════════════
-//  MIC / CAM
-// ════════════════════════════════════════════════════════════════════
-function toggleMic() {
-  if (!myStream) { toast('No microphone available'); return; }
-  micOn = !micOn;
-  myStream.getAudioTracks().forEach(t => {
-    t.enabled = micOn;
-    console.log(`🎙 Mic ${micOn ? 'ON' : 'OFF'}, track enabled:`, t.enabled);
-  });
-  const btn = document.getElementById('micBtn');
-  btn.textContent = micOn ? '🎙 Mic On' : '🔇 Mic Off';
-  btn.classList.toggle('off', !micOn);
-}
+    async function createPeerConnection(peerId, peerName, isInitiator) {
+      if (peers[peerId]) {
+        console.log('Peer connection already exists for:', peerId);
+        return;
+      }
 
-function toggleCam() {
-  if (!myStream) { toast('No camera available'); return; }
-  camOn = !camOn;
-  myStream.getVideoTracks().forEach(t => {
-    t.enabled = camOn;
-    console.log(`📹 Cam ${camOn ? 'ON' : 'OFF'}, track enabled:`, t.enabled);
-  });
-  const btn = document.getElementById('camBtn');
-  btn.textContent = camOn ? '📹 Cam On' : '🚫 Cam Off';
-  btn.classList.toggle('off', !camOn);
+      console.log(`🔗 Creating peer connection with ${peerName} (${peerId}), initiator: ${isInitiator}`);
 
-  const tile  = document.getElementById('tile-me');
-  if (!tile) return;
-  const video = tile.querySelector('video');
-  let   off   = tile.querySelector('.cam-off');
+      const pc = new RTCPeerConnection(ICE);
+      peers[peerId] = { pc, name: peerName, stream: null };
 
-  if (camOn) {
-    if (off) off.remove();
-    if (video) video.style.display = 'block';
-  } else {
-    if (video) video.style.display = 'none';
-    if (!off) {
-      off             = document.createElement('div');
-      off.className   = 'cam-off';
-      off.textContent = 'Cam Off';
-      tile.insertBefore(off, tile.querySelector('.tile-label'));
+      // ✅ FIX 5: Add ALL local tracks to the peer connection
+      if (myStream) {
+        myStream.getTracks().forEach(track => {
+          console.log(`➕ Adding ${track.kind} track to peer connection`);
+          pc.addTrack(track, myStream);
+        });
+      } else {
+        console.warn('⚠️ No local stream to add to peer connection');
+      }
+
+      // ✅ FIX 6: Handle ICE candidates properly
+      pc.onicecandidate = (e) => {
+        if (e.candidate) {
+          socket.emit('rtc-ice', { to: peerId, candidate: e.candidate });
+        }
+      };
+
+      pc.oniceconnectionstatechange = () => {
+        console.log(`ICE state with ${peerName}:`, pc.iceConnectionState);
+      };
+
+      pc.onconnectionstatechange = () => {
+        console.log(`Connection state with ${peerName}:`, pc.connectionState);
+      };
+
+      // ✅ FIX 7: ontrack — properly attach remote stream
+      pc.ontrack = (e) => {
+        console.log(`📹 Got ${e.track.kind} track from ${peerName}`);
+        if (e.streams && e.streams[0]) {
+          peers[peerId].stream = e.streams[0];
+          attachRemoteStream(peerId, e.streams[0]);
+        }
+      };
+
+      // Add video tile for this peer
+      addTile(peerId, peerName);
+
+      // ✅ FIX 8: Only the initiator creates the offer
+      if (isInitiator) {
+        try {
+          const offer = await pc.createOffer({
+            offerToReceiveAudio: true,
+            offerToReceiveVideo: true,
+          });
+          await pc.setLocalDescription(offer);
+          socket.emit('rtc-offer', { to: peerId, offer });
+          console.log('📤 Sent offer to:', peerName);
+        } catch (e) {
+          console.error('Error creating offer:', e);
+        }
+      }
     }
+
+    // ════════════════════════════════════════════════════════════════════
+    //  VIDEO TILES
+    // ════════════════════════════════════════════════════════════════════
+    function renderMyTile() {
+      const existing = document.getElementById('tile-me');
+      if (existing) existing.remove();
+
+      const tile = document.createElement('div');
+      tile.className = 'video-tile';
+      tile.id = 'tile-me';
+
+      if (myStream && camOn) {
+        const video = document.createElement('video');
+        video.autoplay = true;
+        video.muted = true;   // always mute self to avoid echo
+        video.playsInline = true;
+        video.srcObject = myStream;
+        tile.appendChild(video);
+      } else {
+        const off = document.createElement('div');
+        off.className = 'cam-off';
+        off.textContent = myStream ? 'Cam Off' : '🚫 No Camera';
+        tile.appendChild(off);
+      }
+
+      const label = document.createElement('div');
+      label.className = 'tile-label';
+      label.textContent = myName + (myIsHost ? ' 👑' : '') + ' (you)';
+      tile.appendChild(label);
+
+      const grid = document.getElementById('videoGrid');
+      grid.insertBefore(tile, grid.firstChild);
+    }
+
+    function addTile(socketId, name) {
+      if (document.getElementById('tile-' + socketId)) return;
+
+      const tile = document.createElement('div');
+      tile.className = 'video-tile';
+      tile.id = 'tile-' + socketId;
+
+      const off = document.createElement('div');
+      off.className = 'cam-off';
+      off.textContent = 'Connecting…';
+      tile.appendChild(off);
+
+      const label = document.createElement('div');
+      label.className = 'tile-label';
+      label.textContent = name;
+      tile.appendChild(label);
+
+      document.getElementById('videoGrid').appendChild(tile);
+    }
+
+    function attachRemoteStream(socketId, stream) {
+      const tile = document.getElementById('tile-' + socketId);
+      if (!tile) return;
+
+      // Remove "Connecting..." placeholder
+      const off = tile.querySelector('.cam-off');
+      if (off) off.remove();
+
+      // Reuse or create video element
+      let video = tile.querySelector('video');
+      if (!video) {
+        video = document.createElement('video');
+        video.autoplay = true;
+        video.playsInline = true;
+        // ✅ FIX 9: Never mute remote peers — they need to be heard
+        video.muted = false;
+        tile.insertBefore(video, tile.querySelector('.tile-label'));
+      }
+
+      video.srcObject = stream;
+
+      // ✅ FIX 10: Force play — some browsers need this
+      video.play().catch(e => console.warn('Video play error:', e.message));
+    }
+
+    function removeTile(socketId) {
+      const t = document.getElementById('tile-' + socketId);
+      if (t) t.remove();
+    }
+
+    // ════════════════════════════════════════════════════════════════════
+    //  EDITOR STATE — FIXED with hand-back option for members
+    // ════════════════════════════════════════════════════════════════════
+    function updateEditorState() {
+      if (!cmEditor || !mySocketId) return;
+
+      const isMine = editorOwner === mySocketId;
+      cmEditor.setOption('readOnly', isMine ? false : 'nocursor');
+      document.getElementById('lockOverlay').classList.toggle('visible', !isMine);
+
+      const statusEl = document.getElementById('editor-status');
+      if (isMine) {
+        statusEl.textContent = '✏️ You are editing';
+        statusEl.style.color = 'var(--accent3)';
+      } else {
+        const owner = roomUsers.find(u => u.socketId === editorOwner);
+        statusEl.textContent = owner ? `🔒 ${owner.name} is editing` : '🔒 Locked';
+        statusEl.style.color = 'var(--text-muted)';
+      }
+
+      const owner = roomUsers.find(u => u.socketId === editorOwner);
+      document.getElementById('lockMsg').textContent =
+        owner ? `🔒 ${owner.name} is editing — you are read-only` : '🔒 Editor locked';
+
+      const sec = document.getElementById('requestSection');
+      sec.innerHTML = '';
+
+      if (myIsHost) {
+        // ✅ FIX 11: Host always sees reclaim button when someone else has editor
+        if (!isMine) {
+          const btn = document.createElement('button');
+          btn.className = 'btn-action btn-reclaim';
+          btn.id = 'reclaimBtn';
+          btn.textContent = '↩ Take Back Editor';
+          btn.addEventListener('click', () => {
+            socket.emit('reclaim-editor');
+            toast('Taking back editor…');
+          });
+          sec.appendChild(btn);
+        }
+      } else {
+        // Non-host member
+        if (isMine) {
+          // ✅ FIX 12: Member who has editor can hand it back to host
+          const p = document.createElement('p');
+          p.style.cssText = 'font-size:11px;color:var(--accent3);text-align:center;padding:4px 0';
+          p.textContent = '✏️ You have editor access';
+          sec.appendChild(p);
+
+          const handBackBtn = document.createElement('button');
+          handBackBtn.className = 'btn-action btn-handback';
+          handBackBtn.id = 'handBackBtn';
+          handBackBtn.textContent = '↩ Hand Back Editor';
+          handBackBtn.addEventListener('click', () => {
+            // Find host and assign editor back to them
+            const host = roomUsers.find(u => u.isHost);
+            if (host) {
+              socket.emit('return-editor', { toSocketId: host.socketId });
+              toast('Editor returned to host');
+            }
+          });
+          sec.appendChild(handBackBtn);
+
+        } else {
+          // Member doesn't have editor — can request it
+          const btn = document.createElement('button');
+          btn.className = 'btn-action btn-request';
+          btn.id = 'requestBtn';
+          btn.textContent = '🙋 Request Editor Access';
+          btn.addEventListener('click', () => {
+            socket.emit('request-editor');
+            btn.textContent = '⏳ Request sent…';
+            btn.disabled = true;
+            toast('Request sent to host');
+          });
+          sec.appendChild(btn);
+        }
+      }
+    }
+
+    // ════════════════════════════════════════════════════════════════════
+    //  MEMBERS LIST
+    // ════════════════════════════════════════════════════════════════════
+    function renderMembers() {
+      const list = document.getElementById('membersList');
+      list.innerHTML = '';
+
+      const allUsers = [...roomUsers];
+      if (!allUsers.find(u => u.socketId === mySocketId)) {
+        allUsers.unshift({ socketId: mySocketId, name: myName, isHost: myIsHost });
+      }
+
+      allUsers.forEach(u => {
+        const isMe = u.socketId === mySocketId;
+        const isEditing = u.socketId === editorOwner;
+
+        const div = document.createElement('div');
+        div.className = 'member-item';
+
+        const dot = document.createElement('div');
+        dot.className = 'member-dot';
+        div.appendChild(dot);
+
+        const nameDiv = document.createElement('div');
+        nameDiv.className = 'member-name';
+        nameDiv.textContent = u.name + (u.isHost ? ' 👑' : '');
+        div.appendChild(nameDiv);
+
+        if (isMe) {
+          const you = document.createElement('span');
+          you.className = 'member-you';
+          you.textContent = 'you';
+          div.appendChild(you);
+        }
+
+        if (isEditing) {
+          const ed = document.createElement('span');
+          ed.className = 'member-editing';
+          ed.textContent = '✏️';
+          div.appendChild(ed);
+        }
+
+        // ✅ FIX 13: Host can give editor to any member, including taking it from current editor
+        if (myIsHost && !isMe) {
+          const btn = document.createElement('button');
+          btn.className = 'btn-assign';
+          btn.textContent = isEditing ? 'Take' : 'Give';
+          btn.addEventListener('click', () => {
+            if (isEditing) {
+              socket.emit('reclaim-editor');
+            } else {
+              socket.emit('assign-editor', { toSocketId: u.socketId });
+            }
+          });
+          div.appendChild(btn);
+        }
+
+        list.appendChild(div);
+      });
+    }
+
+    // ════════════════════════════════════════════════════════════════════
+    //  MIC / CAM
+    // ════════════════════════════════════════════════════════════════════
+    function toggleMic() {
+      if (!myStream) { toast('No microphone available'); return; }
+      micOn = !micOn;
+      myStream.getAudioTracks().forEach(t => {
+        t.enabled = micOn;
+        console.log(`🎙 Mic ${micOn ? 'ON' : 'OFF'}, track enabled:`, t.enabled);
+      });
+      const btn = document.getElementById('micBtn');
+      btn.textContent = micOn ? '🎙 Mic On' : '🔇 Mic Off';
+      btn.classList.toggle('off', !micOn);
+    }
+
+    function toggleCam() {
+      if (!myStream) { toast('No camera available'); return; }
+      camOn = !camOn;
+      myStream.getVideoTracks().forEach(t => {
+        t.enabled = camOn;
+        console.log(`📹 Cam ${camOn ? 'ON' : 'OFF'}, track enabled:`, t.enabled);
+      });
+      const btn = document.getElementById('camBtn');
+      btn.textContent = camOn ? '📹 Cam On' : '🚫 Cam Off';
+      btn.classList.toggle('off', !camOn);
+
+      const tile = document.getElementById('tile-me');
+      if (!tile) return;
+      const video = tile.querySelector('video');
+      let off = tile.querySelector('.cam-off');
+
+      if (camOn) {
+        if (off) off.remove();
+        if (video) video.style.display = 'block';
+      } else {
+        if (video) video.style.display = 'none';
+        if (!off) {
+          off = document.createElement('div');
+          off.className = 'cam-off';
+          off.textContent = 'Cam Off';
+          tile.insertBefore(off, tile.querySelector('.tile-label'));
+        }
+      }
+    }
+
+    // ════════════════════════════════════════════════════════════════════
+    //  LEAVE
+    // ════════════════════════════════════════════════════════════════════
+    function performLeave() {
+      if (myStream) {
+        myStream.getTracks().forEach(t => t.stop());
+        myStream = null;
+      }
+      Object.values(peers).forEach(p => p.pc.close());
+      peers = {};
+
+      if (socket) { socket.disconnect(); socket = null; }
+
+      roomUsers = []; micOn = true; camOn = true; pendingRequest = null;
+
+      document.getElementById('videoGrid').innerHTML = '';
+      document.getElementById('membersList').innerHTML = '';
+      document.getElementById('shareBox').style.display = 'none';
+      document.getElementById('createRoomBtn').style.display = 'block';
+      document.getElementById('notifBanner').style.display = 'none';
+      document.getElementById('output').textContent = '// Run your code to see output here';
+      document.getElementById('output').style.borderTop = '';
+      document.getElementById('output').className = '';
+      document.getElementById('editor-status').textContent = '';
+      document.getElementById('roomIdBadge').textContent = 'Room: —';
+      document.getElementById('micBtn').textContent = '🎙 Mic On';
+      document.getElementById('camBtn').textContent = '📹 Cam On';
+      document.getElementById('micBtn').classList.remove('off');
+      document.getElementById('camBtn').classList.remove('off');
+      initEditor(STARTER_CODE[currentLang]);
+
+      appMode = 'solo';
+      document.getElementById('modeTeam').classList.remove('active');
+      document.getElementById('modeSolo').classList.add('active');
+      document.getElementById('left-panel').classList.remove('visible');
+      document.getElementById('right-panel').classList.remove('visible');
+      document.getElementById('media-bar').classList.remove('visible');
+      document.getElementById('room-bar').classList.remove('visible');
+      document.getElementById('lobby').classList.remove('visible');
+    }
+
+    function respondRequest(grant) {
+      document.getElementById('notifBanner').style.display = 'none';
+      if (grant && pendingRequest) {
+        socket.emit('assign-editor', { toSocketId: pendingRequest.fromSocketId });
+        toast(`Editor given to ${pendingRequest.fromName}`);
+      } else if (pendingRequest) {
+        socket.emit('deny-editor-request', { toSocketId: pendingRequest.fromSocketId });
+        toast('Request denied');
+      }
+      pendingRequest = null;
+    }
+
+    // ════════════════════════════════════════════════════════════════════
+    //  BOOT
+    // ════════════════════════════════════════════════════════════════════
+    document.addEventListener('DOMContentLoaded', () => {
+      initEditor();
+
+      document.getElementById('modeSolo').addEventListener('click', () => { if (appMode === 'team') performLeave(); else setMode('solo'); });
+      document.getElementById('modeTeam').addEventListener('click', () => setMode('team'));
+      document.querySelectorAll('.lang-pill').forEach(btn => btn.addEventListener('click', () => setLanguage(btn.dataset.lang)));
+      document.getElementById('runBtn').addEventListener('click', runCode);
+      document.getElementById('clearOutputBtn').addEventListener('click', () => {
+        const o = document.getElementById('output');
+        o.textContent = '// Run your code to see output here';
+        o.className = ''; o.style.borderTop = '';
+      });
+      document.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); runCode(); }
+      });
+      document.getElementById('tabBtnCreate').addEventListener('click', () => switchTab('create'));
+      document.getElementById('tabBtnJoin').addEventListener('click', () => switchTab('join'));
+      document.getElementById('createRoomBtn').addEventListener('click', createRoom);
+      document.getElementById('enterRoomBtn').addEventListener('click', enterAsHost);
+      document.getElementById('joinRoomBtn').addEventListener('click', joinRoom);
+      document.getElementById('shareUrl').addEventListener('click', () => {
+        navigator.clipboard.writeText(document.getElementById('shareUrl').textContent).then(() => toast('Link copied!'));
+      });
+      document.getElementById('roomIdBadge').addEventListener('click', () => {
+        navigator.clipboard.writeText(roomId).then(() => toast('Room ID copied!'));
+      });
+      document.getElementById('leaveBtn').addEventListener('click', performLeave);
+      document.getElementById('grantBtn').addEventListener('click', () => respondRequest(true));
+      document.getElementById('denyBtn').addEventListener('click', () => respondRequest(false));
+      document.getElementById('micBtn').addEventListener('click', toggleMic);
+      document.getElementById('camBtn').addEventListener('click', toggleCam);
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlRoomId = urlParams.get('room');
+      if (urlRoomId) {
+        document.getElementById('joinRoomId').value = urlRoomId;
+        switchTab('join');
+        setMode('team');
+      }
+    });
+  </script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3159193304868741"
+    crossorigin="anonymous"></script>
+  <!-- ══ Structured Data (Google Rich Results) ═══════════════ -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "CodeForge",
+  "url": "https://coding-vibes.onrender.com",
+  "description": "Real-time collaborative coding platform with live video, instant code execution, and team rooms.",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "M. Rabi. K."
   }
 }
-
-// ════════════════════════════════════════════════════════════════════
-//  LEAVE
-// ════════════════════════════════════════════════════════════════════
-function performLeave() {
-  if (myStream) {
-    myStream.getTracks().forEach(t => t.stop());
-    myStream = null;
-  }
-  Object.values(peers).forEach(p => p.pc.close());
-  peers = {};
-
-  if (socket) { socket.disconnect(); socket = null; }
-
-  roomUsers = []; micOn = true; camOn = true; pendingRequest = null;
-
-  document.getElementById('videoGrid').innerHTML   = '';
-  document.getElementById('membersList').innerHTML = '';
-  document.getElementById('shareBox').style.display      = 'none';
-  document.getElementById('createRoomBtn').style.display = 'block';
-  document.getElementById('notifBanner').style.display   = 'none';
-  document.getElementById('output').textContent          = '// Run your code to see output here';
-  document.getElementById('output').style.borderTop      = '';
-  document.getElementById('output').className            = '';
-  document.getElementById('editor-status').textContent   = '';
-  document.getElementById('roomIdBadge').textContent     = 'Room: —';
-  document.getElementById('micBtn').textContent          = '🎙 Mic On';
-  document.getElementById('camBtn').textContent          = '📹 Cam On';
-  document.getElementById('micBtn').classList.remove('off');
-  document.getElementById('camBtn').classList.remove('off');
-  initEditor(STARTER_CODE[currentLang]);
-
-  appMode = 'solo';
-  document.getElementById('modeTeam').classList.remove('active');
-  document.getElementById('modeSolo').classList.add('active');
-  document.getElementById('left-panel').classList.remove('visible');
-  document.getElementById('right-panel').classList.remove('visible');
-  document.getElementById('media-bar').classList.remove('visible');
-  document.getElementById('room-bar').classList.remove('visible');
-  document.getElementById('lobby').classList.remove('visible');
-}
-
-function respondRequest(grant) {
-  document.getElementById('notifBanner').style.display = 'none';
-  if (grant && pendingRequest) {
-    socket.emit('assign-editor', { toSocketId: pendingRequest.fromSocketId });
-    toast(`Editor given to ${pendingRequest.fromName}`);
-  } else if (pendingRequest) {
-    socket.emit('deny-editor-request', { toSocketId: pendingRequest.fromSocketId });
-    toast('Request denied');
-  }
-  pendingRequest = null;
-}
-
-// ════════════════════════════════════════════════════════════════════
-//  BOOT
-// ════════════════════════════════════════════════════════════════════
-document.addEventListener('DOMContentLoaded', () => {
-  initEditor();
-
-  document.getElementById('modeSolo').addEventListener('click', () => { if (appMode === 'team') performLeave(); else setMode('solo'); });
-  document.getElementById('modeTeam').addEventListener('click', () => setMode('team'));
-  document.querySelectorAll('.lang-pill').forEach(btn => btn.addEventListener('click', () => setLanguage(btn.dataset.lang)));
-  document.getElementById('runBtn').addEventListener('click', runCode);
-  document.getElementById('clearOutputBtn').addEventListener('click', () => {
-    const o = document.getElementById('output');
-    o.textContent = '// Run your code to see output here';
-    o.className = ''; o.style.borderTop = '';
-  });
-  document.addEventListener('keydown', (e) => {
-    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); runCode(); }
-  });
-  document.getElementById('tabBtnCreate').addEventListener('click', () => switchTab('create'));
-  document.getElementById('tabBtnJoin').addEventListener('click',   () => switchTab('join'));
-  document.getElementById('createRoomBtn').addEventListener('click', createRoom);
-  document.getElementById('enterRoomBtn').addEventListener('click',  enterAsHost);
-  document.getElementById('joinRoomBtn').addEventListener('click',   joinRoom);
-  document.getElementById('shareUrl').addEventListener('click', () => {
-    navigator.clipboard.writeText(document.getElementById('shareUrl').textContent).then(() => toast('Link copied!'));
-  });
-  document.getElementById('roomIdBadge').addEventListener('click', () => {
-    navigator.clipboard.writeText(roomId).then(() => toast('Room ID copied!'));
-  });
-  document.getElementById('leaveBtn').addEventListener('click', performLeave);
-  document.getElementById('grantBtn').addEventListener('click', () => respondRequest(true));
-  document.getElementById('denyBtn').addEventListener('click',  () => respondRequest(false));
-  document.getElementById('micBtn').addEventListener('click', toggleMic);
-  document.getElementById('camBtn').addEventListener('click', toggleCam);
-
-  const urlParams = new URLSearchParams(window.location.search);
-  const urlRoomId = urlParams.get('room');
-  if (urlRoomId) {
-    document.getElementById('joinRoomId').value = urlRoomId;
-    switchTab('join');
-    setMode('team');
-  }
-});
 </script>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3159193304868741"
-     crossorigin="anonymous"></script>
 </body>
+
 </html>
