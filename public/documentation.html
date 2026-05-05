@@ -1,49 +1,692 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Documentations</title>
-    <link rel = "stylesheet" href="documentation.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Documentation — CodeForge</title>
+  <link rel="icon" type="image/png" href="logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0e0d0b;
+      --surface: #141310;
+      --surface2: #1c1a17;
+      --border: #2a2620;
+      --accent: #5b8eff;
+      --accent2: #ff6b6b;
+      --accent3: #4ecdc4;
+      --text: #e8e2d8;
+      --text-muted: #6b6458;
+      --font-mono: 'Space Mono', monospace;
+      --font-display: 'Syne', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-display);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* noise */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1000;
+      opacity: 0.4;
+    }
+
+    /* ── NAV ─────────────────────────── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 48px;
+      height: 56px;
+      background: rgba(14,13,11,0.9);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .nav-logo {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--accent);
+      text-decoration: none;
+      letter-spacing: -0.5px;
+    }
+    .nav-logo span { color: var(--accent2); }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .nav-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 16px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .nav-back:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* ── LAYOUT ──────────────────────── */
+    .page-wrap {
+      display: flex;
+      flex: 1;
+      max-width: 1100px;
+      margin: 0 auto;
+      width: 100%;
+      padding: 48px 48px 80px;
+      gap: 48px;
+    }
+
+    /* ── SIDEBAR ─────────────────────── */
+    .sidebar {
+      width: 210px;
+      flex-shrink: 0;
+    }
+
+    .sidebar-sticky {
+      position: sticky;
+      top: 80px;
+    }
+
+    .sidebar-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      padding-left: 2px;
+    }
+
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .sidebar-link {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 10px;
+      border-radius: 5px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all 0.15s;
+      border: 1px solid transparent;
+    }
+    .sidebar-link:hover {
+      color: var(--text);
+      background: var(--surface);
+      border-color: var(--border);
+    }
+    .sidebar-link.active {
+      color: var(--accent);
+      background: rgba(91,142,255,0.08);
+      border-color: rgba(91,142,255,0.2);
+    }
+    .sidebar-icon { font-size: 14px; }
+
+    /* ── MAIN CONTENT ────────────────── */
+    .doc-main { flex: 1; min-width: 0; }
+
+    /* Page header */
+    .doc-header {
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .doc-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(91,142,255,0.1);
+      border: 1px solid rgba(91,142,255,0.2);
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--accent);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .doc-page-title {
+      font-size: clamp(32px, 4vw, 48px);
+      font-weight: 800;
+      letter-spacing: -1.5px;
+      line-height: 1.05;
+      margin-bottom: 10px;
+    }
+    .doc-page-title em {
+      font-style: normal;
+      background: linear-gradient(135deg, var(--accent), var(--accent3));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .doc-page-sub {
+      font-size: 15px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      line-height: 1.7;
+    }
+
+    /* ── CARDS ───────────────────────── */
+    .doc-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 32px 32px 28px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .doc-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      transition: opacity 0.2s;
+      opacity: 0;
+    }
+    .doc-card:hover { border-color: rgba(91,142,255,0.25); }
+    .doc-card:hover::before { opacity: 1; }
+
+    .doc-card.accent-blue::before  { background: linear-gradient(90deg, var(--accent), var(--accent3)); }
+    .doc-card.accent-red::before   { background: linear-gradient(90deg, var(--accent2), #ff9a6b); }
+    .doc-card.accent-teal::before  { background: linear-gradient(90deg, var(--accent3), var(--accent)); }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .card-icon {
+      width: 38px; height: 38px;
+      border-radius: 8px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .card-title-wrap {}
+    .card-num {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+
+    .doc-card h1 {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      line-height: 1.2;
+    }
+
+    /* Prose */
+    .doc-card p {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.75;
+      font-family: var(--font-mono);
+      margin-bottom: 8px;
+    }
+    .doc-card p:last-child { margin-bottom: 0; }
+
+    /* Subheadings */
+    .doc-card h2 {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: 0.2px;
+      margin: 22px 0 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .doc-card h2::before {
+      content: '';
+      display: inline-block;
+      width: 3px; height: 14px;
+      background: var(--accent);
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    .doc-card h4 {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      text-align: center;
+      margin: 10px 0;
+    }
+
+    /* Lists */
+    .doc-card ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .doc-card ul li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      line-height: 1.6;
+      padding: 6px 10px;
+      border-radius: 5px;
+      border: 1px solid transparent;
+      transition: all 0.15s;
+    }
+    .doc-card ul li:hover {
+      background: var(--surface2);
+      border-color: var(--border);
+      color: var(--text);
+    }
+    .doc-card ul li::before {
+      content: '→';
+      color: var(--accent);
+      flex-shrink: 0;
+      font-size: 12px;
+      margin-top: 1px;
+    }
+
+    /* Feature grid inside card */
+    .feat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .feat-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 12px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 12px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      line-height: 1.5;
+      transition: all 0.15s;
+    }
+    .feat-item:hover {
+      border-color: rgba(91,142,255,0.3);
+      color: var(--text);
+    }
+    .feat-item::before {
+      content: '▸';
+      color: var(--accent3);
+      flex-shrink: 0;
+    }
+
+    /* Step list for Getting Started */
+    .steps-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .step-item {
+      display: flex;
+      gap: 16px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+      align-items: flex-start;
+    }
+    .step-item:last-child { border-bottom: none; }
+
+    .step-bubble {
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      background: rgba(91,142,255,0.15);
+      border: 1px solid rgba(91,142,255,0.3);
+      color: var(--accent);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .step-content {}
+    .step-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+    .step-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      line-height: 1.6;
+    }
+
+    /* OR divider */
+    .or-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 10px 0;
+    }
+    .or-divider::before, .or-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+    .or-text {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    /* inline code */
+    code {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      padding: 1px 6px;
+      border-radius: 3px;
+      color: var(--accent3);
+    }
+
+    /* ── FOOTER ──────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      padding: 22px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .footer-logo {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .footer-logo span { color: var(--accent2); }
+    .footer-copy {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+    .footer-links {
+      display: flex; gap: 20px;
+    }
+    .footer-links a {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-family: var(--font-mono);
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--text); }
+
+    /* ── RESPONSIVE ──────────────────── */
+    @media (max-width: 768px) {
+      nav { padding: 0 20px; }
+      .page-wrap { padding: 32px 20px 60px; flex-direction: column; gap: 32px; }
+      .sidebar { width: 100%; }
+      .sidebar-sticky { position: static; }
+      .sidebar-nav { flex-direction: row; flex-wrap: wrap; }
+      .doc-card { padding: 22px 18px; }
+      .feat-grid { grid-template-columns: 1fr; }
+      footer { padding: 20px; flex-direction: column; text-align: center; }
+    }
+
+    /* fade in */
+    .doc-card {
+      animation: fadeUp 0.5s ease both;
+    }
+    .doc-card:nth-child(1) { animation-delay: 0.05s; }
+    .doc-card:nth-child(2) { animation-delay: 0.12s; }
+    .doc-card:nth-child(3) { animation-delay: 0.19s; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
 </head>
 <body>
-    <div class="back">
-        <a href = "index.html">Back</a>
-    </div>
-    <div class="card">
-        <h1>Product overview</h1>
-        <p>Our platform includes a step above in online community + coding.</p>
-        <p>You can join community or join your friends to code in no time.</p>
-        <p>Ask FAQ's from community for your project.</p>
-    </div>
-    <div class="card">
-        <h1>Main features</h1>
-        <ul>
-            <li>Online coding</li>
-            <li>Run code in browser</li>
-            <li>Multiple programming languages</li>
-            <li>Ability to save projects in your local system</li>
-            <li>Share project</li>
-            <li>Give access to your friends to code on it</li>
-            <li>Secure coding</li>
-        </ul>
-    </div>
-    <div class="card">
-        <h1>Getting started</h1>
-        <h2>Create an account</h2>
-        <ul>
-            <li>Sign up using Gmail or Apple ID</li>
-            <h4>OR</h4>
-            <li>Use local {our project name} ID to sign up</li>
-        </ul>
-        <h2>Create your first project</h2>
-        <ul>
-            <li>Click "New project"</li>
-            <li>Choose language (Python, Java, C++, etc)</li>
-            <li>Type code then run</li>
-            <li>Output will appear below the coding board</li>
-        </ul>
 
+  <!-- NAV -->
+  <nav>
+    <a href="landing.html" class="nav-logo">Code<span>Forge</span></a>
+    <div class="nav-right">
+      <a href="index.html" class="nav-back">← Back to Editor</a>
     </div>
+  </nav>
+
+  <div class="page-wrap">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-sticky">
+        <div class="sidebar-label">// On this page</div>
+        <nav class="sidebar-nav">
+          <a href="#overview" class="sidebar-link active">
+            <span class="sidebar-icon">📋</span> Overview
+          </a>
+          <a href="#features" class="sidebar-link">
+            <span class="sidebar-icon">⚡</span> Features
+          </a>
+          <a href="#getting-started" class="sidebar-link">
+            <span class="sidebar-icon">🚀</span> Getting Started
+          </a>
+        </nav>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="doc-main">
+
+      <!-- Page header -->
+      <div class="doc-header">
+        <div class="doc-eyebrow">📖 Documentation</div>
+        <h1 class="doc-page-title">CodeForge <em>Docs</em></h1>
+        <p class="doc-page-sub">Everything you need to know to start coding, collaborating, and shipping with CodeForge.</p>
+      </div>
+
+      <!-- Card 1: Overview -->
+      <div class="doc-card accent-blue" id="overview">
+        <div class="card-header">
+          <div class="card-icon">📋</div>
+          <div class="card-title-wrap">
+            <div class="card-num">// 01</div>
+            <h1>Product Overview</h1>
+          </div>
+        </div>
+        <p>CodeForge is a real-time collaborative coding platform — a step above ordinary online editors. It combines a powerful in-browser IDE with live team collaboration tools.</p>
+        <p>Join a shared room and code with your friends or teammates instantly. No installs, no configuration, no accounts required.</p>
+        <p>Stuck on something? Your team is right there — in the same editor, on the same screen, at the same time.</p>
+      </div>
+
+      <!-- Card 2: Features -->
+      <div class="doc-card accent-teal" id="features">
+        <div class="card-header">
+          <div class="card-icon">⚡</div>
+          <div class="card-title-wrap">
+            <div class="card-num">// 02</div>
+            <h1>Main Features</h1>
+          </div>
+        </div>
+        <div class="feat-grid">
+          <div class="feat-item">Online coding editor</div>
+          <div class="feat-item">Run code in browser</div>
+          <div class="feat-item">Python, C++, C, Java</div>
+          <div class="feat-item">Save projects locally</div>
+          <div class="feat-item">Shareable room links</div>
+          <div class="feat-item">Grant editor access to friends</div>
+          <div class="feat-item">Password-protected rooms</div>
+          <div class="feat-item">Built-in live video (WebRTC)</div>
+        </div>
+      </div>
+
+      <!-- Card 3: Getting Started -->
+      <div class="doc-card accent-red" id="getting-started">
+        <div class="card-header">
+          <div class="card-icon">🚀</div>
+          <div class="card-title-wrap">
+            <div class="card-num">// 03</div>
+            <h1>Getting Started</h1>
+          </div>
+        </div>
+
+        <h2>Join or Create a Room</h2>
+        <div class="steps-list">
+          <div class="step-item">
+            <div class="step-bubble">1</div>
+            <div class="step-content">
+              <div class="step-title">Switch to Team Mode</div>
+              <div class="step-desc">Click the <code>Team</code> button in the top bar to open the room lobby.</div>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-bubble">2</div>
+            <div class="step-content">
+              <div class="step-title">Create a Room</div>
+              <div class="step-desc">Enter your name, optionally set a password, then click <code>Create Room</code>. Copy the share link.</div>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-bubble">3</div>
+            <div class="step-content">
+              <div class="step-title">— OR — Join a Room</div>
+              <div class="step-desc">Switch to the <code>Join Room</code> tab, paste the Room ID and password (if any), then click <code>Join</code>.</div>
+            </div>
+          </div>
+        </div>
+
+        <h2>Start Your First Project</h2>
+        <div class="steps-list">
+          <div class="step-item">
+            <div class="step-bubble">1</div>
+            <div class="step-content">
+              <div class="step-title">Choose a Language</div>
+              <div class="step-desc">Click any language pill — <code>Python</code>, <code>C++</code>, <code>C</code>, or <code>Java</code>. A starter template loads instantly.</div>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-bubble">2</div>
+            <div class="step-content">
+              <div class="step-title">Write & Run</div>
+              <div class="step-desc">Type your code, add optional <code>stdin</code> input, then press <code>▶ Run</code> or hit <code>Ctrl + Enter</code>.</div>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-bubble">3</div>
+            <div class="step-content">
+              <div class="step-title">See the Output</div>
+              <div class="step-desc">Results appear instantly in the Output panel below the editor. Errors are highlighted in red.</div>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-bubble">4</div>
+            <div class="step-content">
+              <div class="step-title">Collaborate</div>
+              <div class="step-desc">In Team Mode, the host controls the editor. Use <code>🙋 Request Editor Access</code> to ask for a turn, or the host can assign it directly.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">Code<span>Forge</span></div>
+    <div class="footer-copy">Built by M. Rabi. K. · 2025</div>
+    <div class="footer-links">
+      <a href="index.html">Editor</a>
+      <a href="landing.html">Home</a>
+    </div>
+  </footer>
+
+  <script>
+    // Sidebar active link on scroll
+    const sections = document.querySelectorAll('#overview, #features, #getting-started');
+    const links = document.querySelectorAll('.sidebar-link');
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          links.forEach(l => l.classList.remove('active'));
+          const active = document.querySelector(`.sidebar-link[href="#${e.target.id}"]`);
+          if (active) active.classList.add('active');
+        }
+      });
+    }, { threshold: 0.5 });
+
+    sections.forEach(s => observer.observe(s));
+  </script>
 </body>
 </html>
