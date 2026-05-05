@@ -1,929 +1,997 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CodeForge — Where Code Gets Built</title>
-
-  <!-- SEO -->
-  <meta name="description" content="CodeForge — Real-time collaborative coding platform. Write, run, and ship code together in Python, C++, Java and more. Built-in video, live sync, and instant execution."/>
-  <meta name="keywords" content="collaborative coding, real-time code editor, online IDE, pair programming, team coding, Python editor, C++ online, Java online"/>
-  <meta name="author" content="M. Rabi. K."/>
-  <meta name="robots" content="index, follow"/>
-  <meta name="theme-color" content="#0e0d0b"/>
-
-  <!-- Open Graph -->
-  <meta property="og:type"        content="website"/>
-  <meta property="og:url"         content="https://yourdomain.com/"/>
-  <meta property="og:title"       content="CodeForge — Where Code Gets Built"/>
-  <meta property="og:description" content="Real-time collaborative coding with live video, instant execution, and team rooms. No installs. Just open a tab and start building together."/>
-  <meta property="og:image"       content="https://yourdomain.com/og-image.png"/>
-  <meta property="og:site_name"   content="CodeForge"/>
-
-  <!-- Twitter -->
-  <meta name="twitter:card"        content="summary_large_image"/>
-  <meta name="twitter:title"       content="CodeForge — Where Code Gets Built"/>
-  <meta name="twitter:description" content="Real-time collaborative coding with live video, instant execution, and team rooms."/>
-  <meta name="twitter:image"       content="https://yourdomain.com/og-image.png"/>
-
-  <!-- Fonts -->
+  <meta name="description" content="Real-time collaborative coding platform. Write, run, and ship code together." />
+  <link rel="icon" type="image/png" href="logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=JetBrains+Mono:wght@300;400;500;700&family=Barlow+Condensed:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --paper:    #f2ede6;
-      --paper2:   #e8e1d5;
-      --paper3:   #ddd6cc;
-      --ink:      #0e0d0b;
-      --ink2:     #2a2720;
-      --red:      #c8321a;
-      --red2:     #9e2010;
-      --steel:    #6b6560;
-      --rule:     #c8c0b4;
-      --rule2:    #a09890;
-      --ff-serif: 'Playfair Display', serif;
-      --ff-mono:  'JetBrains Mono', monospace;
-      --ff-cond:  'Barlow Condensed', sans-serif;
+      --bg: #0e0d0b;
+      --surface: #141310;
+      --surface2: #1c1a17;
+      --border: #2a2620;
+      --accent: #5b8eff;
+      --accent2: #ff6b6b;
+      --accent3: #4ecdc4;
+      --gold: #f5c842;
+      --text: #e8e2d8;
+      --text-muted: #6b6458;
+      --font-mono: 'Space Mono', monospace;
+      --font-display: 'Syne', sans-serif;
     }
 
     html { scroll-behavior: smooth; }
 
     body {
-      background: var(--paper);
-      color: var(--ink);
-      font-family: var(--ff-mono);
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-display);
       overflow-x: hidden;
+      cursor: default;
     }
 
-    /* Noise texture */
+    /* ── NOISE OVERLAY ─────────────────────── */
     body::before {
       content: '';
-      position: fixed; inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-      pointer-events: none; z-index: 1000;
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1000;
+      opacity: 0.4;
+    }
+
+    /* ── NAV ───────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 48px;
+      height: 60px;
+      background: rgba(14, 13, 11, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .nav-logo {
+      font-family: var(--font-mono);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: -0.5px;
+    }
+    .nav-logo span { color: var(--accent2); }
+
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+
+    .nav-cta {
+      padding: 7px 20px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      font-family: var(--font-display);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .nav-cta:hover {
+      background: #4070ee;
+      transform: translateY(-1px);
+    }
+
+    /* ── HERO ──────────────────────────────── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      padding: 100px 48px 60px;
+      overflow: hidden;
     }
 
     /* Grid background */
-    .grid-bg {
-      position: fixed; inset: 0;
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
       background-image:
-        linear-gradient(var(--rule) 1px, transparent 1px),
-        linear-gradient(90deg, var(--rule) 1px, transparent 1px);
-      background-size: 64px 64px;
-      opacity: 0.18; pointer-events: none; z-index: 0;
+        linear-gradient(rgba(91,142,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(91,142,255,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black 20%, transparent 80%);
     }
 
-    /* Custom cursor */
-    #cursor {
-      position: fixed; width: 8px; height: 8px;
-      background: var(--red); border-radius: 50%;
-      pointer-events: none; z-index: 9999;
-      transform: translate(-50%, -50%);
-      transition: transform 0.1s, background 0.2s;
+    /* Glow blobs */
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+      animation: drift 8s ease-in-out infinite;
     }
-    #cursor-ring {
-      position: fixed; width: 28px; height: 28px;
-      border: 1.5px solid var(--ink); border-radius: 50%;
-      pointer-events: none; z-index: 9998;
-      transform: translate(-50%, -50%);
-      transition: width 0.2s, height 0.2s, border-color 0.2s;
+    .blob-1 {
+      width: 600px; height: 400px;
+      background: rgba(91,142,255,0.08);
+      top: -100px; left: -100px;
+      animation-delay: 0s;
     }
-    a:hover ~ #cursor, button:hover ~ #cursor { transform: translate(-50%,-50%) scale(2); }
-
-    /* Canvas background */
-    #bg-canvas {
-      position: fixed; inset: 0;
-      width: 100%; height: 100%;
-      pointer-events: none; z-index: 1;
+    .blob-2 {
+      width: 500px; height: 400px;
+      background: rgba(255,107,107,0.06);
+      bottom: -100px; right: -50px;
+      animation-delay: -4s;
     }
-
-    /* ── NAV ─────────────────────────────────────────── */
-    nav {
-      position: fixed; top: 0; left: 0; right: 0;
-      z-index: 500;
-      display: flex; align-items: stretch; height: 56px;
-      border-bottom: 2px solid var(--ink);
-      background: var(--paper);
-      transition: background 0.3s;
+    .blob-3 {
+      width: 300px; height: 300px;
+      background: rgba(78,205,196,0.05);
+      top: 40%; left: 50%;
+      animation-delay: -2s;
     }
 
-    nav.scrolled { background: rgba(242,237,230,0.97); backdrop-filter: blur(8px); }
-
-    .nav-logo-block {
-      display: flex; align-items: center;
-      padding: 0 28px; border-right: 2px solid var(--ink);
-      gap: 10px; text-decoration: none;
+    @keyframes drift {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(30px, -20px) scale(1.05); }
+      66% { transform: translate(-20px, 15px) scale(0.95); }
     }
 
-    .nav-logo-mark {
-      width: 28px; height: 28px; background: var(--ink);
-      display: flex; align-items: center; justify-content: center;
-      font-family: var(--ff-serif); font-size: 14px; font-weight: 900; color: var(--paper);
+    .hero-inner {
+      max-width: 900px;
+      text-align: center;
+      position: relative;
+      z-index: 2;
     }
 
-    .nav-logo-text {
-      font-family: var(--ff-cond); font-size: 18px; font-weight: 800;
-      letter-spacing: 3px; text-transform: uppercase; color: var(--ink);
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(91,142,255,0.1);
+      border: 1px solid rgba(91,142,255,0.2);
+      border-radius: 20px;
+      padding: 5px 14px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--accent);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 28px;
+      animation: fadeUp 0.6s ease both;
     }
-    .nav-logo-text .r { color: var(--red); }
-
-    .nav-links {
-      display: flex; align-items: stretch; margin-left: auto;
+    .eyebrow-dot {
+      width: 6px; height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: pulse 2s ease infinite;
     }
-    .nav-links a {
-      display: flex; align-items: center; padding: 0 24px;
-      font-family: var(--ff-mono); font-size: 10px;
-      letter-spacing: 2px; text-transform: uppercase;
-      color: var(--steel); text-decoration: none;
-      border-left: 1px solid var(--rule);
-      transition: color 0.2s, background 0.2s;
-    }
-    .nav-links a:hover { color: var(--ink); background: var(--paper2); }
-    .nav-links .nav-cta {
-      background: var(--ink); color: var(--paper);
-      border-left: 2px solid var(--ink);
-    }
-    .nav-links .nav-cta:hover { background: var(--red); color: var(--paper); }
-
-    /* ── HERO ────────────────────────────────────────── */
-    #hero {
-      position: relative; z-index: 2;
-      min-height: 100vh;
-      display: grid; grid-template-columns: 1fr 1fr;
-      border-bottom: 2px solid var(--ink);
-      padding-top: 56px;
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.6); }
     }
 
-    .hero-left {
-      padding: 80px 60px;
-      border-right: 2px solid var(--ink);
-      display: flex; flex-direction: column; justify-content: center;
+    .hero-title {
+      font-size: clamp(56px, 9vw, 96px);
+      font-weight: 800;
+      line-height: 0.95;
+      letter-spacing: -3px;
+      margin-bottom: 24px;
+      animation: fadeUp 0.6s 0.1s ease both;
     }
 
-    .hero-label {
-      font-family: var(--ff-mono); font-size: 10px;
-      letter-spacing: 4px; text-transform: uppercase; color: var(--red);
-      margin-bottom: 36px; display: flex; align-items: center; gap: 10px;
-      opacity: 0; animation: fadeIn 0.6s ease 0.2s forwards;
-    }
-    .hero-label::before {
-      content: ''; display: block; width: 24px; height: 2px; background: var(--red);
-    }
-
-    .hero-h1 {
-      font-family: var(--ff-serif);
-      font-size: clamp(52px, 7vw, 96px);
-      font-weight: 900; line-height: 0.92; letter-spacing: -2px; color: var(--ink);
-      opacity: 0; animation: slideRight 0.8s cubic-bezier(0.16,1,0.3,1) 0.3s forwards;
-    }
-    .hero-h1 .italic  { font-style: italic; color: var(--red); }
-    .hero-h1 .outline { -webkit-text-stroke: 2px var(--ink); color: transparent; }
-
-    .hero-meta {
-      margin-top: 48px; padding-top: 32px;
-      border-top: 1px solid var(--rule);
-      opacity: 0; animation: fadeIn 0.8s ease 0.7s forwards;
-    }
-    .hero-meta p { font-size: 12px; line-height: 2; color: var(--steel); max-width: 380px; }
-    .hero-meta strong { color: var(--ink); font-weight: 500; }
-
-    .hero-buttons { display: flex; gap: 12px; margin-top: 36px; flex-wrap: wrap; }
-
-    .btn-ink {
-      display: inline-flex; align-items: center; gap: 10px;
-      background: var(--ink); color: var(--paper);
-      font-family: var(--ff-mono); font-size: 11px;
-      letter-spacing: 2px; text-transform: uppercase;
-      padding: 14px 28px; text-decoration: none;
-      border: 2px solid var(--ink); transition: background 0.2s, border-color 0.2s;
-    }
-    .btn-ink:hover { background: var(--red); border-color: var(--red); }
-
-    .btn-outline {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: transparent; color: var(--ink);
-      font-family: var(--ff-mono); font-size: 11px;
-      letter-spacing: 2px; text-transform: uppercase;
-      padding: 14px 28px; text-decoration: none;
-      border: 2px solid var(--rule2); transition: border-color 0.2s;
-    }
-    .btn-outline:hover { border-color: var(--ink); }
-
-    .hero-right {
-      display: flex; flex-direction: column;
-      justify-content: space-between; overflow: hidden;
+    .title-line-1 { display: block; color: var(--text); }
+    .title-line-2 {
+      display: block;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent3) 60%, var(--accent2) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
-    .hero-right-top {
-      flex: 1; display: flex; align-items: center;
-      justify-content: center; position: relative; padding: 60px;
+    .hero-sub {
+      font-size: 18px;
+      color: var(--text-muted);
+      max-width: 560px;
+      margin: 0 auto 44px;
+      line-height: 1.7;
+      font-weight: 400;
+      animation: fadeUp 0.6s 0.2s ease both;
     }
 
-    .hero-bg-num {
-      font-family: var(--ff-cond); font-size: clamp(140px, 20vw, 300px);
-      font-weight: 800; color: transparent;
-      -webkit-text-stroke: 2px var(--rule); line-height: 1;
-      user-select: none;
-      opacity: 0; animation: fadeIn 1s ease 0.5s forwards;
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+      animation: fadeUp 0.6s 0.3s ease both;
     }
 
-    .hero-badge {
-      position: absolute; top: 36px; right: 36px;
-      width: 90px; height: 90px; border: 2px solid var(--ink); border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-family: var(--ff-mono); font-size: 7.5px; letter-spacing: 1.5px;
-      text-transform: uppercase; color: var(--ink); text-align: center; line-height: 1.7;
-      animation: spin 20s linear infinite;
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 32px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      font-family: var(--font-display);
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
     }
-    .hero-badge-inner {
-      position: absolute; top: 50%; left: 50%;
-      transform: translate(-50%,-50%);
-      animation: spinReverse 20s linear infinite;
-      font-size: 18px; font-family: var(--ff-serif); font-weight: 700; color: var(--red);
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+      opacity: 0;
+      transition: opacity 0.2s;
     }
+    .btn-primary:hover::before { opacity: 1; }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(91,142,255,0.35); }
 
-    @keyframes spin        { to { transform: rotate(360deg); } }
-    @keyframes spinReverse { from { transform: translate(-50%,-50%) rotate(0deg); } to { transform: translate(-50%,-50%) rotate(-360deg); } }
-
-    .hero-right-stats { display: grid; grid-template-columns: 1fr 1fr; border-top: 2px solid var(--ink); }
-
-    .hero-stat { padding: 28px 36px; border-right: 1px solid var(--rule); }
-    .hero-stat:nth-child(even) { border-right: none; }
-
-    .hero-stat-num {
-      font-family: var(--ff-cond); font-size: 42px; font-weight: 800;
-      line-height: 1; color: var(--ink); display: block;
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 32px;
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      font-family: var(--font-display);
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
     }
-    .hero-stat-num .r { color: var(--red); }
-    .hero-stat-label {
-      font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
-      color: var(--steel); display: block; margin-top: 4px;
-    }
-
-    /* ── MARQUEE ─────────────────────────────────────── */
-    .marquee-strip {
-      position: relative; z-index: 2; background: var(--ink);
-      overflow: hidden; padding: 14px 0;
-    }
-    .marquee-track {
-      display: flex; animation: marquee 30s linear infinite; white-space: nowrap;
-    }
-    .marquee-item {
-      font-family: var(--ff-cond); font-size: 13px; font-weight: 700;
-      letter-spacing: 5px; text-transform: uppercase; color: var(--paper2);
-      padding: 0 36px; display: flex; align-items: center; gap: 36px;
-    }
-    .marquee-sep { color: var(--red); }
-    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-
-    /* ── FEATURES ────────────────────────────────────── */
-    #features { position: relative; z-index: 2; border-bottom: 2px solid var(--ink); }
-
-    .features-header {
-      display: grid; grid-template-columns: auto 1fr; border-bottom: 2px solid var(--ink);
-    }
-    .features-num-col {
-      padding: 60px 48px; border-right: 2px solid var(--ink);
-      display: flex; flex-direction: column; justify-content: space-between; min-width: 120px;
-    }
-    .rotated-label {
-      writing-mode: vertical-rl; text-orientation: mixed; transform: rotate(180deg);
-      font-family: var(--ff-mono); font-size: 9px; letter-spacing: 4px;
-      text-transform: uppercase; color: var(--steel);
-    }
-    .section-big-num { font-family: var(--ff-cond); font-size: 80px; font-weight: 800; color: var(--rule); line-height: 1; }
-    .features-title-col { padding: 60px 64px; display: flex; flex-direction: column; justify-content: flex-end; }
-
-    .section-tag { font-family: var(--ff-mono); font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--red); margin-bottom: 20px; }
-
-    .section-h2 { font-family: var(--ff-serif); font-size: clamp(38px,5vw,68px); font-weight: 900; line-height: 0.95; letter-spacing: -1.5px; }
-    .section-h2 em { font-style: italic; color: var(--red); }
-
-    .features-grid { display: grid; grid-template-columns: repeat(3,1fr); }
-
-    .feat {
-      padding: 52px 48px; border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
-      transition: background 0.25s;
-    }
-    .feat:nth-child(3n)        { border-right: none; }
-    .feat:nth-last-child(-n+3) { border-bottom: none; }
-    .feat:hover { background: var(--paper2); }
-
-    .feat-num {
-      font-family: var(--ff-cond); font-size: 11px; font-weight: 700;
-      letter-spacing: 3px; color: var(--rule2); margin-bottom: 20px;
-      display: flex; align-items: center; gap: 8px;
-    }
-    .feat-num::after { content: ''; flex: 1; height: 1px; background: var(--rule); }
-    .feat-icon { font-size: 24px; margin-bottom: 16px; display: block; }
-    .feat-title { font-family: var(--ff-serif); font-size: 22px; font-weight: 700; line-height: 1.1; margin-bottom: 12px; }
-    .feat-desc  { font-size: 11px; line-height: 2; color: var(--steel); }
-    .feat-tag {
-      display: inline-block; margin-top: 20px;
-      font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
-      padding: 3px 8px; background: var(--ink); color: var(--paper);
+    .btn-ghost:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      transform: translateY(-2px);
     }
 
-    /* ── CODE PREVIEW ────────────────────────────────── */
-    #preview {
-      position: relative; z-index: 2;
-      display: grid; grid-template-columns: 1fr 1fr;
-      border-bottom: 2px solid var(--ink);
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    .preview-text {
-      padding: 80px 60px; border-right: 2px solid var(--ink);
-      display: flex; flex-direction: column; justify-content: center;
-    }
-    .preview-list { margin-top: 36px; display: flex; flex-direction: column; gap: 12px; }
-    .preview-list-item {
-      display: flex; align-items: center; gap: 12px;
-      font-size: 11px; color: var(--steel);
-    }
-    .preview-list-item::before { content: '→'; color: var(--red); font-size: 14px; }
-
-    .preview-editor-col {
-      padding: 48px; background: var(--ink2);
-      display: flex; align-items: center;
+    /* ── EDITOR PREVIEW ───────────────────── */
+    .preview-wrap {
+      max-width: 900px;
+      margin: 20px auto 0;
+      padding: 0 48px;
+      animation: fadeUp 0.8s 0.5s ease both;
+      position: relative;
+      z-index: 2;
     }
 
-    .editor-window { width: 100%; border: 1px solid #3a3630; font-family: var(--ff-mono); font-size: 12px; line-height: 1.8; }
-    .editor-bar {
-      background: #1e1c18; padding: 10px 16px;
-      display: flex; align-items: center; gap: 6px; border-bottom: 1px solid #3a3630;
+    .editor-mock {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 40px 100px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.03);
     }
-    .e-dot { width: 10px; height: 10px; border-radius: 50%; }
-    .e-red { background: #ff5f57; } .e-yel { background: #febc2e; } .e-grn { background: #28c840; }
-    .e-filename { margin-left: 10px; font-size: 10px; color: #6b6560; letter-spacing: 1px; }
-    .editor-code { padding: 24px; overflow-x: auto; background: #0e0d0b; }
-    .editor-code pre { white-space: pre; }
 
-    .ck { color: #e06c75; } .cf { color: #61afef; } .cs { color: #98c379; }
-    .cn { color: #d19a66; } .cc { color: #5c6370; font-style: italic; } .co { color: #56b6c2; }
-    .blink { display: inline-block; width: 2px; height: 13px; background: #61afef; vertical-align: middle; animation: bl 1s step-end infinite; }
-    @keyframes bl { 0%,100%{opacity:1} 50%{opacity:0} }
+    .mock-titlebar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+    }
+    .mock-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .mock-dot:nth-child(1) { background: #ff5f57; }
+    .mock-dot:nth-child(2) { background: #febc2e; }
+    .mock-dot:nth-child(3) { background: #28c840; }
+    .mock-filename {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-left: 8px;
+    }
 
-    /* ── STATS ───────────────────────────────────────── */
-    #stats {
-      position: relative; z-index: 2; background: var(--ink);
-      display: grid; grid-template-columns: repeat(3,1fr);
-      border-bottom: 2px solid var(--ink);
+    .mock-body {
+      display: grid;
+      grid-template-columns: 40px 1fr 220px;
+      min-height: 280px;
+    }
+
+    .mock-gutter {
+      background: rgba(0,0,0,0.2);
+      border-right: 1px solid var(--border);
+      padding: 16px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+    .ln {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: right;
+      padding: 0 10px;
+      line-height: 22px;
+      opacity: 0.4;
+    }
+
+    .mock-code {
+      padding: 16px 20px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      line-height: 22px;
+      overflow: hidden;
+    }
+
+    .code-line { display: flex; gap: 6px; white-space: nowrap; }
+    .kw { color: #c678dd; }
+    .fn { color: #61afef; }
+    .str { color: #98c379; }
+    .cm { color: #5c6370; font-style: italic; }
+    .num { color: #d19a66; }
+    .op { color: #56b6c2; }
+    .indent { display: inline-block; width: 24px; }
+    .cursor {
+      display: inline-block;
+      width: 2px;
+      height: 14px;
+      background: var(--accent);
+      animation: blink 1.1s step-end infinite;
+      vertical-align: middle;
+      margin-left: 1px;
+    }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+    .mock-sidebar {
+      background: var(--surface2);
+      border-left: 1px solid var(--border);
+      padding: 12px;
+    }
+    .sidebar-label {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+    .member-mock {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 8px;
+      font-size: 11px;
+      font-family: var(--font-mono);
+    }
+    .m-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    .m-crown { font-size: 10px; }
+
+    .output-mock {
+      border-top: 1px solid var(--border);
+      padding: 8px 16px 10px 20px;
+      grid-column: 1 / 3;
+    }
+    .out-label {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      font-family: var(--font-mono);
+    }
+    .out-line {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: #4ade80;
+      line-height: 1.7;
+    }
+
+    /* ── STATS BAR ────────────────────────── */
+    .stats-bar {
+      display: flex;
+      justify-content: center;
+      gap: 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      overflow: hidden;
     }
 
     .stat-item {
-      padding: 48px 52px; border-right: 1px solid #2a2720;
-      display: flex; flex-direction: column; gap: 8px;
+      flex: 1;
+      max-width: 220px;
+      padding: 28px 24px;
+      text-align: center;
+      border-right: 1px solid var(--border);
+      transition: background 0.2s;
     }
     .stat-item:last-child { border-right: none; }
+    .stat-item:hover { background: var(--surface2); }
 
     .stat-num {
-      font-family: var(--ff-cond); font-size: 64px; font-weight: 800;
-      line-height: 1; color: var(--paper);
+      font-size: 36px;
+      font-weight: 800;
+      font-family: var(--font-mono);
+      background: linear-gradient(135deg, var(--accent), var(--accent3));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+      margin-bottom: 4px;
     }
-    .stat-num .r { color: var(--red); }
-    .stat-label { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: #5a5650; }
-
-    /* ── HOW IT WORKS ────────────────────────────────── */
-    #how { position: relative; z-index: 2; border-bottom: 2px solid var(--ink); }
-
-    .how-header {
-      padding: 60px 64px; border-bottom: 2px solid var(--ink);
-      display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 24px;
-    }
-
-    .how-steps { display: grid; grid-template-columns: repeat(3,1fr); }
-    .how-step {
-      padding: 56px 52px; border-right: 1px solid var(--rule);
-      position: relative; transition: background 0.25s;
-    }
-    .how-step:last-child { border-right: none; }
-    .how-step:hover { background: var(--paper2); }
-
-    .how-step-num { font-family: var(--ff-cond); font-size: 96px; font-weight: 800; line-height: 0.9; color: var(--rule); margin-bottom: 28px; display: block; }
-    .how-step-title { font-family: var(--ff-serif); font-size: 26px; font-weight: 700; margin-bottom: 14px; }
-    .how-step-desc  { font-size: 11px; line-height: 2; color: var(--steel); }
-    .how-step-arrow { position: absolute; top: 56px; right: -18px; font-size: 24px; color: var(--rule2); z-index: 1; }
-    .how-step:last-child .how-step-arrow { display: none; }
-
-    /* ── TESTIMONIALS ────────────────────────────────── */
-    #testimonials { position: relative; z-index: 2; border-bottom: 2px solid var(--ink); }
-
-    .testimonials-header { padding: 60px 64px; border-bottom: 2px solid var(--ink); }
-    .testimonials-grid { display: grid; grid-template-columns: repeat(3,1fr); }
-
-    .testimonial {
-      padding: 48px 44px; border-right: 1px solid var(--rule); transition: background 0.2s;
-    }
-    .testimonial:last-child { border-right: none; }
-    .testimonial:hover { background: var(--paper2); }
-
-    .t-quote-mark { font-family: var(--ff-serif); font-size: 72px; line-height: 0.7; color: var(--red); margin-bottom: 16px; display: block; }
-    .t-quote { font-family: var(--ff-serif); font-style: italic; font-size: 15px; line-height: 1.7; color: var(--ink2); margin-bottom: 24px; }
-    .t-rule { height: 1px; background: var(--rule); margin-bottom: 20px; }
-    .t-name { font-family: var(--ff-mono); font-size: 11px; font-weight: 700; color: var(--ink); display: block; }
-    .t-role { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--steel); margin-top: 3px; display: block; }
-
-    /* ── CTA ─────────────────────────────────────────── */
-    #cta {
-      position: relative; z-index: 2; background: var(--red);
-      display: grid; grid-template-columns: 1fr 1fr;
-      border-bottom: 2px solid var(--ink);
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 600;
+      letter-spacing: 0.5px;
     }
 
-    .cta-left { padding: 80px 64px; border-right: 2px solid var(--red2); }
-    .cta-h2 {
-      font-family: var(--ff-serif); font-size: clamp(42px,5.5vw,80px);
-      font-weight: 900; line-height: 0.95; letter-spacing: -2px;
-      color: var(--paper); margin-bottom: 32px;
+    /* ── FEATURES ─────────────────────────── */
+    .section {
+      padding: 100px 48px;
+      max-width: 1080px;
+      margin: 0 auto;
     }
-    .cta-h2 .outline { -webkit-text-stroke: 2px var(--paper); color: transparent; }
-    .cta-sub { font-size: 12px; line-height: 2; color: rgba(242,237,230,0.7); max-width: 340px; margin-bottom: 40px; }
 
-    .btn-paper {
-      display: inline-flex; align-items: center; gap: 10px;
-      background: var(--paper); color: var(--ink);
-      font-family: var(--ff-mono); font-size: 11px;
-      letter-spacing: 2px; text-transform: uppercase;
-      padding: 16px 32px; text-decoration: none;
-      border: 2px solid var(--paper); font-weight: 700; transition: background 0.2s, color 0.2s;
+    .section-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--accent);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 14px;
     }
-    .btn-paper:hover { background: transparent; color: var(--paper); }
 
-    .cta-right { padding: 80px 64px; display: flex; flex-direction: column; justify-content: center; }
-    .cta-list { list-style: none; display: flex; flex-direction: column; gap: 16px; }
-    .cta-list li {
-      display: flex; align-items: flex-start; gap: 14px;
-      font-size: 12px; line-height: 1.7; color: rgba(242,237,230,0.8);
-      padding-bottom: 16px; border-bottom: 1px solid var(--red2);
+    .section-title {
+      font-size: clamp(32px, 4vw, 52px);
+      font-weight: 800;
+      letter-spacing: -1.5px;
+      line-height: 1.1;
+      margin-bottom: 60px;
     }
-    .cta-list li:last-child { border-bottom: none; padding-bottom: 0; }
-    .cta-list li::before { content: '→'; color: var(--paper); flex-shrink: 0; font-weight: 700; }
-    .cta-list strong { color: var(--paper); font-weight: 500; }
+    .section-title em {
+      font-style: normal;
+      color: var(--accent);
+    }
 
-    /* ── FOOTER ──────────────────────────────────────── */
-    footer { position: relative; z-index: 2; background: var(--ink); color: var(--paper); }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
 
-    .footer-top { display: grid; grid-template-columns: 1fr auto 1fr; border-bottom: 1px solid #2a2720; }
-    .footer-brand { padding: 48px 52px; border-right: 1px solid #2a2720; }
-    .footer-logo { font-family: var(--ff-cond); font-size: 28px; font-weight: 800; letter-spacing: 4px; text-transform: uppercase; color: var(--paper); }
-    .footer-logo .r { color: var(--red); }
-    .footer-tagline { font-size: 10px; color: #5a5650; letter-spacing: 2px; text-transform: uppercase; margin-top: 8px; display: block; }
+    .feat-card {
+      background: var(--surface);
+      padding: 32px 28px;
+      transition: background 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .feat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent3));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s ease;
+    }
+    .feat-card:hover { background: var(--surface2); }
+    .feat-card:hover::before { transform: scaleX(1); }
 
-    .footer-nav { padding: 48px 64px; display: flex; align-items: center; gap: 40px; border-right: 1px solid #2a2720; }
-    .footer-nav a { font-family: var(--ff-mono); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: #5a5650; text-decoration: none; transition: color 0.2s; }
-    .footer-nav a:hover { color: var(--paper); }
+    .feat-icon {
+      font-size: 28px;
+      margin-bottom: 14px;
+      display: block;
+    }
+    .feat-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: -0.3px;
+    }
+    .feat-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      font-family: var(--font-mono);
+    }
 
-    .footer-founder { padding: 48px 52px; display: flex; flex-direction: column; justify-content: center; align-items: flex-end; text-align: right; }
-    .footer-founder-name { font-family: var(--ff-serif); font-style: italic; font-size: 18px; color: var(--paper); }
-    .footer-founder-role { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: #5a5650; margin-top: 4px; }
+    /* ── LANGUAGES ────────────────────────── */
+    .langs-section {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 70px 48px;
+    }
 
-    .footer-bottom { padding: 20px 52px; display: flex; align-items: center; justify-content: space-between; }
-    .footer-copy { font-size: 10px; color: #3a3630; letter-spacing: 1.5px; }
-    .footer-copy span { color: var(--red); }
+    .langs-inner {
+      max-width: 1080px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 60px;
+      flex-wrap: wrap;
+    }
 
-    /* ── Scroll reveal ───────────────────────────────── */
-    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
-    .reveal.in { opacity: 1; transform: none; }
+    .langs-text { flex: 1; min-width: 260px; }
+    .langs-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      flex: 1;
+      min-width: 260px;
+    }
 
-    /* ── Keyframes ───────────────────────────────────── */
-    @keyframes fadeIn    { from{opacity:0} to{opacity:1} }
-    @keyframes slideRight { from{opacity:0;transform:translateX(-32px)} to{opacity:1;transform:none} }
+    .lang-tag {
+      padding: 8px 18px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-muted);
+      transition: all 0.2s;
+      cursor: default;
+    }
+    .lang-tag:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(91,142,255,0.08);
+    }
+    .lang-tag.highlight {
+      border-color: var(--accent3);
+      color: var(--accent3);
+      background: rgba(78,205,196,0.08);
+    }
 
-    /* ── Responsive ──────────────────────────────────── */
-    @media (max-width: 900px) {
-      #hero, #preview, #cta { grid-template-columns: 1fr; }
-      .hero-left, .preview-text, .cta-left { border-right: none; border-bottom: 2px solid var(--ink); }
-      .features-grid, .how-steps, .testimonials-grid, #stats { grid-template-columns: 1fr; }
-      .feat, .how-step, .testimonial, .stat-item { border-right: none; }
-      .nav-links a:not(.nav-cta) { display: none; }
-      .hero-left, .preview-text, .cta-left, .cta-right { padding: 56px 28px; }
-      .features-title-col, .how-header, .testimonials-header { padding: 40px 28px; }
-      .feat, .how-step, .testimonial { padding: 40px 28px; }
-      .footer-top { grid-template-columns: 1fr; }
-      .footer-brand, .footer-nav, .footer-founder { border-right: none; border-bottom: 1px solid #2a2720; padding: 32px 28px; }
-      .footer-founder { align-items: flex-start; text-align: left; }
-      .footer-bottom { padding: 16px 28px; flex-direction: column; gap: 8px; text-align: center; }
-      .footer-nav { flex-wrap: wrap; gap: 20px; }
+    /* ── HOW IT WORKS ─────────────────────── */
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+    }
+
+    .step {
+      position: relative;
+    }
+    .step-num {
+      font-family: var(--font-mono);
+      font-size: 60px;
+      font-weight: 700;
+      color: var(--surface2);
+      line-height: 1;
+      margin-bottom: 12px;
+      user-select: none;
+    }
+    .step-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: -0.3px;
+    }
+    .step-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.7;
+      font-family: var(--font-mono);
+    }
+
+    /* connector line */
+    .step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 30px; right: -16px;
+      width: 32px; height: 1px;
+      background: linear-gradient(90deg, var(--border), transparent);
+    }
+
+    /* ── CTA SECTION ──────────────────────── */
+    .cta-section {
+      padding: 100px 48px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(91,142,255,0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .cta-inner {
+      max-width: 600px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+    }
+
+    .cta-title {
+      font-size: clamp(38px, 5vw, 60px);
+      font-weight: 800;
+      letter-spacing: -2px;
+      line-height: 1.05;
+      margin-bottom: 18px;
+    }
+
+    .cta-sub {
+      font-size: 16px;
+      color: var(--text-muted);
+      margin-bottom: 36px;
+      line-height: 1.6;
+      font-family: var(--font-mono);
+    }
+
+    .btn-launch {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 40px;
+      background: linear-gradient(135deg, var(--accent) 0%, #7b9fff 100%);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.25s;
+      box-shadow: 0 8px 32px rgba(91,142,255,0.25);
+    }
+    .btn-launch:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 16px 48px rgba(91,142,255,0.4);
+    }
+    .btn-launch svg { transition: transform 0.2s; }
+    .btn-launch:hover svg { transform: translateX(4px); }
+
+    /* ── FOOTER ───────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      padding: 28px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .footer-logo {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .footer-logo span { color: var(--accent2); }
+
+    .footer-copy {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 24px;
+    }
+    .footer-links a {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-family: var(--font-mono);
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--text); }
+
+    /* ── RESPONSIVE ───────────────────────── */
+    @media (max-width: 768px) {
+      nav { padding: 0 20px; }
+      .nav-links { display: none; }
+      .hero { padding: 100px 24px 40px; }
+      .preview-wrap { padding: 0 24px; }
+      .section { padding: 60px 24px; }
+      .features-grid { grid-template-columns: 1fr; }
+      .steps-grid { grid-template-columns: 1fr; }
+      .step::after { display: none; }
+      .stats-bar { flex-wrap: wrap; }
+      .langs-section { padding: 50px 24px; }
+      .langs-inner { gap: 32px; }
+      .cta-section { padding: 70px 24px; }
+      footer { padding: 24px; flex-direction: column; text-align: center; }
+      .mock-sidebar { display: none; }
+      .mock-body { grid-template-columns: 40px 1fr; }
+    }
+
+    /* scroll reveal */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
     }
   </style>
 </head>
 <body>
-<div class="grid-bg"></div>
-<div id="cursor"></div>
-<div id="cursor-ring"></div>
-<canvas id="bg-canvas"></canvas>
 
-<!-- ══ NAV ═══════════════════════════════════════════════════ -->
-<nav id="navbar">
-  <a class="nav-logo-block" href="/">
-    <div class="nav-logo-mark">CF</div>
-    <span class="nav-logo-text">CODE<span class="r">FORGE</span></span>
-  </a>
-  <div class="nav-links">
-    <a href="#features">Features</a>
-    <a href="#how">How It Works</a>
-    <a href="#testimonials">About</a>
-    <a class="nav-cta" href="index.html">Open Editor →</a>
-  </div>
-</nav>
-
-<!-- ══ HERO ══════════════════════════════════════════════════ -->
-<section id="hero">
-  <div class="hero-left">
-    <div class="hero-label">Est. 2026 · Built for developers</div>
-    <h1 class="hero-h1">
-      WHERE<br>
-      <span class="italic">CODE</span><br>
-      <span class="outline">GETS BUILT</span>
-    </h1>
-    <div class="hero-meta">
-      <p>A <strong>real-time collaborative coding environment</strong> for teams who move fast. Write, run, and ship code together — in any language, from anywhere.</p>
-      <div class="hero-buttons">
-        <a class="btn-ink" href="index.html">Launch Editor →</a>
-        <a class="btn-outline" href="#features">See Features</a>
-      </div>
-    </div>
-  </div>
-
-  <div class="hero-right">
-    <div class="hero-right-top">
-      <div class="hero-bg-num">CF</div>
-      <div class="hero-badge">
-        CODE · FORGE · BUILD · SHIP ·&nbsp;
-        <span class="hero-badge-inner">✦</span>
-      </div>
-    </div>
-    <div class="hero-right-stats">
-      <div class="hero-stat">
-        <span class="hero-stat-num">4<span class="r">+</span></span>
-        <span class="hero-stat-label">Languages</span>
-      </div>
-      <div class="hero-stat">
-        <span class="hero-stat-num">8<span class="r">×</span></span>
-        <span class="hero-stat-label">Team Members</span>
-      </div>
-      <div class="hero-stat">
-        <span class="hero-stat-num">&lt;1<span class="r">s</span></span>
-        <span class="hero-stat-label">Execution</span>
-      </div>
-      <div class="hero-stat">
-        <span class="hero-stat-num">∞</span>
-        <span class="hero-stat-label">Possibilities</span>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══ MARQUEE ════════════════════════════════════════════════ -->
-<div class="marquee-strip">
-  <div class="marquee-track">
-    <div class="marquee-item">Python <span class="marquee-sep">✦</span></div>
-    <div class="marquee-item">C++ <span class="marquee-sep">✦</span></div>
-    <div class="marquee-item">Java <span class="marquee-sep">✦</span></div>
-    <div class="marquee-item">Real-Time Sync <span class="marquee-sep">✦</span></div>
-    <div class="marquee-item">Live Video <span class="marquee-sep">✦</span></div>
-    <div class="marquee-item">Team Rooms <span class="marquee-sep">✦</span></div>
-    <div class="marquee-item">Judge0 Engine <span class="marquee-sep">✦</span></div>
-    <div class="marquee-item">WebRTC P2P <span class="marquee-sep">✦</span></div>
-    <div class="marquee-item">Python <span class="marquee-sep">✦</span></div>
-    <div class="marquee-item">C++ <span class="marquee-sep">✦</span></div>
-    <div class="marquee-item">Java <span class="marquee-sep">✦</span></div>
-    <div class="marquee-item">Real-Time Sync <span class="marquee-sep">✦</span></div>
-    <div class="marquee-item">Live Video <span class="marquee-sep">✦</span></div>
-    <div class="marquee-item">Team Rooms <span class="marquee-sep">✦</span></div>
-    <div class="marquee-item">Judge0 Engine <span class="marquee-sep">✦</span></div>
-    <div class="marquee-item">WebRTC P2P <span class="marquee-sep">✦</span></div>
-  </div>
-</div>
-
-<!-- ══ FEATURES ══════════════════════════════════════════════ -->
-<section id="features">
-  <div class="features-header">
-    <div class="features-num-col">
-      <div class="rotated-label">Core Features</div>
-      <div class="section-big-num">05</div>
-    </div>
-    <div class="features-title-col">
-      <div class="section-tag">// What we built</div>
-      <h2 class="section-h2 reveal">Everything your<br>team <em>needs.</em></h2>
-    </div>
-  </div>
-  <div class="features-grid">
-    <div class="feat reveal">
-      <div class="feat-num">01</div>
-      <span class="feat-icon">⚡</span>
-      <div class="feat-title">Live Collaboration</div>
-      <p class="feat-desc">Real-time code sync via Socket.io. One person types, everyone sees it instantly. Editor control passes with one click — no merge conflicts.</p>
-      <span class="feat-tag">Socket.io</span>
-    </div>
-    <div class="feat reveal">
-      <div class="feat-num">02</div>
-      <span class="feat-icon">🎥</span>
-      <div class="feat-title">Video & Audio</div>
-      <p class="feat-desc">Built-in WebRTC video calls. No third-party apps. Toggle mic and camera on the fly while coding side by side with your team.</p>
-      <span class="feat-tag">WebRTC P2P</span>
-    </div>
-    <div class="feat reveal">
-      <div class="feat-num">03</div>
-      <span class="feat-icon">🔥</span>
-      <div class="feat-title">Instant Execution</div>
-      <p class="feat-desc">Run Python, C, C++, and Java right in the browser. Powered by Judge0. Results in under a second — no installs, no config.</p>
-      <span class="feat-tag">Judge0</span>
-    </div>
-    <div class="feat reveal">
-      <div class="feat-num">04</div>
-      <span class="feat-icon">🔒</span>
-      <div class="feat-title">Secure Rooms</div>
-      <p class="feat-desc">Password-protected team rooms with JWT authentication. Server-enforced editor control — the host decides who types.</p>
-      <span class="feat-tag">JWT Auth</span>
-    </div>
-    <div class="feat reveal">
-      <div class="feat-num">05</div>
-      <span class="feat-icon">🌐</span>
-      <div class="feat-title">Share in One Click</div>
-      <p class="feat-desc">Generate a room link instantly. Teammates join from any browser — no accounts needed. The link is the invite.</p>
-      <span class="feat-tag">Instant Links</span>
-    </div>
-    <div class="feat reveal" style="background:var(--paper2);">
-      <div class="feat-num" style="color:var(--red);">★</div>
-      <div style="margin-top:20px">
-        <div class="feat-title" style="font-size:28px;line-height:1;letter-spacing:-1px;">The only editor your team needs.</div>
-        <p class="feat-desc" style="margin-top:16px">Built from the ground up for real collaboration — not screen-sharing workarounds.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══ CODE PREVIEW ══════════════════════════════════════════ -->
-<section id="preview">
-  <div class="preview-text reveal">
-    <div class="section-tag">// In action</div>
-    <h2 class="section-h2" style="margin:16px 0 28px;">Write.<br>Run.<br><em>Ship.</em></h2>
-    <p style="font-size:11px;line-height:2;color:var(--steel);max-width:340px;">
-      A full syntax-highlighted editor with CodeMirror, live teammate presence, and one-click code execution. Everything here is real — no mocks.
-    </p>
-    <div class="preview-list">
-      <div class="preview-list-item">Python, C, C++, Java supported</div>
-      <div class="preview-list-item">Stdin / stdout piped correctly</div>
-      <div class="preview-list-item">Compile errors shown inline</div>
-    </div>
-  </div>
-  <div class="preview-editor-col">
-    <div class="editor-window reveal">
-      <div class="editor-bar">
-        <div class="e-dot e-red"></div>
-        <div class="e-dot e-yel"></div>
-        <div class="e-dot e-grn"></div>
-        <span class="e-filename">solution.py — 3 online · Alex editing</span>
-      </div>
-      <div class="editor-code"><pre><span class="cc"># CodeForge — collaborative session</span>
-<span class="cc"># Team: Alex 👑, Jordan, Priya</span>
-
-<span class="ck">def</span> <span class="cf">merge_sort</span>(arr):
-    <span class="ck">if</span> <span class="cf">len</span>(arr) <span class="co">&lt;=</span> <span class="cn">1</span>:
-        <span class="ck">return</span> arr
-
-    mid   <span class="co">=</span> <span class="cf">len</span>(arr) <span class="co">//</span> <span class="cn">2</span>
-    left  <span class="co">=</span> <span class="cf">merge_sort</span>(arr[:mid])
-    right <span class="co">=</span> <span class="cf">merge_sort</span>(arr[mid:])
-
-    <span class="ck">return</span> <span class="cf">merge</span>(left, right)
-
-<span class="ck">def</span> <span class="cf">merge</span>(left, right):
-    result <span class="co">=</span> []
-    i <span class="co">=</span> j <span class="co">=</span> <span class="cn">0</span>
-    <span class="ck">while</span> i <span class="co">&lt;</span> <span class="cf">len</span>(left) <span class="ck">and</span> j <span class="co">&lt;</span> <span class="cf">len</span>(right):
-        <span class="ck">if</span> left[i] <span class="co">&lt;=</span> right[j]:<span class="blink"></span></pre>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══ STATS ══════════════════════════════════════════════════ -->
-<div id="stats">
-  <div class="stat-item reveal">
-    <span class="stat-num">4<span class="r">+</span></span>
-    <span class="stat-label">Languages Supported</span>
-  </div>
-  <div class="stat-item reveal">
-    <span class="stat-num">8<span class="r">×</span></span>
-    <span class="stat-label">Max Team Size</span>
-  </div>
-  <div class="stat-item reveal">
-    <span class="stat-num">&lt;1<span class="r">s</span></span>
-    <span class="stat-label">Code Execution Speed</span>
-  </div>
-</div>
-
-<!-- ══ HOW IT WORKS ═══════════════════════════════════════════ -->
-<section id="how">
-  <div class="how-header">
-    <div>
-      <div class="section-tag">// Process</div>
-      <h2 class="section-h2 reveal">Up and running<br>in <em>three steps.</em></h2>
-    </div>
-    <a class="btn-ink" href="index.html" style="align-self:flex-end;">Try it now →</a>
-  </div>
-  <div class="how-steps">
-    <div class="how-step reveal">
-      <span class="how-step-num">01</span>
-      <div class="how-step-title">Create a Room</div>
-      <p class="how-step-desc">Hit Team Mode. Pick a name, set an optional password. Your room is live in seconds — no installs, no config, no waiting.</p>
-      <span class="how-step-arrow">→</span>
-    </div>
-    <div class="how-step reveal">
-      <span class="how-step-num">02</span>
-      <div class="how-step-title">Invite Your Team</div>
-      <p class="how-step-desc">Share the auto-generated link. Teammates join from any browser. Video and audio connect automatically via WebRTC peer-to-peer.</p>
-      <span class="how-step-arrow">→</span>
-    </div>
-    <div class="how-step reveal">
-      <span class="how-step-num">03</span>
-      <div class="how-step-title">Build Together</div>
-      <p class="how-step-desc">Pass editor control. Run code. See output together. Everything syncs live — no conflicts, no "who has the keyboard?"</p>
-    </div>
-  </div>
-</section>
-
-<!-- ══ TESTIMONIALS ═══════════════════════════════════════════ -->
-<section id="testimonials">
-  <div class="testimonials-header">
-    <div class="section-tag">// What people say</div>
-    <h2 class="section-h2 reveal" style="margin-top:16px;">Trusted by<br><em>builders.</em></h2>
-  </div>
-  <div class="testimonials-grid">
-    <div class="testimonial reveal">
-      <span class="t-quote-mark">"</span>
-      <p class="t-quote">We used to screenshare over Zoom and fight for the keyboard. CodeForge replaced all of that in a single browser tab.</p>
-      <div class="t-rule"></div>
-      <span class="t-name">Zara K.</span>
-      <span class="t-role">Senior Engineer · Fintech Startup</span>
-    </div>
-    <div class="testimonial reveal">
-      <span class="t-quote-mark">"</span>
-      <p class="t-quote">As a TA I can jump into a student's code and fix it without a 10-minute setup ritual. The editor handoff is brilliant.</p>
-      <div class="t-rule"></div>
-      <span class="t-name">Dr. Marcus L.</span>
-      <span class="t-role">CS Lecturer · University</span>
-    </div>
-    <div class="testimonial reveal">
-      <span class="t-quote-mark">"</span>
-      <p class="t-quote">All our technical interviews run on CodeForge now. No extensions, no setup — just send a link and you're in.</p>
-      <div class="t-rule"></div>
-      <span class="t-name">Priya S.</span>
-      <span class="t-role">Head of Engineering · SaaS Co.</span>
-    </div>
-  </div>
-</section>
-
-<!-- ══ CTA ════════════════════════════════════════════════════ -->
-<section id="cta">
-  <div class="cta-left reveal">
-    <h2 class="cta-h2">
-      Stop<br>waiting.<br>
-      <span class="outline">Build.</span>
-    </h2>
-    <p class="cta-sub">Free to start. No credit card. No installs. Open a tab and your team is coding together in under a minute.</p>
-    <a class="btn-paper" href="index.html">Launch CodeForge →</a>
-  </div>
-  <div class="cta-right reveal">
-    <ul class="cta-list">
-      <li>Works in <strong>any modern browser</strong> — no extensions</li>
-      <li>Runs <strong>Python, C, C++, Java</strong> out of the box</li>
-      <li><strong>Real-time sync</strong> — no lag, no conflicts</li>
-      <li>Built-in <strong>video & audio</strong> via WebRTC</li>
-      <li>Secure rooms with <strong>optional passwords</strong></li>
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">Code<span>Forge</span></div>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#how">How it works</a></li>
+      <li><a href="documentation.html">Docs</a></li>
     </ul>
-  </div>
-</section>
+    <a href="index.html" class="nav-cta">Launch Editor →</a>
+  </nav>
 
-<!-- ══ FOOTER ════════════════════════════════════════════════ -->
-<footer>
-  <div class="footer-top">
-    <div class="footer-brand">
-      <div class="footer-logo">CODE<span class="r">FORGE</span></div>
-      <span class="footer-tagline">Where code gets built · Est. 2026</span>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    <div class="hero-inner">
+      <div class="hero-eyebrow">
+        <div class="eyebrow-dot"></div>
+        Real-time collaborative coding
+      </div>
+      <h1 class="hero-title">
+        <span class="title-line-1">Where Code</span>
+        <span class="title-line-2">Gets Built.</span>
+      </h1>
+      <p class="hero-sub">
+        Write, run, and ship code with your team in real-time. Built-in video, live sync, instant execution. No installs. Just open a tab.
+      </p>
+      <div class="hero-actions">
+        <a href="index.html" class="btn-primary">
+          ▶ Start Coding Now
+        </a>
+        <a href="#features" class="btn-ghost">
+          See Features
+        </a>
+      </div>
     </div>
-    <div class="footer-nav">
+  </section>
+
+  <!-- EDITOR PREVIEW -->
+  <div class="preview-wrap">
+    <div class="editor-mock">
+      <div class="mock-titlebar">
+        <div class="mock-dot"></div>
+        <div class="mock-dot"></div>
+        <div class="mock-dot"></div>
+        <span class="mock-filename">main.py — CodeForge Room #a3f2</span>
+      </div>
+      <div class="mock-body">
+        <div class="mock-gutter">
+          <div class="ln">1</div><div class="ln">2</div><div class="ln">3</div>
+          <div class="ln">4</div><div class="ln">5</div><div class="ln">6</div>
+          <div class="ln">7</div><div class="ln">8</div><div class="ln">9</div>
+          <div class="ln">10</div>
+        </div>
+        <div class="mock-code">
+          <div class="code-line"><span class="cm"># Collaborative session — 3 members online</span></div>
+          <div class="code-line"></div>
+          <div class="code-line"><span class="kw">def</span> <span class="fn">find_primes</span><span style="color:#abb2bf">(</span><span style="color:#e06c75">n</span><span style="color:#abb2bf">):</span></div>
+          <div class="code-line"><span class="indent"></span><span class="str">"""Return all primes up to n."""</span></div>
+          <div class="code-line"><span class="indent"></span><span style="color:#e06c75">sieve</span> <span class="op">=</span> <span style="color:#abb2bf">[</span><span class="kw">True</span><span style="color:#abb2bf">]</span> <span class="op">*</span> <span style="color:#abb2bf">(</span><span style="color:#e06c75">n</span> <span class="op">+</span> <span class="num">1</span><span style="color:#abb2bf">)</span></div>
+          <div class="code-line"><span class="indent"></span><span class="kw">for</span> <span style="color:#e06c75">i</span> <span class="kw">in</span> <span class="fn">range</span><span style="color:#abb2bf">(</span><span class="num">2</span><span style="color:#abb2bf">,</span> <span class="fn">int</span><span style="color:#abb2bf">(</span><span style="color:#e06c75">n</span><span class="op">**</span><span class="num">0.5</span><span style="color:#abb2bf">)</span> <span class="op">+</span> <span class="num">1</span><span style="color:#abb2bf">):</span></div>
+          <div class="code-line"><span class="indent"></span><span class="indent"></span><span class="kw">if</span> <span style="color:#e06c75">sieve</span><span style="color:#abb2bf">[</span><span style="color:#e06c75">i</span><span style="color:#abb2bf">]:</span></div>
+          <div class="code-line"><span class="indent"></span><span class="indent"></span><span class="indent"></span><span style="color:#e06c75">sieve</span><span style="color:#abb2bf">[</span><span style="color:#e06c75">i</span><span class="op">*</span><span style="color:#e06c75">i</span><span style="color:#abb2bf">::</span><span style="color:#e06c75">i</span><span style="color:#abb2bf">]</span> <span class="op">=</span> <span style="color:#abb2bf">[</span><span class="kw">False</span><span style="color:#abb2bf">]</span> <span class="op">*</span> <span style="color:#abb2bf">((</span><span style="color:#e06c75">n</span> <span class="op">-</span> <span style="color:#e06c75">i</span><span class="op">*</span><span style="color:#e06c75">i</span><span style="color:#abb2bf">)</span> <span class="op">//</span> <span style="color:#e06c75">i</span> <span class="op">+</span> <span class="num">1</span><span style="color:#abb2bf">)</span></div>
+          <div class="code-line"><span class="indent"></span><span class="kw">return</span> <span style="color:#abb2bf">[</span><span style="color:#e06c75">i</span> <span class="kw">for</span> <span style="color:#e06c75">i</span> <span class="kw">in</span> <span class="fn">range</span><span style="color:#abb2bf">(</span><span class="num">2</span><span style="color:#abb2bf">,</span> <span style="color:#e06c75">n</span><span class="op">+</span><span class="num">1</span><span style="color:#abb2bf">)</span> <span class="kw">if</span> <span style="color:#e06c75">sieve</span><span style="color:#abb2bf">[</span><span style="color:#e06c75">i</span><span style="color:#abb2bf">]]</span><span class="cursor"></span></div>
+        </div>
+        <div class="mock-sidebar">
+          <div class="sidebar-label">Live Members</div>
+          <div class="member-mock"><div class="m-dot" style="background:#4ade80"></div>Alex <span class="m-crown">👑</span><span style="font-size:10px;color:#4ecdc4;margin-left:4px">✏️</span></div>
+          <div class="member-mock"><div class="m-dot" style="background:#4ade80"></div>Jordan</div>
+          <div class="member-mock"><div class="m-dot" style="background:#4ade80"></div>Sam</div>
+          <div style="margin-top:16px">
+            <div class="sidebar-label">Video</div>
+            <div style="background:var(--bg);border:1px solid var(--border);border-radius:5px;height:70px;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--text-muted);font-family:var(--font-mono)">📹 3 connected</div>
+          </div>
+        </div>
+      </div>
+      <div style="border-top:1px solid var(--border);padding:8px 60px 10px 20px;background:rgba(0,0,0,0.2);">
+        <div class="out-label">Output</div>
+        <div class="out-line">[2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47]</div>
+        <div style="font-size:11px;color:var(--text-muted);font-family:var(--font-mono);margin-top:2px">Process finished with exit code 0 · 0.18s</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATS BAR -->
+  <div class="stats-bar" style="margin-top:80px">
+    <div class="stat-item">
+      <div class="stat-num">4</div>
+      <div class="stat-label">Languages Supported</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">&lt;1s</div>
+      <div class="stat-label">Execution Time</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">∞</div>
+      <div class="stat-label">Team Members / Room</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">0</div>
+      <div class="stat-label">Installs Required</div>
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <section class="section" id="features">
+    <div class="reveal">
+      <div class="section-label">// Features</div>
+      <h2 class="section-title">Everything you need<br>to <em>code together</em>.</h2>
+    </div>
+    <div class="features-grid reveal">
+      <div class="feat-card">
+        <span class="feat-icon">⚡</span>
+        <div class="feat-title">Instant Execution</div>
+        <p class="feat-desc">Run Python, C++, C, and Java directly in your browser. Results appear in under a second.</p>
+      </div>
+      <div class="feat-card">
+        <span class="feat-icon">🔄</span>
+        <div class="feat-title">Live Code Sync</div>
+        <p class="feat-desc">Every keystroke is synced to all teammates in real-time via WebSockets. Zero lag collaboration.</p>
+      </div>
+      <div class="feat-card">
+        <span class="feat-icon">📹</span>
+        <div class="feat-title">Built-in Video</div>
+        <p class="feat-desc">WebRTC peer-to-peer video and audio. No third-party tools. Just open a room and see your team.</p>
+      </div>
+      <div class="feat-card">
+        <span class="feat-icon">🔐</span>
+        <div class="feat-title">Password-Protected Rooms</div>
+        <p class="feat-desc">Lock your room with a password. Only teammates with the link and password can join.</p>
+      </div>
+      <div class="feat-card">
+        <span class="feat-icon">👑</span>
+        <div class="feat-title">Editor Ownership</div>
+        <p class="feat-desc">One editor, full control. The host manages who types. Members request access, host approves.</p>
+      </div>
+      <div class="feat-card">
+        <span class="feat-icon">📥</span>
+        <div class="feat-title">stdin Support</div>
+        <p class="feat-desc">Pass input to your programs. Test interactive scripts and competitive programming problems.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- LANGUAGES -->
+  <div class="langs-section">
+    <div class="langs-inner">
+      <div class="langs-text reveal">
+        <div class="section-label">// Languages</div>
+        <h2 style="font-size:clamp(26px,3vw,38px);font-weight:800;letter-spacing:-1px;line-height:1.15;margin-bottom:10px">
+          Your stack,<br>fully supported.
+        </h2>
+        <p style="font-size:13px;color:var(--text-muted);line-height:1.7;font-family:var(--font-mono)">
+          Switch languages mid-session. Starter templates load instantly. More languages coming soon.
+        </p>
+      </div>
+      <div class="langs-pills reveal">
+        <div class="lang-tag highlight">Python</div>
+        <div class="lang-tag highlight">C++</div>
+        <div class="lang-tag highlight">C</div>
+        <div class="lang-tag highlight">Java</div>
+        <div class="lang-tag" style="opacity:0.4">JavaScript <span style="font-size:10px">(soon)</span></div>
+        <div class="lang-tag" style="opacity:0.4">Go <span style="font-size:10px">(soon)</span></div>
+        <div class="lang-tag" style="opacity:0.4">Rust <span style="font-size:10px">(soon)</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <section class="section" id="how">
+    <div class="reveal">
+      <div class="section-label">// How it works</div>
+      <h2 class="section-title">Up and running<br>in <em>30 seconds</em>.</h2>
+    </div>
+    <div class="steps-grid reveal">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-title">Create a Room</div>
+        <p class="step-desc">Enter your name, optionally set a password. Get a shareable link instantly — no accounts needed.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-title">Invite Your Team</div>
+        <p class="step-desc">Share the room link. Teammates join from their browser. Live video and code sync starts automatically.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-title">Build Together</div>
+        <p class="step-desc">Write code, pass editor control, run programs, see output together. Ship faster as a team.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="cta-inner reveal">
+      <h2 class="cta-title">Ready to forge<br>something great?</h2>
+      <p class="cta-sub">Free. No installs. No accounts.<br>Just you, your team, and your code.</p>
+      <a href="index.html" class="btn-launch">
+        Open the Editor
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">Code<span>Forge</span></div>
+    <div class="footer-copy">Built by M. Rabi. K. · 2025</div>
+    <div class="footer-links">
       <a href="index.html">Editor</a>
-      <a href="#features">Features</a>
-      <a href="#how">How It Works</a>
-      <a href="#testimonials">About</a>
+      <a href="documentation.html">Docs</a>
     </div>
-    <div class="footer-founder">
-      <div class="footer-founder-name">M. Rabi. K.</div>
-      <div class="footer-founder-role">Web Developer · CEO, CodeForge</div>
-    </div>
-  </div>
-  <div class="footer-bottom">
-    <span class="footer-copy">© 2026 CodeForge — Built by <span>M. Rabi. K.</span> All rights reserved.</span>
-    <span class="footer-copy" style="color:#3a3630;">Made with precision. Shipped with purpose.</span>
-  </div>
-</footer>
+  </footer>
 
-<script>
-// ── Custom cursor ─────────────────────────────────────────────
-const cursor     = document.getElementById('cursor');
-const cursorRing = document.getElementById('cursor-ring');
-let mx = 0, my = 0, rx = 0, ry = 0;
+  <script>
+    // Scroll reveal
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
 
-document.addEventListener('mousemove', e => {
-  mx = e.clientX; my = e.clientY;
-  cursor.style.left = mx + 'px';
-  cursor.style.top  = my + 'px';
-});
-
-(function animRing() {
-  rx += (mx - rx) * 0.12;
-  ry += (my - ry) * 0.12;
-  cursorRing.style.left = rx + 'px';
-  cursorRing.style.top  = ry + 'px';
-  requestAnimationFrame(animRing);
-})();
-
-document.querySelectorAll('a, button').forEach(el => {
-  el.addEventListener('mouseenter', () => {
-    cursor.style.transform = 'translate(-50%,-50%) scale(2)';
-    cursorRing.style.borderColor = 'var(--red)';
-  });
-  el.addEventListener('mouseleave', () => {
-    cursor.style.transform = 'translate(-50%,-50%) scale(1)';
-    cursorRing.style.borderColor = 'var(--ink)';
-  });
-});
-
-// ── Navbar scroll ─────────────────────────────────────────────
-const navbar = document.getElementById('navbar');
-window.addEventListener('scroll', () => {
-  navbar.classList.toggle('scrolled', window.scrollY > 40);
-}, { passive: true });
-
-// ── Scroll reveal ─────────────────────────────────────────────
-const revealEls = document.querySelectorAll('.reveal');
-const observer  = new IntersectionObserver(entries => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      e.target.classList.add('in');
-      observer.unobserve(e.target);
-    }
-  });
-}, { threshold: 0.1 });
-revealEls.forEach(el => observer.observe(el));
-
-// ── Background canvas: floating code glyphs (paper-toned) ─────
-const canvas = document.getElementById('bg-canvas');
-const ctx    = canvas.getContext('2d');
-const GLYPHS = ['{ }', '=>', '//', '( )', '[]', '&&', '||', '++', '**', '!=', '==', '<<', '>>', '0x', 'fn', '::', '|>', '??'];
-
-let W, H;
-
-function resize() {
-  W = canvas.width  = window.innerWidth;
-  H = canvas.height = window.innerHeight;
-}
-resize();
-window.addEventListener('resize', resize, { passive: true });
-
-class Particle {
-  constructor() { this.reset(true); }
-  reset(rand = false) {
-    this.x     = Math.random() * W;
-    this.y     = rand ? Math.random() * H : H + 20;
-    this.speed = 0.15 + Math.random() * 0.4;
-    this.drift = (Math.random() - 0.5) * 0.25;
-    this.alpha = 0.03 + Math.random() * 0.07;
-    this.size  = 9 + Math.floor(Math.random() * 5);
-    this.glyph = GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
-    /* Paper-tone colors: warm dark ink or muted steel */
-    this.color = Math.random() > 0.6 ? '#c8321a' : '#a09890';
-  }
-  update() {
-    this.y -= this.speed;
-    this.x += this.drift;
-    if (this.y < -30) this.reset();
-  }
-  draw() {
-    ctx.save();
-    ctx.globalAlpha = this.alpha;
-    ctx.fillStyle   = this.color;
-    ctx.font        = `${this.size}px 'JetBrains Mono', monospace`;
-    ctx.fillText(this.glyph, this.x, this.y);
-    ctx.restore();
-  }
-}
-
-const particles = [];
-for (let i = 0; i < 50; i++) particles.push(new Particle());
-
-(function animCanvas() {
-  ctx.clearRect(0, 0, W, H);
-  particles.forEach(p => { p.update(); p.draw(); });
-  requestAnimationFrame(animCanvas);
-})();
-</script>
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
 </body>
 </html>
