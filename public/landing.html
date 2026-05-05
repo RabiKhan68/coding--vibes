@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CodeForge — Where Code Gets Built</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  /* ══════════════════════════════════════════════════════════════
+   CodeForge Editor — Paper & Ink Editorial Theme
+   Matches landingpage.html aesthetic exactly
+   ══════════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=JetBrains+Mono:wght@300;400;500;700&family=Barlow+Condensed:wght@300;400;600;700;800&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* ── Core palette (from landingpage) ── */
+  --paper:       #f2ede6;
+  --paper2:      #e8e1d5;
+  --paper3:      #ddd6cc;
+  --ink:         #0e0d0b;
+  --ink2:        #2a2720;
+  --ink3:        #1a1814;
+  --red:         #c8321a;
+  --red2:        #9e2010;
+  --steel:       #6b6560;
+  --rule:        #c8c0b4;
+  --rule2:       #a09890;
+
+  /* ── Semantic mappings ── */
+  --bg:          var(--paper);
+  --surface:     var(--paper2);
+  --surface2:    var(--paper3);
+  --border:      var(--rule);
+  --border2:     var(--rule2);
+  --accent:      var(--red);
+  --accent2:     var(--ink);
+  --accent3:     var(--steel);
+  --text:        var(--ink);
+  --text-muted:  var(--steel);
+  --success:     #2d7a3a;
+  --error:       var(--red);
+  --gold:        #8a6a00;
+
+  /* ── Typography ── */
+  --ff-serif:  'Playfair Display', serif;
+  --ff-mono:   'JetBrains Mono', monospace;
+  --ff-cond:   'Barlow Condensed', sans-serif;
+  --font-mono: var(--ff-mono);
+
+  --shadow: 0 4px 24px rgba(14,13,11,0.15);
+}
+
+html, body {
+  height: 100%;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--ff-mono);
+  font-size: 14px;
+  overflow: hidden;
+}
+
+/* ── Noise texture overlay (matches landing) ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1000;
+}
+
+/* ── Grid background (matches landing) ── */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--rule) 1px, transparent 1px),
+    linear-gradient(90deg, var(--rule) 1px, transparent 1px);
+  background-size: 64px 64px;
+  opacity: 0.12;
+  pointer-events: none;
+  z-index: 0;
+}
+
+#app-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+
+/* ══ TOPBAR ════════════════════════════════════════════════════ */
+#topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 20px;
+  height: 56px;
+  background: var(--paper);
+  border-bottom: 2px solid var(--ink);
+  flex-shrink: 0;
+  z-index: 10;
+}
+
+.logo-text {
+  font-family: var(--ff-cond);
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin-right: 8px;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Logo mark box matching nav-logo-mark */
+.logo-text::before {
+  content: 'CF';
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: var(--ink);
+  font-family: var(--ff-serif);
+  font-size: 12px;
+  font-weight: 900;
+  color: var(--paper);
+  letter-spacing: 0;
+  flex-shrink: 0;
+}
+
+.logo-text span { color: var(--red); }
+
+/* ── Mode toggle ── */
+.mode-toggle {
+  display: flex;
+  background: var(--paper2);
+  border: 2px solid var(--ink);
+  border-radius: 0;
+  padding: 2px;
+  gap: 2px;
+}
+
+.mode-btn {
+  padding: 4px 14px;
+  border: none;
+  background: transparent;
+  color: var(--steel);
+  border-radius: 0;
+  cursor: pointer;
+  font-size: 10px;
+  font-family: var(--ff-mono);
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  transition: all 0.15s;
+}
+
+.mode-btn.active {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.mode-btn:not(.active):hover {
+  background: var(--paper3);
+  color: var(--ink);
+}
+
+/* ── Language pills ── */
+.lang-pills { display: flex; gap: 4px; margin-left: 4px; }
+
+.lang-pill {
+  padding: 4px 12px;
+  border: 1px solid var(--rule2);
+  background: transparent;
+  color: var(--steel);
+  border-radius: 0;
+  cursor: pointer;
+  font-size: 10px;
+  font-family: var(--ff-mono);
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  transition: all 0.15s;
+}
+
+.lang-pill:hover  { border-color: var(--ink); color: var(--ink); background: var(--paper2); }
+.lang-pill.active { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+
+/* ── Run button ── */
+#runBtn {
+  margin-left: auto;
+  padding: 8px 20px;
+  background: var(--ink);
+  color: var(--paper);
+  border: 2px solid var(--ink);
+  border-radius: 0;
+  font-family: var(--ff-mono);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+#runBtn:hover:not(:disabled) { background: var(--red); border-color: var(--red); }
+#runBtn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ── Room bar ── */
+#room-bar { display: none; align-items: center; gap: 8px; font-size: 12px; }
+#room-bar.visible { display: flex; }
+
+.room-badge {
+  background: var(--paper2);
+  border: 1px solid var(--rule2);
+  border-radius: 0;
+  padding: 4px 10px;
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  text-transform: uppercase;
+  color: var(--steel);
+  transition: all 0.15s;
+}
+
+.room-badge:hover { border-color: var(--ink); color: var(--ink); }
+
+#editor-status {
+  font-size: 10px;
+  color: var(--steel);
+  font-family: var(--ff-mono);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+#leaveBtn {
+  padding: 4px 12px;
+  background: transparent;
+  border: 1px solid var(--red);
+  color: var(--red);
+  border-radius: 0;
+  cursor: pointer;
+  font-size: 10px;
+  font-family: var(--ff-mono);
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  transition: all 0.15s;
+}
+
+#leaveBtn:hover { background: var(--red); color: var(--paper); }
+
+/* ══ MAIN AREA ═════════════════════════════════════════════════ */
+#main-area { display: flex; flex: 1; overflow: hidden; }
+
+/* ══ LEFT PANEL ════════════════════════════════════════════════ */
+#left-panel {
+  width: 210px;
+  flex-shrink: 0;
+  background: var(--paper2);
+  border-right: 2px solid var(--ink);
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+#left-panel.visible { display: flex; }
+
+.panel-section {
+  padding: 14px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.panel-title {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--steel);
+  margin-bottom: 10px;
+  font-family: var(--ff-mono);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.panel-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--rule);
+}
+
+.member-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  font-size: 12px;
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--ff-mono);
+}
+
+.member-item:last-child { border-bottom: none; }
+
+.member-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--success);
+  flex-shrink: 0;
+}
+
+.member-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11px;
+  color: var(--ink);
+}
+
+.member-you     { font-size: 9px; color: var(--steel); letter-spacing: 1px; text-transform: uppercase; }
+.member-editing { font-size: 9px; color: var(--red); letter-spacing: 1px; text-transform: uppercase; }
+
+.btn-assign {
+  font-size: 9px;
+  padding: 2px 7px;
+  background: transparent;
+  border: 1px solid var(--rule2);
+  color: var(--steel);
+  border-radius: 0;
+  cursor: pointer;
+  font-family: var(--ff-mono);
+  letter-spacing: 0.5px;
+  transition: all 0.15s;
+}
+
+.btn-assign:hover { border-color: var(--ink); color: var(--ink); }
+
+.btn-action {
+  width: 100%;
+  padding: 8px;
+  border: none;
+  border-radius: 0;
+  font-size: 10px;
+  font-family: var(--ff-mono);
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  margin-top: 6px;
+  transition: all 0.15s;
+}
+
+.btn-request  { background: var(--paper3); border: 1px solid var(--ink); color: var(--ink); }
+.btn-request:hover  { background: var(--ink); color: var(--paper); }
+
+.btn-reclaim  { background: var(--paper3); border: 1px solid var(--red); color: var(--red); }
+.btn-reclaim:hover  { background: var(--red); color: var(--paper); }
+
+.btn-handback { background: var(--paper3); border: 1px solid var(--steel); color: var(--steel); }
+.btn-handback:hover { background: var(--steel); color: var(--paper); }
+
+/* ── Notification banner ── */
+#notifBanner {
+  display: none;
+  background: var(--paper);
+  border: 1px solid var(--ink);
+  border-radius: 0;
+  padding: 10px;
+  margin-top: 8px;
+  font-size: 11px;
+  font-family: var(--ff-mono);
+  color: var(--ink);
+}
+
+#notifBanner .banner-btns { display: flex; gap: 4px; margin-top: 8px; }
+
+.bbtn {
+  flex: 1;
+  padding: 5px;
+  border: none;
+  border-radius: 0;
+  font-size: 10px;
+  font-family: var(--ff-mono);
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.bbtn.yes { background: var(--ink); color: var(--paper); }
+.bbtn.yes:hover { background: var(--red); }
+.bbtn.no  { background: var(--paper3); border: 1px solid var(--rule2); color: var(--steel); }
+.bbtn.no:hover  { border-color: var(--ink); color: var(--ink); }
+
+/* ══ EDITOR PANEL ══════════════════════════════════════════════ */
+#editor-panel { display: flex; flex-direction: column; flex: 1; overflow: hidden; min-width: 0; }
+
+/* ── Stdin bar ── */
+#stdin-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 14px;
+  background: var(--paper2);
+  border-bottom: 1px solid var(--rule);
+  flex-shrink: 0;
+}
+
+#stdin-bar label {
+  font-size: 9px;
+  color: var(--steel);
+  white-space: nowrap;
+  font-family: var(--ff-mono);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+#stdinInput {
+  flex: 1;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 0;
+  color: var(--ink);
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  padding: 4px 10px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+#stdinInput:focus { border-color: var(--ink); }
+#stdinInput::placeholder { color: var(--rule2); }
+
+/* ── Lock overlay ── */
+#lockOverlay {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background: rgba(242,237,230,0.65);
+  z-index: 5;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-family: var(--ff-mono);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--steel);
+  pointer-events: none;
+  backdrop-filter: blur(1px);
+}
+
+#lockOverlay.visible { display: flex; }
+
+/* ── CodeMirror wrapper ── */
+.cm-wrapper { position: relative; flex: 1; overflow: hidden; }
+
+.CodeMirror {
+  height: 100% !important;
+  font-family: var(--ff-mono) !important;
+  font-size: 13px !important;
+  background: var(--paper) !important;
+  color: var(--ink) !important;
+}
+
+.CodeMirror-scroll { padding-bottom: 0 !important; }
+.CodeMirror-gutters { background: var(--paper2) !important; border-right: 1px solid var(--rule) !important; }
+.CodeMirror-linenumber { color: var(--rule2) !important; font-size: 11px; }
+.CodeMirror-cursor { border-left: 2px solid var(--red) !important; }
+.CodeMirror-selected { background: rgba(200,50,26,0.12) !important; }
+.CodeMirror-focused .CodeMirror-selected { background: rgba(200,50,26,0.15) !important; }
+
+/* ── CodeMirror syntax (paper/ink tones) ── */
+.cm-keyword   { color: var(--red) !important; font-weight: 600; }
+.cm-def       { color: var(--ink2) !important; font-weight: 600; }
+.cm-variable  { color: var(--ink) !important; }
+.cm-string    { color: #5a3e00 !important; }
+.cm-number    { color: #7a3800 !important; }
+.cm-comment   { color: var(--rule2) !important; font-style: italic; }
+.cm-operator  { color: var(--red2) !important; }
+.cm-builtin   { color: var(--ink2) !important; }
+.cm-atom      { color: var(--red) !important; }
+
+/* ══ OUTPUT PANEL ══════════════════════════════════════════════ */
+#output-panel {
+  height: 190px;
+  flex-shrink: 0;
+  background: var(--paper2);
+  border-top: 2px solid var(--ink);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.output-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 14px;
+  border-bottom: 1px solid var(--rule);
+  flex-shrink: 0;
+  background: var(--paper3);
+}
+
+.output-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--steel);
+  font-family: var(--ff-mono);
+}
+
+#clearOutputBtn {
+  background: none;
+  border: none;
+  color: var(--rule2);
+  cursor: pointer;
+  font-size: 10px;
+  font-family: var(--ff-mono);
+  letter-spacing: 1px;
+  padding: 2px 8px;
+  transition: color 0.15s;
+  text-transform: uppercase;
+}
+
+#clearOutputBtn:hover { color: var(--red); }
+
+#output {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 16px;
+  font-family: var(--ff-mono);
+  font-size: 12px;
+  white-space: pre-wrap;
+  word-break: break-all;
+  color: var(--ink);
+  line-height: 1.7;
+  background: var(--paper);
+}
+
+#output.has-error   { color: var(--red); }
+#output.has-success { color: var(--ink); }
+
+/* ══ RIGHT PANEL (Video) ═══════════════════════════════════════ */
+#right-panel {
+  width: 210px;
+  flex-shrink: 0;
+  background: var(--paper2);
+  border-left: 2px solid var(--ink);
+  display: none;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+#right-panel.visible { display: flex; }
+
+.video-grid { padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+
+.video-tile {
+  position: relative;
+  background: var(--paper3);
+  border: 1px solid var(--rule);
+  border-radius: 0;
+  overflow: hidden;
+  aspect-ratio: 4/3;
+}
+
+.video-tile video { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.cam-off {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--rule2);
+  font-size: 10px;
+  font-family: var(--ff-mono);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.tile-label {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  background: rgba(14,13,11,0.75);
+  color: var(--paper);
+  font-size: 9px;
+  font-family: var(--ff-mono);
+  letter-spacing: 1px;
+  padding: 4px 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Media bar ── */
+#media-bar {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: var(--paper2);
+  border-top: 1px solid var(--rule);
+  flex-shrink: 0;
+}
+
+#media-bar.visible { display: flex; }
+
+.tool-btn {
+  padding: 5px 14px;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  color: var(--steel);
+  border-radius: 0;
+  cursor: pointer;
+  font-size: 10px;
+  font-family: var(--ff-mono);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  transition: all 0.15s;
+}
+
+.tool-btn:hover { border-color: var(--ink); color: var(--ink); }
+.tool-btn.off   { border-color: var(--red); color: var(--red); }
+.tool-btn.off:hover { background: var(--red); color: var(--paper); }
+
+/* ══ LOBBY MODAL ═══════════════════════════════════════════════ */
+#lobby {
+  position: fixed;
+  inset: 0;
+  background: rgba(242,237,230,0.88);
+  backdrop-filter: blur(4px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+#lobby.visible { display: flex; }
+
+.lobby-card {
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  border-radius: 0;
+  padding: 36px 40px;
+  width: 400px;
+  box-shadow: 8px 8px 0 var(--ink);
+}
+
+.lobby-card h2 {
+  font-family: var(--ff-serif);
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--ink);
+  margin-bottom: 4px;
+  letter-spacing: -0.5px;
+  line-height: 1;
+}
+
+.lobby-card h2 em { font-style: italic; color: var(--red); }
+
+.lobby-card p {
+  color: var(--steel);
+  font-family: var(--ff-mono);
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  margin-bottom: 24px;
+  margin-top: 8px;
+}
+
+/* ── Tabs ── */
+.tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 20px;
+  background: var(--paper2);
+  border: 1px solid var(--rule);
+  padding: 0;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 9px;
+  border: none;
+  background: transparent;
+  color: var(--steel);
+  border-radius: 0;
+  cursor: pointer;
+  font-size: 10px;
+  font-family: var(--ff-mono);
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  transition: all 0.15s;
+  border-right: 1px solid var(--rule);
+}
+
+.tab-btn:last-child { border-right: none; }
+.tab-btn.active { background: var(--ink); color: var(--paper); }
+.tab-btn:not(.active):hover { background: var(--paper3); color: var(--ink); }
+
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* ── Form fields ── */
+.field { margin-bottom: 14px; }
+
+.field label {
+  display: block;
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--steel);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-family: var(--ff-mono);
+}
+
+.field input {
+  width: 100%;
+  padding: 10px 12px;
+  background: var(--paper2);
+  border: 1px solid var(--rule);
+  border-radius: 0;
+  color: var(--ink);
+  font-size: 13px;
+  font-family: var(--ff-mono);
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.field input:focus { border-color: var(--ink); background: var(--paper); }
+.field input::placeholder { color: var(--rule2); }
+
+.hint {
+  font-size: 10px;
+  color: var(--rule2);
+  margin-top: 5px;
+  font-family: var(--ff-mono);
+  letter-spacing: 0.3px;
+}
+
+.btn-main {
+  width: 100%;
+  padding: 12px;
+  background: var(--ink);
+  color: var(--paper);
+  border: 2px solid var(--ink);
+  border-radius: 0;
+  font-size: 11px;
+  font-family: var(--ff-mono);
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.15s;
+  margin-top: 6px;
+}
+
+.btn-main:hover:not(:disabled) { background: var(--red); border-color: var(--red); }
+.btn-main:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ── Share box ── */
+.share-box {
+  display: none;
+  margin-top: 16px;
+  background: var(--paper2);
+  border: 1px solid var(--rule);
+  border-radius: 0;
+  padding: 14px;
+  font-size: 11px;
+  font-family: var(--ff-mono);
+}
+
+.share-url {
+  font-family: var(--ff-mono);
+  font-size: 10px;
+  color: var(--red);
+  word-break: break-all;
+  cursor: pointer;
+  margin-top: 8px;
+  padding: 8px;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  display: block;
+  letter-spacing: 0.3px;
+  transition: border-color 0.15s;
+}
+
+.share-url:hover { border-color: var(--ink); text-decoration: underline; }
+
+.lobby-error {
+  color: var(--red);
+  font-size: 11px;
+  font-family: var(--ff-mono);
+  margin-top: 10px;
+  min-height: 16px;
+  letter-spacing: 0.3px;
+}
+
+/* ══ TOAST ═════════════════════════════════════════════════════ */
+#toast {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%) translateY(12px);
+  background: var(--ink);
+  border: 1px solid var(--ink2);
+  color: var(--paper);
+  padding: 9px 20px;
+  border-radius: 0;
+  font-size: 10px;
+  font-family: var(--ff-mono);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  opacity: 0;
+  transition: all 0.25s;
+  z-index: 200;
+  pointer-events: none;
+  white-space: nowrap;
+  box-shadow: 4px 4px 0 rgba(14,13,11,0.3);
+}
+
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ══ SCROLLBARS ════════════════════════════════════════════════ */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--paper2); }
+::-webkit-scrollbar-thumb { background: var(--rule); }
+::-webkit-scrollbar-thumb:hover { background: var(--rule2); }
+
+/* ══ SELECTION ═════════════════════════════════════════════════ */
+::selection { background: rgba(200,50,26,0.2); color: var(--ink); }
+</style>
+</head>
+<body>
+
+<!-- Custom cursor -->
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- Background canvas (floating code particles) -->
+<canvas id="bg-canvas"></canvas>
+
+<!-- ══ NAV ═══════════════════════════════════════════════════ -->
+<nav id="navbar">
+  <a class="nav-logo" href="/">
+    CODE<span class="forge">FORGE</span><span class="dot">.</span>
+  </a>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#how">How it works</a>
+    <a href="#" style="color:var(--muted)">Docs</a>
+    <a class="nav-cta" href="index.html">Open Editor →</a>
+  </div>
+</nav>
+
+<!-- ══ HERO ══════════════════════════════════════════════════ -->
+<section id="hero">
+  <div class="hero-eyebrow">Est. 2026 — Built for developers</div>
+  <h1 class="hero-headline">
+    WHERE<br>
+    CODE<br>
+    <span class="line2">Gets <span class="accent-word">Built.</span></span>
+  </h1>
+  <div class="hero-sub-row">
+    <p class="hero-sub">
+      A <strong>collaborative coding environment</strong> for teams who move fast.
+      Write, run, and ship code together — in real time, from anywhere.
+    </p>
+    <div class="hero-cta-group">
+      <a class="btn-primary" href="index.html">
+        Start Coding
+        <span>→</span>
+      </a>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- ══ MARQUEE ════════════════════════════════════════════════ -->
+<div class="marquee-strip">
+  <div class="marquee-track">
+    <!-- Doubled for seamless loop -->
+    <div class="marquee-item">Python <span class="sep"></span></div>
+    <div class="marquee-item">C++ <span class="sep"></span></div>
+    <div class="marquee-item">Java <span class="sep"></span></div>
+    <div class="marquee-item">Real-time Sync <span class="sep"></span></div>
+    <div class="marquee-item">Live Video <span class="sep"></span></div>
+    <div class="marquee-item">Team Rooms <span class="sep"></span></div>
+    <div class="marquee-item">Judge0 Execution <span class="sep"></span></div>
+    <div class="marquee-item">Secure by Default <span class="sep"></span></div>
+    <div class="marquee-item">Python <span class="sep"></span></div>
+    <div class="marquee-item">C++ <span class="sep"></span></div>
+    <div class="marquee-item">Java <span class="sep"></span></div>
+    <div class="marquee-item">Real-time Sync <span class="sep"></span></div>
+    <div class="marquee-item">Live Video <span class="sep"></span></div>
+    <div class="marquee-item">Team Rooms <span class="sep"></span></div>
+    <div class="marquee-item">Judge0 Execution <span class="sep"></span></div>
+    <div class="marquee-item">Secure by Default <span class="sep"></span></div>
+  </div>
+</div>
+
+<!-- ══ FEATURES ══════════════════════════════════════════════ -->
+<section id="features">
+  <div class="section-label">Core Features</div>
+  <h2 class="section-headline reveal">Everything your<br>team <em>needs.</em></h2>
+
+  <div class="features-grid reveal">
+    <div class="feature-cell" data-num="01">
+      <span class="feature-icon">⚡</span>
+      <div class="feature-title">Live Collaboration</div>
+      <p class="feature-desc">
+        Real-time code sync powered by Socket.io. One person types, everyone sees it instantly.
+        Editor control passes with a single click — no conflicts, no merge hell.
+      </p>
+      <span class="feature-tag">Socket.io</span>
+    </div>
+    <div class="feature-cell" data-num="02">
+      <span class="feature-icon">🎥</span>
+      <div class="feature-title">Live Video & Audio</div>
+      <p class="feature-desc">
+        Built-in WebRTC video calls. No third-party app required.
+        See your teammates while you build — toggle mic and camera on the fly.
+      </p>
+      <span class="feature-tag">WebRTC P2P</span>
+    </div>
+    <div class="feature-cell wide" data-num="03">
+      <span class="feature-icon">🔥</span>
+      <div class="feature-title">Run Code Instantly</div>
+      <p class="feature-desc">
+        Execute Python, C, C++, and Java right in the browser. Powered by Judge0 — results in seconds, no installs, no config.
+        Pass stdin, read stdout, catch compile errors — all inline.
+      </p>
+      <span class="feature-tag">Judge0 Engine</span>
+    </div>
+    <div class="feature-cell" data-num="04">
+      <span class="feature-icon">🔒</span>
+      <div class="feature-title">Secure Rooms</div>
+      <p class="feature-desc">
+        Password-protected team rooms with JWT authentication.
+        Server-enforced editor control — only the host decides who codes.
+      </p>
+      <span class="feature-tag">JWT Auth</span>
+    </div>
+    <div class="feature-cell" data-num="05">
+      <span class="feature-icon">🌐</span>
+      <div class="feature-title">Share Anywhere</div>
+      <p class="feature-desc">
+        Generate a shareable room link in one click.
+        Teammates join from any browser — no accounts needed to collaborate.
+      </p>
+      <span class="feature-tag">Instant Links</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CODE PREVIEW ══════════════════════════════════════════ -->
+<section id="preview">
+  <div class="editor-mockup reveal">
+    <div class="editor-titlebar">
+      <div class="titlebar-dot dot-red"></div>
+      <div class="titlebar-dot dot-yel"></div>
+      <div class="titlebar-dot dot-grn"></div>
+      <span class="titlebar-name">team_session.py — CodeForge</span>
+    </div>
+    <div class="editor-body">
+      <div class="line-nums">
+        <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+        <span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
+        <span>11</span><span>12</span><span>13</span><span>14</span><span>15</span>
+        <span>16</span>
+      </div>
+      <div class="code-area"><pre><span class="c-comment"># CodeForge — real-time collaborative editor</span>
+<span class="c-comment"># 3 teammates online · editor: Alex 👑</span>
+
+<span class="c-keyword">from</span> <span class="c-class">collections</span> <span class="c-keyword">import</span> defaultdict
+
+<span class="c-keyword">def</span> <span class="c-fn">find_shortest_path</span>(graph, start, end):
+    <span class="c-str">"""BFS to find shortest path between nodes."""</span>
+    queue   <span class="c-op">=</span> [(start, [start])]
+    visited <span class="c-op">=</span> <span class="c-fn">set</span>()
+
+    <span class="c-keyword">while</span> queue:
+        node, path <span class="c-op">=</span> queue.pop(<span class="c-num">0</span>)
+        <span class="c-keyword">if</span> node <span class="c-op">==</span> end:
+            <span class="c-keyword">return</span> path
+        <span class="c-keyword">for</span> neighbor <span class="c-keyword">in</span> graph[node]:
+            <span class="c-keyword">if</span> neighbor <span class="c-op">not in</span> visited:<span class="cursor-blink"></span></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ STATS ══════════════════════════════════════════════════ -->
+<div id="stats">
+  <div class="stats-inner">
+    <div class="stat-item reveal">
+      <span class="stat-num">4<span class="accent">+</span></span>
+      <span class="stat-label">Languages Supported</span>
+    </div>
+    <div class="stat-item reveal">
+      <span class="stat-num">8<span class="accent">×</span></span>
+      <span class="stat-label">Max Team Size</span>
+    </div>
+    <div class="stat-item reveal">
+      <span class="stat-num">&lt;1<span class="accent">s</span></span>
+      <span class="stat-label">Code Execution Speed</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══ HOW IT WORKS ═══════════════════════════════════════════ -->
+<section id="how">
+  <div class="section-label">How It Works</div>
+  <h2 class="section-headline reveal">Up and running<br>in <em>three steps.</em></h2>
+  <div class="steps reveal">
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-title">Create a Room</div>
+      <p class="step-desc">
+        Hit "Team Mode", choose a name, optionally set a password.
+        Your room is live in seconds — no installs, no config files.
+      </p>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-title">Invite Your Team</div>
+      <p class="step-desc">
+        Share the auto-generated link. Teammates join from any browser.
+        Video and audio connect automatically via WebRTC.
+      </p>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-title">Code Together</div>
+      <p class="step-desc">
+        Pass editor control, run code, see output together.
+        Everything syncs live — no merge conflicts, ever.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ TESTIMONIALS ═══════════════════════════════════════════ -->
+<section id="testimonials">
+  <div class="testimonials-inner">
+    <div class="section-label">What People Say</div>
+    <h2 class="section-headline reveal">Trusted by<br>builders <em>worldwide.</em></h2>
+    <div class="testimonials-grid">
+      <div class="testimonial-card reveal">
+        <div class="testimonial-quote">
+          We used to screenshare over Zoom and fight over who has the keyboard.
+          CodeForge replaced all of that in one tab.
+        </div>
+        <div class="testimonial-author">
+          <div class="author-avatar">🧑‍💻</div>
+          <div>
+            <span class="author-name">Rabi K.</span>
+            <span class="author-role">Web Developer · Indie Startup</span>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card reveal">
+        <div class="testimonial-quote">
+          The editor control system is clever. As a TA, I can take over a student's code
+          and fix it without a 10-minute setup ritual.
+        </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CTA ════════════════════════════════════════════════════ -->
+<section id="cta">
+  <div class="cta-bg-text">FORGE</div>
+  <div class="cta-content reveal">
+    <h2 class="cta-headline">
+      Stop waiting.<br>
+      Start <em>building.</em>
+    </h2>
+    <div class="cta-buttons">
+      <a class="btn-primary" href="index.html">Launch Editor →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ════════════════════════════════════════════════ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">CODE<span>FORGE</span></div>
+    <div class="footer-links">
+      <a href="index.html">Editor</a>
+      <a href="#features">Features</a>
+      <a href="#how">How It Works</a>
+    </div>
+    <span class="footer-copy">© 2026 CodeForge. All rights reserved.</span>
+  </div>
+</footer>
+
+<script>
+// ── Custom cursor ─────────────────────────────────────────────
+const cursor     = document.getElementById('cursor');
+const cursorRing = document.getElementById('cursor-ring');
+let mx = 0, my = 0, rx = 0, ry = 0;
+
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  cursor.style.left = mx + 'px';
+  cursor.style.top  = my + 'px';
+});
+
+(function animRing() {
+  rx += (mx - rx) * 0.12;
+  ry += (my - ry) * 0.12;
+  cursorRing.style.left = rx + 'px';
+  cursorRing.style.top  = ry + 'px';
+  requestAnimationFrame(animRing);
+})();
+
+// ── Navbar scroll ─────────────────────────────────────────────
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 40);
+}, { passive: true });
+
+// ── Scroll reveal ─────────────────────────────────────────────
+const revealEls = document.querySelectorAll('.reveal');
+const observer  = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12 });
+
+revealEls.forEach(el => observer.observe(el));
+
+// ── Background canvas: floating code glyphs ───────────────────
+const canvas  = document.getElementById('bg-canvas');
+const ctx     = canvas.getContext('2d');
+const GLYPHS  = ['{ }', '=>', '//', '( )', '[]', '&&', '||', '++', '**', '!=', '==', '<<', '>>', '0x', 'fn', '::', '|>', '??'];
+
+let W, H, particles = [];
+
+function resize() {
+  W = canvas.width  = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+
+resize();
+window.addEventListener('resize', resize, { passive: true });
+
+class Particle {
+  constructor() { this.reset(true); }
+
+  reset(fromBottom = false) {
+    this.x     = Math.random() * W;
+    this.y     = fromBottom ? H + 20 : Math.random() * H;
+    this.speed = 0.2 + Math.random() * 0.5;
+    this.drift = (Math.random() - 0.5) * 0.3;
+    this.alpha = 0.04 + Math.random() * 0.1;
+    this.size  = 9 + Math.floor(Math.random() * 6);
+    this.glyph = GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
+    this.color = Math.random() > 0.7 ? '#4f7fff' : '#52566b';
+  }
+
+  update() {
+    this.y -= this.speed;
+    this.x += this.drift;
+    if (this.y < -30) this.reset();
+  }
+
+  draw() {
+    ctx.save();
+    ctx.globalAlpha = this.alpha;
+    ctx.fillStyle   = this.color;
+    ctx.font        = `${this.size}px 'DM Mono', monospace`;
+    ctx.fillText(this.glyph, this.x, this.y);
+    ctx.restore();
+  }
+}
+
+for (let i = 0; i < 55; i++) particles.push(new Particle());
+
+function animCanvas() {
+  ctx.clearRect(0, 0, W, H);
+  particles.forEach(p => { p.update(); p.draw(); });
+  requestAnimationFrame(animCanvas);
+}
+
+animCanvas();
+</script>
+</body>
+</html>
