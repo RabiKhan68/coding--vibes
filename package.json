@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "CodeForge — collaborative code editor",
   "scripts": {
-    "start": "node teamserver.js",
+    "start": "node script.js",
     "runner": "node script.js",
-    "dev": "concurrently \"node script.js\" \"node teamserver.js\""
+    "dev": "concurrently \"node script.js\" \"nodemon script.js\""
   },
   "dependencies": {
     "concurrently": "^8.2.2",
