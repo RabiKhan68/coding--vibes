@@ -1,0 +1,41 @@
+* {
+    margin: 10px;
+}
+
+.back a {
+    display: inline-block;
+    padding: 8px 16px;
+    border: 1px solid black;
+    font-size: 14px;
+    border-radius: 10px;
+    text-decoration: none;
+    color: black;
+    cursor: pointer;
+    transition: 
+    background-color 0.3s ease,
+    color 0.3s ease-in-out,
+    border-color 0.3s ease;
+}
+
+.back a:hover {
+    background-color: cadetblue;
+    color: white;
+    border-color: cadetblue;
+}
+
+.card {
+    border: 1px solid black;
+}
+
+h1 {
+    text-align: center;
+}
+
+p {
+    text-align: center;
+    font-size: 18px;
+}
+
+.card ul {
+    font-size: 20px;
+}

@@ -1,0 +1,89 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.back {
+    position: fixed;      /* stays even when scrolling */
+    top: 20px;
+    left: 20px;
+    z-index: 1000;        /* stays above cards */
+}
+
+.back a {
+    display: inline-block;
+    padding: 8px 16px;
+    border-radius: 10px;
+    border: 1px solid black;
+    text-decoration: none;
+    color: black;
+    background-color: white;
+    font-size: 14px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.back a:hover {
+    background-color: cadetblue;
+    color: white;
+}
+
+.login-container {
+    width: 100%;
+    max-width: 350px;
+}
+
+.login-box {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.login-box h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.login-box label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 14px;
+}
+
+.login-box input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    outline: none;
+}
+
+.login-box input:focus {
+    border-color: cadetblue;
+}
+
+.login-box button {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    background: cadetblue;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.login-box button:hover {
+    background: #4a8f8f;
+}

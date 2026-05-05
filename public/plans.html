@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CodeForge — Plans</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #07090f;
+      --surface:   #0d1018;
+      --surface2:  #131720;
+      --border:    #1e2535;
+      --border2:   #2a3550;
+      --accent:    #3d7eff;
+      --gold:      #f5a623;
+      --gold-dim:  #c47d0e;
+      --text:      #dde4f0;
+      --muted:     #5a6a8a;
+      --success:   #34d399;
+      --ff-head:   'Syne', sans-serif;
+      --ff-mono:   'DM Mono', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--ff-head);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(61,126,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(61,126,255,0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.18;
+    }
+    .blob-1 { width: 500px; height: 500px; background: var(--accent); top: -100px; left: -150px; }
+    .blob-2 { width: 400px; height: 400px; background: var(--gold);   bottom: -80px; right: -100px; }
+
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 48px;
+      background: rgba(7,9,15,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: var(--ff-mono);
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--accent);
+      text-decoration: none;
+      letter-spacing: -0.5px;
+    }
+    .nav-logo span { color: var(--gold); }
+    .nav-links { display: flex; gap: 28px; align-items: center; }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+
+    #currentPlanBadge {
+      font-family: var(--ff-mono);
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-weight: 500;
+    }
+    #currentPlanBadge.free { background: var(--surface2); border: 1px solid var(--border2); color: var(--muted); }
+    #currentPlanBadge.pro  { background: rgba(245,166,35,0.12); border: 1px solid var(--gold-dim); color: var(--gold); }
+
+    .hero {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 96px 24px 64px;
+    }
+
+    .hero-eyebrow {
+      font-family: var(--ff-mono);
+      font-size: 12px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+      opacity: 0;
+      animation: fadeUp 0.6s ease 0.1s forwards;
+    }
+
+    .hero h1 {
+      font-size: clamp(40px, 6vw, 72px);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -2px;
+      margin-bottom: 20px;
+      opacity: 0;
+      animation: fadeUp 0.6s ease 0.2s forwards;
+    }
+
+    .hero h1 em {
+      font-style: normal;
+      background: linear-gradient(135deg, var(--gold) 0%, #ff8c42 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-sub {
+      font-size: 16px;
+      color: var(--muted);
+      max-width: 440px;
+      margin: 0 auto;
+      line-height: 1.7;
+      font-weight: 400;
+      opacity: 0;
+      animation: fadeUp 0.6s ease 0.3s forwards;
+    }
+
+    .plans-wrapper {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      padding: 0 24px 80px;
+      flex-wrap: wrap;
+    }
+
+    .plan-card {
+      width: 340px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 36px;
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .plan-card.animate-in { animation: fadeUp 0.6s ease forwards; }
+    .plan-card:nth-child(1) { animation-delay: 0.4s; }
+    .plan-card:nth-child(2) { animation-delay: 0.55s; }
+    .plan-card:hover { transform: translateY(-4px); }
+
+    .plan-card.free:hover {
+      border-color: var(--border2);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+
+    .plan-card.pro {
+      border-color: var(--gold-dim);
+      background: linear-gradient(160deg, #0d1018 0%, #120f08 100%);
+    }
+    .plan-card.pro:hover {
+      border-color: var(--gold);
+      box-shadow: 0 20px 60px rgba(245,166,35,0.15);
+    }
+    .plan-card.pro::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+
+    .plan-card.active-plan { box-shadow: 0 0 0 2px var(--accent), 0 20px 60px rgba(61,126,255,0.15); }
+    .plan-card.pro.active-plan { box-shadow: 0 0 0 2px var(--gold), 0 20px 60px rgba(245,166,35,0.2); }
+
+    .plan-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--ff-mono);
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+      font-weight: 500;
+    }
+    .plan-badge.free { background: var(--surface2); border: 1px solid var(--border2); color: var(--muted); }
+    .plan-badge.pro  { background: rgba(245,166,35,0.1); border: 1px solid var(--gold-dim); color: var(--gold); }
+    .plan-badge .dot { width: 5px; height: 5px; border-radius: 50%; }
+    .plan-badge.free .dot { background: var(--muted); }
+    .plan-badge.pro  .dot { background: var(--gold); box-shadow: 0 0 6px var(--gold); }
+
+    .plan-name {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 6px;
+    }
+    .plan-card.pro .plan-name {
+      background: linear-gradient(135deg, var(--gold), #ff8c42);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .plan-price { display: flex; align-items: baseline; gap: 4px; margin-bottom: 6px; }
+    .price-amount { font-size: 48px; font-weight: 800; letter-spacing: -2px; line-height: 1; }
+    .price-period { font-size: 14px; color: var(--muted); font-weight: 400; }
+
+    .plan-desc { font-size: 13px; color: var(--muted); margin-bottom: 28px; line-height: 1.6; font-weight: 400; }
+
+    .plan-divider { height: 1px; background: var(--border); margin-bottom: 24px; }
+    .plan-card.pro .plan-divider { background: rgba(245,166,35,0.15); }
+
+    .features-label {
+      font-family: var(--ff-mono);
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+
+    .feature-list { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 32px; }
+    .feature-item { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; line-height: 1.5; font-weight: 400; }
+
+    .feature-icon {
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      margin-top: 1px;
+    }
+    .plan-card.free .feature-icon { background: rgba(61,126,255,0.12); color: var(--accent); }
+    .plan-card.pro  .feature-icon { background: rgba(245,166,35,0.12); color: var(--gold); }
+
+    .limit-pill {
+      display: inline-block;
+      font-family: var(--ff-mono);
+      font-size: 10px;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-weight: 500;
+      margin-left: 4px;
+    }
+    .plan-card.free .limit-pill { background: rgba(61,126,255,0.1); color: var(--accent); }
+    .plan-card.pro  .limit-pill { background: rgba(245,166,35,0.1); color: var(--gold); }
+
+    .plan-cta {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      font-family: var(--ff-head);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .plan-cta::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(255,255,255,0);
+      transition: background 0.2s;
+    }
+    .plan-cta:hover::after { background: rgba(255,255,255,0.06); }
+    .plan-cta.free-cta { background: var(--surface2); border: 1px solid var(--border2); color: var(--text); }
+    .plan-cta.free-cta:hover { border-color: var(--accent); color: var(--accent); }
+    .plan-cta.pro-cta { background: linear-gradient(135deg, var(--gold) 0%, #e8870e 100%); color: #07090f; }
+    .plan-cta.pro-cta:hover { transform: translateY(-1px); box-shadow: 0 8px 30px rgba(245,166,35,0.35); }
+    .plan-cta:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+
+    .active-indicator {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .active-indicator.free { background: rgba(61,126,255,0.08); border: 1px solid rgba(61,126,255,0.2); color: var(--accent); }
+    .active-indicator.pro  { background: rgba(245,166,35,0.08); border: 1px solid rgba(245,166,35,0.2); color: var(--gold); }
+    .plan-card.active-plan .plan-cta         { display: none; }
+    .plan-card.active-plan .active-indicator { display: flex; }
+
+    .compare-section {
+      position: relative;
+      z-index: 1;
+      max-width: 740px;
+      margin: 0 auto 80px;
+      padding: 0 24px;
+      opacity: 0;
+      animation: fadeUp 0.6s ease 0.7s forwards;
+    }
+    .compare-section h2 {
+      text-align: center;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 28px;
+      color: var(--muted);
+    }
+
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    thead th {
+      padding: 12px 20px;
+      text-align: left;
+      font-family: var(--ff-mono);
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+    }
+    thead th:nth-child(2),
+    thead th:last-child { text-align: center; }
+    tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; }
+    tbody tr:hover { background: var(--surface); }
+    tbody tr:last-child { border-bottom: none; }
+    tbody td { padding: 14px 20px; vertical-align: middle; }
+    tbody td:nth-child(2),
+    tbody td:nth-child(3) { text-align: center; }
+    .td-feature { color: var(--text); font-weight: 400; }
+    .td-free { color: var(--accent); font-family: var(--ff-mono); font-size: 12px; }
+    .td-pro  { color: var(--gold);   font-family: var(--ff-mono); font-size: 12px; }
+    .check { font-size: 16px; }
+
+    /* Payment Modal */
+    #payModal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(8px);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+    }
+    #payModal.open { display: flex; }
+
+    .modal-card {
+      background: var(--surface);
+      border: 1px solid var(--gold-dim);
+      border-radius: 16px;
+      padding: 36px;
+      width: 420px;
+      position: relative;
+      box-shadow: 0 40px 100px rgba(0,0,0,0.6), 0 0 0 1px rgba(245,166,35,0.1);
+      animation: scaleIn 0.25s ease;
+    }
+
+    @keyframes scaleIn {
+      from { transform: scale(0.94); opacity: 0; }
+      to   { transform: scale(1);    opacity: 1; }
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 14px; right: 16px;
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 20px;
+      cursor: pointer;
+      transition: color 0.2s;
+      line-height: 1;
+    }
+    .modal-close:hover { color: var(--text); }
+
+    .modal-title { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 4px; }
+    .modal-sub { font-size: 13px; color: var(--muted); margin-bottom: 28px; font-weight: 400; }
+
+    .form-field { margin-bottom: 16px; }
+    .form-field label {
+      display: block;
+      font-family: var(--ff-mono);
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .form-field input {
+      width: 100%;
+      padding: 10px 12px;
+      background: var(--bg);
+      border: 1px solid var(--border2);
+      border-radius: 7px;
+      color: var(--text);
+      font-family: var(--ff-mono);
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .form-field input:focus { border-color: var(--gold-dim); }
+    .form-row { display: flex; gap: 12px; }
+    .form-row .form-field { flex: 1; }
+
+    .modal-note { font-size: 11px; color: var(--muted); text-align: center; margin-top: 12px; line-height: 1.5; font-weight: 400; }
+    .modal-note strong { color: var(--gold); }
+
+    .pay-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--gold) 0%, #e8870e 100%);
+      border: none;
+      border-radius: 10px;
+      color: #07090f;
+      font-family: var(--ff-head);
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 4px;
+    }
+    .pay-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 30px rgba(245,166,35,0.35); }
+    .pay-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    #toast {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      color: var(--text);
+      padding: 12px 24px;
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 600;
+      opacity: 0;
+      transition: all 0.3s;
+      z-index: 300;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 600px) {
+      nav { padding: 14px 20px; }
+      .hero { padding: 64px 20px 48px; }
+      .plans-wrapper { padding: 0 16px 60px; }
+      .plan-card { width: 100%; }
+      .modal-card { width: calc(100% - 32px); padding: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+
+<nav>
+  <a class="nav-logo" href="/">Code<span>Forge</span></a>
+  <div class="nav-links">
+    <a href="/">Editor</a>
+    <a href="/plans.html" style="color:var(--text)">Plans</a>
+    <span id="currentPlanBadge" class="free">Free Plan</span>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-eyebrow">Simple pricing</div>
+  <h1>Build alone.<br><em>Ship together.</em></h1>
+  <p class="hero-sub">Start free. Upgrade when your team grows. No hidden fees.</p>
+</section>
+
+<div class="plans-wrapper">
+
+  <!-- FREE -->
+  <div class="plan-card free animate-in" id="freeCard">
+    <div class="plan-badge free"><span class="dot"></span> Free</div>
+    <div class="plan-name">Free</div>
+    <div class="plan-price">
+      <span class="price-amount">$0</span>
+      <span class="price-period">/ forever</span>
+    </div>
+    <p class="plan-desc">Perfect for solo projects and small experiments. No credit card required.</p>
+    <div class="plan-divider"></div>
+    <div class="features-label">What's included</div>
+    <ul class="feature-list">
+      <li class="feature-item"><div class="feature-icon">✓</div><span>Live sessions up to <span class="limit-pill">90 min</span></span></li>
+      <li class="feature-item"><div class="feature-icon">✓</div><span>Up to <span class="limit-pill">4 members</span> per room</span></li>
+      <li class="feature-item"><div class="feature-icon">✓</div><span>Create up to <span class="limit-pill">8 rooms</span></span></li>
+      <li class="feature-item"><div class="feature-icon">✓</div><span>Save & export up to <span class="limit-pill">10 files</span></span></li>
+      <li class="feature-item"><div class="feature-icon">✓</div><span>Python, C, C++, Java support</span></li>
+    </ul>
+    <!-- FIX 6: no inline onclick -->
+    <button class="plan-cta free-cta" id="freeCtaBtn">Get started free</button>
+    <div class="active-indicator free">✓ Your current plan</div>
+  </div>
+
+  <!-- PRO -->
+  <div class="plan-card pro animate-in" id="proCard">
+    <div class="plan-badge pro"><span class="dot"></span> Pro</div>
+    <div class="plan-name">Pro</div>
+    <div class="plan-price">
+      <span class="price-amount">$10</span>
+      <span class="price-period">/ month</span>
+    </div>
+    <p class="plan-desc">For teams that ship. Unlimited sessions, bigger rooms, and all the storage you need.</p>
+    <div class="plan-divider"></div>
+    <div class="features-label">Everything in Free, plus</div>
+    <ul class="feature-list">
+      <li class="feature-item"><div class="feature-icon">✓</div><span><span class="limit-pill">No limit</span> on live session duration</span></li>
+      <li class="feature-item"><div class="feature-icon">✓</div><span>Up to <span class="limit-pill">8 members</span> per room</span></li>
+      <li class="feature-item"><div class="feature-icon">✓</div><span><span class="limit-pill">Unlimited</span> team rooms</span></li>
+      <li class="feature-item"><div class="feature-icon">✓</div><span><span class="limit-pill">Unlimited</span> file saves & exports</span></li>
+      <li class="feature-item"><div class="feature-icon">✓</div><span>Priority support</span></li>
+    </ul>
+    <!-- FIX 2 & 3: Pro button now correctly calls openPayModal (the demo checkout) -->
+    <button class="plan-cta pro-cta" id="proCtaBtn">Upgrade to Pro →</button>
+    <div class="active-indicator pro">✓ Your current plan</div>
+  </div>
+
+</div>
+
+<section class="compare-section">
+  <h2>Full comparison</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Feature</th>
+        <th>Free</th>
+        <th>Pro</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td class="td-feature">Live session duration</td><td class="td-free">90 min</td><td class="td-pro">Unlimited</td></tr>
+      <tr><td class="td-feature">Members per room</td><td class="td-free">4</td><td class="td-pro">8</td></tr>
+      <tr><td class="td-feature">Team rooms</td><td class="td-free">8</td><td class="td-pro">Unlimited</td></tr>
+      <tr><td class="td-feature">File saves & exports</td><td class="td-free">10</td><td class="td-pro">Unlimited</td></tr>
+      <tr><td class="td-feature">Python, C, C++, Java</td><td class="td-free"><span class="check">✓</span></td><td class="td-pro"><span class="check">✓</span></td></tr>
+      <tr><td class="td-feature">Real-time collaboration</td><td class="td-free"><span class="check">✓</span></td><td class="td-pro"><span class="check">✓</span></td></tr>
+      <tr><td class="td-feature">Live video & audio</td><td class="td-free"><span class="check">✓</span></td><td class="td-pro"><span class="check">✓</span></td></tr>
+      <tr><td class="td-feature">Priority support</td><td class="td-free">—</td><td class="td-pro"><span class="check">✓</span></td></tr>
+      <tr><td class="td-feature">Price</td><td class="td-free">$0</td><td class="td-pro">$10 / mo</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- Payment Modal -->
+<div id="payModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-card">
+    <!-- FIX 6: no inline onclick -->
+    <button class="modal-close" id="modalCloseBtn" aria-label="Close">×</button>
+    <div class="modal-title" id="modalTitle">Upgrade to Pro</div>
+    <p class="modal-sub">$10 / month · Cancel anytime</p>
+    <div class="form-field">
+      <label>Cardholder name</label>
+      <input type="text" id="cardName" placeholder="Jane Smith" autocomplete="cc-name"/>
+    </div>
+    <div class="form-field">
+      <label>Card number</label>
+      <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" autocomplete="cc-number"/>
+    </div>
+    <div class="form-row">
+      <div class="form-field">
+        <label>Expiry</label>
+        <input type="text" id="cardExpiry" placeholder="MM / YY" maxlength="7" autocomplete="cc-exp"/>
+      </div>
+      <div class="form-field">
+        <label>CVC</label>
+        <input type="text" id="cardCvc" placeholder="123" maxlength="3" autocomplete="cc-csc"/>
+      </div>
+    </div>
+    <button class="pay-btn" id="payBtn">Pay $10.00</button>
+    <p class="modal-note">
+      🔒 This is a <strong>demo</strong> — no real charge will occur.<br>
+      In production, integrate Stripe or your payment provider here.
+    </p>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ════════════════════════════════════════════════════════════════════
+//  PLAN DEFINITIONS — single source of truth
+//  server.js reads cf_plan_limits from the request or its own store;
+//  index.html reads it from localStorage for client-side enforcement.
+// ════════════════════════════════════════════════════════════════════
+const PLANS = {
+  free: { name: 'Free', sessionMins: 90,       maxMembers: 4, maxRooms: 8,        maxFiles: 10       },
+  pro:  { name: 'Pro',  sessionMins: Infinity,  maxMembers: 8, maxRooms: Infinity, maxFiles: Infinity },
+};
+
+// ── localStorage helpers ──────────────────────────────────────────────
+function getCurrentPlan() {
+  const stored = localStorage.getItem('cf_plan');
+  // FIX 4: validate stored value — fall back to 'free' if unexpected
+  return (stored === 'pro' || stored === 'free') ? stored : 'free';
+}
+
+function setPlan(plan) {
+  // FIX 4: only accept valid plan keys
+  if (plan !== 'free' && plan !== 'pro') return;
+  localStorage.setItem('cf_plan', plan);
+  localStorage.setItem('cf_plan_limits', JSON.stringify(PLANS[plan]));
+  localStorage.setItem('cf_plan_set_at', Date.now().toString());
+}
+
+// ── UI refresh ────────────────────────────────────────────────────────
+function refreshUI() {
+  const plan = getCurrentPlan();
+  const badge = document.getElementById('currentPlanBadge');
+  badge.textContent = plan === 'pro' ? '⚡ Pro Plan' : 'Free Plan';
+  badge.className   = plan === 'pro' ? 'pro' : 'free';
+  document.getElementById('freeCard').classList.toggle('active-plan', plan === 'free');
+  document.getElementById('proCard').classList.toggle('active-plan',  plan === 'pro');
+}
+
+// ── Downgrade to Free ─────────────────────────────────────────────────
+function selectFree() {
+  if (getCurrentPlan() === 'free') return;
+  if (!confirm('Downgrade to Free plan? Your limits will be reduced immediately.')) return;
+  setPlan('free');
+  refreshUI();
+  toast('Downgraded to Free plan.');
+}
+
+// ── Payment modal ─────────────────────────────────────────────────────
+function openPayModal() {
+  if (getCurrentPlan() === 'pro') return;
+  document.getElementById('payModal').classList.add('open');
+  document.getElementById('cardName').focus();
+}
+
+function closePayModal() {
+  document.getElementById('payModal').classList.remove('open');
+  // Reset form fields
+  ['cardName','cardNumber','cardExpiry','cardCvc'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+}
+
+// ── Card input formatting ─────────────────────────────────────────────
+document.getElementById('cardNumber').addEventListener('input', function() {
+  let v = this.value.replace(/\D/g,'').slice(0,16);
+  this.value = v.replace(/(.{4})/g,'$1 ').trim();
+});
+
+document.getElementById('cardExpiry').addEventListener('input', function() {
+  let v = this.value.replace(/\D/g,'').slice(0,4);
+  if (v.length >= 3) v = v.slice(0,2) + ' / ' + v.slice(2);
+  this.value = v;
+});
+
+document.getElementById('cardCvc').addEventListener('input', function() {
+  this.value = this.value.replace(/\D/g,'').slice(0,3);
+});
+
+// ── Process payment (demo) ────────────────────────────────────────────
+async function processPayment() {
+  const name   = document.getElementById('cardName').value.trim();
+  const number = document.getElementById('cardNumber').value.replace(/\s/g,'');
+  const expiry = document.getElementById('cardExpiry').value.trim();
+  const cvc    = document.getElementById('cardCvc').value.trim();
+
+  if (!name)                  { toast('Enter cardholder name.');   return; }
+  if (number.length < 16)     { toast('Enter a valid card number.'); return; }
+  if (!expiry.includes('/'))  { toast('Enter a valid expiry date.'); return; }
+  if (cvc.length < 3)         { toast('Enter a valid CVC.');        return; }
+
+  const btn = document.getElementById('payBtn');
+  btn.disabled = true;
+  btn.textContent = 'Processing…';
+
+  // Simulated delay — replace with real Stripe / payment provider call
+  await new Promise(r => setTimeout(r, 1800));
+
+  setPlan('pro');
+  refreshUI();
+  closePayModal();
+  toast('🎉 Welcome to Pro! Your limits are now active.');
+
+  btn.disabled = false;
+  btn.textContent = 'Pay $10.00';
+}
+
+// ── Toast ─────────────────────────────────────────────────────────────
+let toastTimer;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 3200);
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  FIX 1: urlParams declared ONCE at the top, before any usage
+// ════════════════════════════════════════════════════════════════════
+const urlParams = new URLSearchParams(window.location.search);
+
+// ── FIX 5 & 7: Only attempt payment verification if the server
+//    actually implements /api/verify-safepay. Guarded with a flag so
+//    this block is easy to enable when the endpoint exists.
+//    Replace HAS_PAYMENT_API = false with true once you add the
+//    /api/verify-safepay and /api/me endpoints to server.js.
+const HAS_PAYMENT_API = false;
+
+if (HAS_PAYMENT_API && urlParams.get('payment') === 'success') {
+  const tracker = urlParams.get('tracker') || sessionStorage.getItem('sf_tracker');
+  if (tracker) {
+    fetch(`/api/verify-safepay/${tracker}`)
+      .then(r => r.json())
+      .then(data => {
+        if (data.paid) {
+          setPlan('pro');
+          refreshUI();
+          toast('🎉 Welcome to Pro! Your limits are now active.');
+        } else {
+          // FIX 7: surface a clear message instead of silent failure
+          toast('⚠ Payment not confirmed — contact support if you were charged.');
+        }
+      })
+      .catch(() => toast('⚠ Could not verify payment. Contact support.'));
+  } else {
+    // FIX 7: tracker missing — don't silently fail
+    toast('⚠ Payment tracker missing. Contact support with your order details.');
+  }
+  // Clean up URL regardless
+  window.history.replaceState({}, '', window.location.pathname);
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  Boot — try to sync plan from server, fall back to localStorage
+//  FIX 5: /api/me is guarded by HAS_PAYMENT_API so it doesn't 404
+//  on the current server.js which has no /api/me endpoint.
+// ════════════════════════════════════════════════════════════════════
+async function boot() {
+  if (HAS_PAYMENT_API) {
+    try {
+      const res  = await fetch('/api/me');
+      const data = await res.json();
+      if (data.loggedIn && (data.plan === 'free' || data.plan === 'pro')) {
+        // FIX 4: validate before writing
+        setPlan(data.plan);
+        if (data.email) {
+          document.getElementById('currentPlanBadge').title = data.email;
+        }
+      }
+    } catch (e) {
+      // Server offline or endpoint missing — fall back to localStorage silently
+    }
+  }
+  refreshUI();
+}
+
+// ════════════════════════════════════════════════════════════════════
+//  FIX 6: All event wiring in DOMContentLoaded — no inline onclick
+// ════════════════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  // Plan CTAs
+  document.getElementById('freeCtaBtn').addEventListener('click', selectFree);
+  // FIX 2 & 3: Pro button calls openPayModal (the working demo flow)
+  document.getElementById('proCtaBtn').addEventListener('click', openPayModal);
+
+  // Modal controls
+  document.getElementById('modalCloseBtn').addEventListener('click', closePayModal);
+  document.getElementById('payBtn').addEventListener('click', processPayment);
+
+  // Close modal on backdrop click
+  document.getElementById('payModal').addEventListener('click', function(e) {
+    if (e.target === this) closePayModal();
+  });
+
+  // ESC to close modal
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closePayModal();
+  });
+
+  boot();
+});
+</script>
+</body>
+</html>
