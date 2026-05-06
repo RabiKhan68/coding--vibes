@@ -1,28 +1,839 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <link rel="stylesheet" href="login.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login — CodeForge</title>
+    <link rel="icon" type="image/png" href="logo.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #0e0d0b;
+            --surface: #141310;
+            --surface2: #1c1a17;
+            --border: #2a2620;
+            --border-hover: #3d3830;
+            --accent: #5b8eff;
+            --accent2: #ff6b6b;
+            --accent3: #4ecdc4;
+            --text: #e8e2d8;
+            --text-muted: #6b6458;
+            --success: #4ade80;
+            --error: #f87171;
+            --font-mono: 'Space Mono', monospace;
+            --font-display: 'Syne', sans-serif;
+        }
+
+        html,
+        body {
+            height: 100%;
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font-display);
+            overflow: hidden;
+        }
+
+        /* noise */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        /* ── LAYOUT ── */
+        .page {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            height: 100vh;
+        }
+
+        /* ── LEFT PANEL ── */
+        .left-panel {
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 40px 48px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* grid bg */
+        .left-panel::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(91, 142, 255, 0.035) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(91, 142, 255, 0.035) 1px, transparent 1px);
+            background-size: 48px 48px;
+            mask-image: radial-gradient(ellipse 90% 80% at 30% 50%, black 0%, transparent 70%);
+        }
+
+        /* glow */
+        .left-panel::after {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(91, 142, 255, 0.07) 0%, transparent 65%);
+            bottom: -100px;
+            right: -100px;
+            pointer-events: none;
+        }
+
+        .left-logo {
+            font-family: var(--font-mono);
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--accent);
+            letter-spacing: -0.5px;
+            text-decoration: none;
+            position: relative;
+            z-index: 2;
+        }
+
+        .left-logo span {
+            color: var(--accent2);
+        }
+
+        .left-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .left-eyebrow {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: var(--accent);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+
+        .left-title {
+            font-size: clamp(32px, 3.5vw, 48px);
+            font-weight: 800;
+            letter-spacing: -2px;
+            line-height: 1.05;
+            margin-bottom: 16px;
+        }
+
+        .left-title em {
+            font-style: normal;
+            background: linear-gradient(135deg, var(--accent), var(--accent3));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .left-sub {
+            font-size: 14px;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+            line-height: 1.7;
+            max-width: 340px;
+            margin-bottom: 40px;
+        }
+
+        /* code snippet decoration */
+        .code-snippet {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px 18px;
+            font-family: var(--font-mono);
+            font-size: 12px;
+            line-height: 1.8;
+            max-width: 360px;
+        }
+
+        .cs-line {
+            display: flex;
+            gap: 10px;
+        }
+
+        .cs-ln {
+            color: var(--border-hover);
+            min-width: 16px;
+            text-align: right;
+            user-select: none;
+        }
+
+        .kw {
+            color: #c678dd;
+        }
+
+        .fn {
+            color: #61afef;
+        }
+
+        .str {
+            color: #98c379;
+        }
+
+        .cm {
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .op {
+            color: #56b6c2;
+        }
+
+        .left-footer {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+            position: relative;
+            z-index: 2;
+        }
+
+        /* ── RIGHT PANEL / FORM ── */
+        .right-panel {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 48px;
+            overflow-y: auto;
+        }
+
+        .form-card {
+            width: 100%;
+            max-width: 400px;
+            animation: fadeUp 0.5s ease both;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-title {
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 4px;
+        }
+
+        .form-sub {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+            margin-bottom: 28px;
+        }
+
+        .form-sub a {
+            color: var(--accent);
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+
+        .form-sub a:hover {
+            opacity: 0.75;
+        }
+
+        /* Google btn */
+        .btn-google {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 11px 20px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 7px;
+            color: var(--text);
+            font-family: var(--font-display);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-google::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.04), transparent);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .btn-google:hover {
+            border-color: var(--border-hover);
+            background: var(--surface2);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-google:hover::before {
+            opacity: 1;
+        }
+
+        .google-icon {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+        }
+
+        /* divider */
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .divider-text {
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* fields */
+        .field {
+            margin-bottom: 14px;
+        }
+
+        .field label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .field label a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 11px;
+            letter-spacing: 0;
+            text-transform: none;
+            transition: opacity 0.2s;
+        }
+
+        .field label a:hover {
+            opacity: 0.75;
+        }
+
+        .input-wrap {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 14px;
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
+        .field input {
+            width: 100%;
+            padding: 10px 12px 10px 38px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font-family: var(--font-mono);
+            font-size: 13px;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .field input:focus {
+            border-color: var(--accent);
+            background: var(--surface2);
+            box-shadow: 0 0 0 3px rgba(91, 142, 255, 0.1);
+        }
+
+        .field input::placeholder {
+            color: var(--text-muted);
+            opacity: 0.6;
+        }
+
+        .field input.error-input {
+            border-color: var(--error);
+            box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.1);
+        }
+
+        /* show/hide password */
+        .toggle-pass {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 13px;
+            padding: 2px;
+            transition: color 0.2s;
+        }
+
+        .toggle-pass:hover {
+            color: var(--text);
+        }
+
+        /* remember me */
+        .remember-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            margin-top: 2px;
+        }
+
+        .remember-row input[type="checkbox"] {
+            width: 15px;
+            height: 15px;
+            accent-color: var(--accent);
+            cursor: pointer;
+        }
+
+        .remember-row label {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+
+        /* submit */
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 7px;
+            font-family: var(--font-display);
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .btn-submit::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), transparent);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .btn-submit:hover {
+            background: #4070ee;
+            transform: translateY(-1px);
+            box-shadow: 0 8px 24px rgba(91, 142, 255, 0.3);
+        }
+
+        .btn-submit:hover::before {
+            opacity: 1;
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* error message */
+        .error-msg {
+            display: none;
+            background: rgba(248, 113, 113, 0.1);
+            border: 1px solid rgba(248, 113, 113, 0.25);
+            border-radius: 6px;
+            padding: 10px 12px;
+            font-family: var(--font-mono);
+            font-size: 12px;
+            color: var(--error);
+            margin-bottom: 14px;
+            animation: shake 0.3s ease;
+        }
+
+        .error-msg.show {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-4px);
+            }
+
+            75% {
+                transform: translateX(4px);
+            }
+        }
+
+        /* success */
+        .success-msg {
+            display: none;
+            background: rgba(74, 222, 128, 0.1);
+            border: 1px solid rgba(74, 222, 128, 0.25);
+            border-radius: 6px;
+            padding: 10px 12px;
+            font-family: var(--font-mono);
+            font-size: 12px;
+            color: var(--success);
+            margin-bottom: 14px;
+        }
+
+        .success-msg.show {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        /* loading spinner */
+        .spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            vertical-align: middle;
+            margin-right: 6px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* responsive */
+        @media (max-width: 768px) {
+            .page {
+                grid-template-columns: 1fr;
+            }
+
+            .left-panel {
+                display: none;
+            }
+
+            .right-panel {
+                padding: 40px 24px;
+                align-items: flex-start;
+                padding-top: 60px;
+            }
+
+            html,
+            body {
+                overflow: auto;
+            }
+        }
+    </style>
 </head>
+
 <body>
-    <div class="back"> 
-        <a href = "index.html">Back</a> 
+
+    <div class="page">
+
+        <!-- LEFT DECORATIVE PANEL -->
+        <div class="left-panel">
+            <a href="landing.html" class="left-logo">Code<span>Forge</span></a>
+
+            <div class="left-content">
+                <div class="left-eyebrow">// Welcome back</div>
+                <h1 class="left-title">Code.<br><em>Collaborate.</em><br>Ship.</h1>
+                <p class="left-sub">
+                    Sign in to access your rooms, saved projects, and team sessions.
+                </p>
+
+                <div class="code-snippet">
+                    <div class="cs-line"><span class="cs-ln">1</span><span><span class="cm"># Your session,
+                                restored</span></span></div>
+                    <div class="cs-line"><span class="cs-ln">2</span><span></span></div>
+                    <div class="cs-line"><span class="cs-ln">3</span><span><span class="kw">def</span> <span
+                                class="fn">resume</span>(user):</span></div>
+                    <div class="cs-line"><span class="cs-ln">4</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span
+                                class="fn">load_projects</span>(user)</span></div>
+                    <div class="cs-line"><span class="cs-ln">5</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span
+                                class="fn">reconnect_team</span>(user)</span></div>
+                    <div class="cs-line"><span class="cs-ln">6</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span
+                                class="kw">return</span> <span class="str">"Ready to forge 🔥"</span></span></div>
+                </div>
+            </div>
+
+            <div class="left-footer">© 2026 CodeForge · Built by M. Rabi. K.</div>
+        </div>
+
+        <!-- RIGHT FORM PANEL -->
+        <div class="right-panel">
+            <div class="form-card">
+
+                <div class="form-title">Sign in</div>
+                <div class="form-sub">
+                    No account? <a href="signup.html">Create one free →</a>
+                </div>
+
+                <!-- Google -->
+                <button class="btn-google" onclick="handleGoogleLogin()">
+                    <svg class="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                            fill="#4285F4" />
+                        <path
+                            d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                            fill="#34A853" />
+                        <path
+                            d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"
+                            fill="#FBBC05" />
+                        <path
+                            d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                            fill="#EA4335" />
+                    </svg>
+                    Continue with Google
+                </button>
+
+                <div class="divider"><span class="divider-text">or sign in with email</span></div>
+
+                <!-- Error / Success -->
+                <div class="error-msg" id="errorMsg">⚠ <span id="errorText"></span></div>
+                <div class="success-msg" id="successMsg">✓ <span id="successText"></span></div>
+
+                <!-- Form -->
+                <form id="loginForm" novalidate>
+                    <div class="field">
+                        <label>Email</label>
+                        <div class="input-wrap">
+                            <span class="input-icon">✉</span>
+                            <input type="email" id="email" placeholder="you@example.com" autocomplete="email" />
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label>
+                            Password
+                            <a href="#">Forgot password?</a>
+                        </label>
+                        <div class="input-wrap">
+                            <span class="input-icon">🔑</span>
+                            <input type="password" id="password" placeholder="Enter your password"
+                                autocomplete="current-password" />
+                            <button type="button" class="toggle-pass" id="togglePass"
+                                title="Show/hide password">👁</button>
+                        </div>
+                    </div>
+
+                    <div class="remember-row">
+                        <input type="checkbox" id="remember" />
+                        <label for="remember">Remember me for 30 days</label>
+                    </div>
+
+                    <button type="submit" class="btn-submit" id="submitBtn">Sign In</button>
+                </form>
+
+                <div style="text-align:center;font-family:var(--font-mono);font-size:11px;color:var(--text-muted)">
+                    By signing in, you agree to our
+                    <a href="#" style="color:var(--accent);text-decoration:none">Terms</a> &
+                    <a href="#" style="color:var(--accent);text-decoration:none">Privacy Policy</a>
+                </div>
+
+            </div>
+        </div>
     </div>
-    <div class="login-container">
-        <form class="login-box">
-            <h2>Login</h2>
 
-            <label for="username">Username</label>
-            <input type="text" id="username" name="username" placeholder="Enter your username" required>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" placeholder="Enter your email" required>
+        const res = await fetch('/api/firebase-config');
+        const firebaseConfig = await res.json();
 
-            <button type="submit">Login</button>
-        </form>
-    </div>
+        const app = initializeApp(firebaseConfig);
 
+        console.log("Firebase initialized");
+    </script>
+
+    <script>
+        document.getElementById('togglePass').addEventListener('click', () => {
+            const inp = document.getElementById('password');
+            const btn = document.getElementById('togglePass');
+            if (inp.type === 'password') {
+                inp.type = 'text';
+                btn.textContent = '🙈';
+            } else {
+                inp.type = 'password';
+                btn.textContent = '👁';
+            }
+        });
+
+        // ── Show error
+        function showError(msg) {
+            const el = document.getElementById('errorMsg');
+            document.getElementById('errorText').textContent = msg;
+            el.classList.add('show');
+            document.getElementById('successMsg').classList.remove('show');
+        }
+
+        // ── Show success
+        function showSuccess(msg) {
+            const el = document.getElementById('successMsg');
+            document.getElementById('successText').textContent = msg;
+            el.classList.add('show');
+            document.getElementById('errorMsg').classList.remove('show');
+        }
+
+        // ── Validate email
+        function isValidEmail(v) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+        }
+
+        // ── Form submit
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const btn = document.getElementById('submitBtn');
+
+            document.getElementById('errorMsg').classList.remove('show');
+            document.getElementById('email').classList.remove('error-input');
+            document.getElementById('password').classList.remove('error-input');
+
+            if (!email) {
+                showError('Please enter your email.');
+                document.getElementById('email').classList.add('error-input');
+                return;
+            }
+            if (!isValidEmail(email)) {
+                showError('Enter a valid email address.');
+                document.getElementById('email').classList.add('error-input');
+                return;
+            }
+            if (!password) {
+                showError('Please enter your password.');
+                document.getElementById('password').classList.add('error-input');
+                return;
+            }
+
+            // Loading state
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span>Signing in…';
+
+            try {
+                // 🔌 Replace this with your actual auth endpoint
+                const res = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password }),
+                });
+                const data = await res.json();
+
+                if (res.ok) {
+                    showSuccess('Signed in! Redirecting…');
+                    setTimeout(() => window.location.href = 'index.html', 1000);
+                } else {
+                    showError(data.error || 'Invalid email or password.');
+                }
+            } catch (err) {
+                // Demo fallback — remove when backend is connected
+                showSuccess('Demo: Redirecting to editor…');
+                setTimeout(() => window.location.href = 'index.html', 1200);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'Sign In';
+            }
+        });
+
+        // ── Google login
+        function handleGoogleLogin() {
+            const btn = document.querySelector('.btn-google');
+            btn.disabled = true;
+            btn.innerHTML = `
+        <svg class="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.45 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+        </svg>
+        <span class="spinner"></span>Connecting…`;
+
+            // 🔌 Replace with your Google OAuth redirect URL
+            // e.g. window.location.href = '/auth/google';
+            setTimeout(() => {
+                // Demo fallback
+                window.location.href = '/auth/google';
+            }, 800);
+        }
+
+        // ── Auto-fill from URL params (e.g. after signup redirect)
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('registered') === '1') {
+            showSuccess('Account created! Sign in to continue.');
+        }
+        if (params.get('email')) {
+            document.getElementById('email').value = decodeURIComponent(params.get('email'));
+        }
+    </script>
 </body>
+
 </html>
