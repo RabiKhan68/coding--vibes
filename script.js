@@ -17,17 +17,6 @@ const io = new Server(server, {
   cors: { origin: '*', methods: ['GET', 'POST'] }
 });
 
-app.get('/api/firebase-config', (req, res) => {
-  res.json({
-    apiKey: process.env.FIREBASE_API_KEY,
-    authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-    projectId: process.env.FIREBASE_PROJECT_ID,
-    storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-    messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
-    appId: process.env.FIREBASE_APP_ID
-  });
-});
-
 const PORT = process.env.PORT || 4000;
 const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
 const JUDGE0_URL = process.env.JUDGE0_URL || 'https://ce.judge0.com';
@@ -42,6 +31,20 @@ const JUDGE0_LANG = {
 
 app.use(express.json({ limit: '100kb' }));
 app.use(express.static(path.join(__dirname, 'public')));
+
+// ════════════════════════════════════════════════════════
+//  FIREBASE CONFIG
+// ════════════════════════════════════════════════════════
+app.get('/api/firebase-config', (req, res) => {
+  res.json({
+    apiKey:            process.env.FIREBASE_API_KEY,
+    authDomain:        process.env.FIREBASE_AUTH_DOMAIN,
+    projectId:         process.env.FIREBASE_PROJECT_ID,
+    storageBucket:     process.env.FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+    appId:             process.env.FIREBASE_APP_ID
+  });
+});
 
 // ════════════════════════════════════════════════════════
 //  CODE EXECUTION
@@ -115,10 +118,13 @@ app.post('/api/create-room', (req, res) => {
 
   rooms[roomId] = {
     hostToken,
-    hostName:    name.trim(),
-    editorOwner: null,
-    code:        '# Python\nprint("Hello, World!")\n',
-    users:       new Map(),
+    hostName:       name.trim(),
+    hostSocketId:   null,        // FIX: track host socket for reconnect reset
+    editorOwner:    null,
+    code:           '# Python\nprint("Hello, World!")\n',
+    users:          new Map(),
+    _pendingTokens: new Map(),   // FIX: initialize here instead of lazily
+    _hostConnected: false,
   };
 
   res.json({ roomId, token: hostToken, shareUrl: `${BASE_URL}/?room=${roomId}` });
@@ -133,14 +139,9 @@ app.post('/api/join-room', (req, res) => {
   if (!room) return res.status(404).json({ error: 'Room not found' });
 
   const token = makeToken();
-  room._pendingTokens = room._pendingTokens || new Map();
   room._pendingTokens.set(token, name.trim());
 
   res.json({ token });
-});
-
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // ════════════════════════════════════════════════════════
@@ -151,11 +152,18 @@ io.use((socket, next) => {
   if (!token) return next(new Error('No token'));
 
   for (const [roomId, room] of Object.entries(rooms)) {
-    if (token === room.hostToken && !room._hostConnected) {
+    if (token === room.hostToken) {
+      // FIX: allow host reconnect by resetting _hostConnected on disconnect
+      if (room._hostConnected && room.hostSocketId) {
+        // Already connected — reject duplicate tab, allow if old socket is gone
+        const existingSocket = io.sockets.sockets.get(room.hostSocketId);
+        if (existingSocket) return next(new Error('Host already connected'));
+      }
       socket._roomId = roomId;
       socket._isHost = true;
       socket._name   = room.hostName;
       room._hostConnected = true;
+      room.hostSocketId   = socket.id;
       return next();
     }
     if (room._pendingTokens?.has(token)) {
@@ -210,7 +218,6 @@ io.on('connection', (socket) => {
 
   // ── Editor control ────────────────────────────────────
 
-  // Host assigns editor to a member
   socket.on('assign-editor', ({ toSocketId }) => {
     if (!isHost) return;
     if (!room.users.has(toSocketId)) return;
@@ -218,14 +225,12 @@ io.on('connection', (socket) => {
     io.to(roomId).emit('editor-assigned', { editorOwner: toSocketId });
   });
 
-  // Host reclaims editor back to themselves
   socket.on('reclaim-editor', () => {
     if (!isHost) return;
     room.editorOwner = socket.id;
     io.to(roomId).emit('editor-assigned', { editorOwner: socket.id });
   });
 
-  // Member requests editor access from host
   socket.on('request-editor', () => {
     const host = [...room.users.entries()].find(([, u]) => u.isHost);
     if (host) {
@@ -236,15 +241,12 @@ io.on('connection', (socket) => {
     }
   });
 
-  // Host denies a member's request
   socket.on('deny-editor-request', ({ toSocketId }) => {
     if (!isHost) return;
     io.to(toSocketId).emit('editor-request-denied');
   });
 
-  // 👈 Member hands editor back to host (or any target)
   socket.on('return-editor', ({ toSocketId }) => {
-    // Only the current editor can hand it back
     if (room.editorOwner !== socket.id) return;
     if (!room.users.has(toSocketId)) return;
     room.editorOwner = toSocketId;
@@ -260,11 +262,16 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     room.users.delete(socket.id);
 
+    // FIX: reset host connection flag so host can reconnect
+    if (isHost) {
+      room._hostConnected = false;
+      room.hostSocketId   = null;
+    }
+
     if (room.editorOwner === socket.id) {
-      // Pass editor to host, or first available user
       const host = [...room.users.entries()].find(([, u]) => u.isHost);
-      const next = host || [...room.users.entries()][0];
-      room.editorOwner = next ? next[0] : null;
+      const nextUser = host || [...room.users.entries()][0];
+      room.editorOwner = nextUser ? nextUser[0] : null;
       io.to(roomId).emit('editor-assigned', { editorOwner: room.editorOwner });
     }
 
@@ -274,12 +281,13 @@ io.on('connection', (socket) => {
   });
 });
 
-// Serve landing page at root
+// ════════════════════════════════════════════════════════
+//  ROUTES — order matters: specific before catch-all
+// ════════════════════════════════════════════════════════
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'landing.html'));
 });
 
-// Catch-all still serves index.html for the editor
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
