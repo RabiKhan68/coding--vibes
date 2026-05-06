@@ -23,11 +23,19 @@
   <title>CodeForge — Editor</title>
   <link rel="icon" type="image/png" href="/logo.png">
 
+  <!-- CodeMirror -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.20/codemirror.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.20/theme/dracula.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.20/codemirror.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.20/mode/python/python.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.20/mode/clike/clike.min.js"></script>
+
+  <!-- Firebase SDKs (compat — works with simple firebase.xxx() calls) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+  <!-- Socket.IO -->
   <script src="/socket.io/socket.io.js"></script>
 
   <style>
@@ -51,68 +59,94 @@
     }
 
     html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 14px; overflow: hidden; }
-
     #app-shell { display: flex; flex-direction: column; height: 100vh; }
 
-    /* ══ TOPBAR ══════════════════════════════════════════════ */
+    /* ══ TOPBAR ══ */
     #topbar {
-      display: flex; align-items: center; gap: 12px;
-      padding: 0 20px; height: 52px;
+      display: flex; align-items: center; gap: 8px;
+      padding: 0 14px; height: 52px;
       background: var(--surface); border-bottom: 1px solid var(--border);
-      flex-shrink: 0; z-index: 10;
+      flex-shrink: 0; z-index: 10; overflow-x: auto;
     }
+    #topbar::-webkit-scrollbar { height: 0; }
 
-    .logo-text { font-family: var(--font-mono); font-size: 16px; font-weight: 700; color: var(--accent); letter-spacing: -0.5px; margin-right: 8px; white-space: nowrap; }
+    .logo-text { font-family: var(--font-mono); font-size: 15px; font-weight: 700; color: var(--accent); letter-spacing: -0.5px; margin-right: 4px; white-space: nowrap; flex-shrink: 0; }
     .logo-text span { color: var(--accent2); }
 
-    .mode-toggle { display: flex; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 3px; gap: 2px; }
-    .mode-btn { padding: 4px 14px; border: none; background: transparent; color: var(--text-muted); border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600; letter-spacing: 0.3px; transition: all 0.15s; }
+    .mode-toggle { display: flex; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 3px; gap: 2px; flex-shrink: 0; }
+    .mode-btn { padding: 4px 12px; border: none; background: transparent; color: var(--text-muted); border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600; transition: all 0.15s; white-space: nowrap; }
     .mode-btn.active { background: var(--accent); color: #fff; }
 
-    .lang-pills { display: flex; gap: 4px; margin-left: 4px; }
-    .lang-pill { padding: 3px 10px; border: 1px solid var(--border); background: transparent; color: var(--text-muted); border-radius: 4px; cursor: pointer; font-size: 11px; font-family: var(--font-mono); font-weight: 600; transition: all 0.15s; }
+    .lang-pills { display: flex; gap: 3px; flex-shrink: 0; }
+    .lang-pill { padding: 3px 9px; border: 1px solid var(--border); background: transparent; color: var(--text-muted); border-radius: 4px; cursor: pointer; font-size: 11px; font-family: var(--font-mono); font-weight: 600; transition: all 0.15s; white-space: nowrap; }
     .lang-pill:hover { border-color: var(--accent); color: var(--accent); }
     .lang-pill.active { background: var(--accent); border-color: var(--accent); color: #fff; }
 
-    #runBtn { margin-left: auto; padding: 6px 18px; background: var(--accent); color: #fff; border: none; border-radius: 6px; font-weight: 700; font-size: 13px; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+    .topbar-sep { width: 1px; height: 24px; background: var(--border); flex-shrink: 0; margin: 0 2px; }
+
+    .topbar-btn {
+      padding: 4px 10px; background: transparent; border: 1px solid var(--border);
+      color: var(--text-muted); border-radius: 4px; cursor: pointer;
+      font-size: 11px; font-family: var(--font-mono); transition: all 0.15s;
+      white-space: nowrap; flex-shrink: 0; text-decoration: none; display: inline-flex; align-items: center;
+    }
+    .topbar-btn:hover { border-color: var(--accent3); color: var(--accent3); }
+    .topbar-btn.save { border-color: var(--accent); color: var(--accent); }
+    .topbar-btn.save:hover { background: var(--accent); color: #fff; }
+
+    #runBtn { margin-left: auto; padding: 6px 16px; background: var(--accent); color: #fff; border: none; border-radius: 6px; font-weight: 700; font-size: 13px; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 6px; white-space: nowrap; flex-shrink: 0; }
     #runBtn:hover:not(:disabled) { background: #4070ee; transform: translateY(-1px); }
     #runBtn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-    #room-bar { display: none; align-items: center; gap: 8px; margin-left: auto; font-size: 12px; }
+    /* Auth area */
+    #authArea { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+    #signInBtn { padding: 4px 10px; background: transparent; border: 1px solid var(--accent3); color: var(--accent3); border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: 600; white-space: nowrap; transition: all 0.15s; }
+    #signInBtn:hover { background: var(--accent3); color: #000; }
+    #userInfo { display: none; align-items: center; gap: 6px; }
+    #userInfo.visible { display: flex; }
+    .user-avatar { width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--border); }
+    .user-name { font-size: 11px; color: var(--text-muted); font-family: var(--font-mono); max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    #signOutBtn { padding: 2px 7px; background: transparent; border: 1px solid var(--border); color: var(--text-muted); border-radius: 3px; cursor: pointer; font-size: 10px; transition: all 0.15s; }
+    #signOutBtn:hover { border-color: var(--accent2); color: var(--accent2); }
+
+    /* Room bar */
+    #room-bar { display: none; align-items: center; gap: 6px; font-size: 12px; flex-shrink: 0; }
     #room-bar.visible { display: flex; }
-    .room-badge { background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; padding: 3px 8px; font-family: var(--font-mono); font-size: 11px; cursor: pointer; }
+    .room-badge { background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; padding: 3px 8px; font-family: var(--font-mono); font-size: 11px; cursor: pointer; white-space: nowrap; }
     .room-badge:hover { border-color: var(--accent); }
-    #editor-status { font-size: 11px; color: var(--text-muted); }
-    #leaveBtn { padding: 4px 10px; background: transparent; border: 1px solid var(--accent2); color: var(--accent2); border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: 600; transition: all 0.15s; }
+    #editor-status { font-size: 11px; color: var(--text-muted); white-space: nowrap; }
+    #leaveBtn { padding: 4px 8px; background: transparent; border: 1px solid var(--accent2); color: var(--accent2); border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: 600; transition: all 0.15s; white-space: nowrap; }
     #leaveBtn:hover { background: var(--accent2); color: #fff; }
 
-    /* ── Topbar file buttons ── */
-    .topbar-file-btn {
-      padding: 4px 12px; background: transparent; border: 1px solid var(--border);
-      color: var(--text-muted); border-radius: 4px; cursor: pointer;
-      font-size: 11px; font-family: var(--font-mono); transition: all 0.15s;
+    /* ══ CURRENT FILE BAR ══ */
+    #current-file-bar {
+      display: none; align-items: center; gap: 8px;
+      padding: 3px 12px; background: var(--surface2);
+      border-bottom: 1px solid var(--border); flex-shrink: 0;
+      font-size: 11px; font-family: var(--font-mono);
     }
-    .topbar-file-btn:hover { border-color: var(--accent3); color: var(--accent3); }
-    .topbar-file-btn.save-btn { border-color: var(--accent); color: var(--accent); }
-    .topbar-file-btn.save-btn:hover { background: var(--accent); color: #fff; }
+    #current-file-bar.visible { display: flex; }
+    #current-file-name { color: var(--accent3); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    #save-indicator { font-size: 10px; color: var(--text-muted); white-space: nowrap; }
+    #save-indicator.unsaved { color: var(--gold); }
 
-    /* ══ MAIN AREA ════════════════════════════════════════════ */
+    /* ══ MAIN AREA ══ */
     #main-area { display: flex; flex: 1; overflow: hidden; }
 
-    /* ══ LEFT PANEL ══════════════════════════════════════════ */
+    /* ══ LEFT PANEL ══ */
     #left-panel { width: 240px; flex-shrink: 0; background: var(--surface); border-right: 1px solid var(--border); display: none; flex-direction: column; overflow: hidden; }
     #left-panel.visible { display: flex; }
 
-    /* ── Panel tabs (Members / Files) ── */
     .panel-tabs { display: flex; border-bottom: 1px solid var(--border); flex-shrink: 0; }
     .panel-tab { flex: 1; padding: 8px 4px; border: none; background: transparent; color: var(--text-muted); font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.15s; }
     .panel-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
     .panel-tab-content { display: none; flex-direction: column; flex: 1; overflow: hidden; }
     .panel-tab-content.active { display: flex; }
 
-    .panel-section { padding: 10px 12px; border-bottom: 1px solid var(--border); }
+    .panel-section { padding: 10px 12px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
     .panel-title { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; }
 
+    /* Members */
     .member-item { display: flex; align-items: center; gap: 6px; padding: 5px 0; font-size: 12px; border-bottom: 1px solid var(--border); }
     .member-item:last-child { border-bottom: none; }
     .member-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--success); flex-shrink: 0; }
@@ -121,7 +155,6 @@
     .member-editing { font-size: 10px; color: var(--accent3); }
     .btn-assign { font-size: 10px; padding: 2px 6px; background: transparent; border: 1px solid var(--border); color: var(--text-muted); border-radius: 3px; cursor: pointer; transition: all 0.15s; }
     .btn-assign:hover { border-color: var(--accent3); color: var(--accent3); }
-
     .btn-action { width: 100%; padding: 7px; border: none; border-radius: 5px; font-size: 11px; font-weight: 600; cursor: pointer; margin-top: 6px; transition: all 0.15s; }
     .btn-request { background: var(--surface2); border: 1px solid var(--accent); color: var(--accent); }
     .btn-request:hover { background: var(--accent); color: #fff; }
@@ -129,103 +162,73 @@
     .btn-reclaim:hover { background: var(--accent2); color: #fff; }
     .btn-handback { background: var(--surface2); border: 1px solid var(--accent3); color: var(--accent3); }
     .btn-handback:hover { background: var(--accent3); color: #000; }
-
     #notifBanner { display: none; background: var(--surface2); border: 1px solid var(--accent); border-radius: 6px; padding: 8px; margin-top: 6px; font-size: 11px; }
     #notifBanner .banner-btns { display: flex; gap: 4px; margin-top: 6px; }
     .bbtn { flex: 1; padding: 4px; border: none; border-radius: 4px; font-size: 11px; font-weight: 700; cursor: pointer; }
     .bbtn.yes { background: var(--success); color: #000; }
-    .bbtn.no  { background: var(--error);   color: #fff; }
+    .bbtn.no  { background: var(--error); color: #fff; }
 
-    /* ══ FILE MANAGER ══════════════════════════════════════════ */
+    /* ══ FILE PANEL ══ */
     #files-panel { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
 
-    .files-toolbar {
-      display: flex; gap: 4px; padding: 8px 10px;
-      border-bottom: 1px solid var(--border); flex-shrink: 0;
-    }
-    .files-toolbar button {
-      flex: 1; padding: 5px 4px; border: 1px solid var(--border);
-      background: var(--surface2); color: var(--text-muted);
-      border-radius: 4px; cursor: pointer; font-size: 10px; font-weight: 600;
-      letter-spacing: 0.3px; transition: all 0.15s;
-    }
+    .files-toolbar { display: flex; gap: 4px; padding: 8px 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+    .files-toolbar button { flex: 1; padding: 5px 4px; border: 1px solid var(--border); background: var(--surface2); color: var(--text-muted); border-radius: 4px; cursor: pointer; font-size: 10px; font-weight: 600; transition: all 0.15s; }
     .files-toolbar button:hover { border-color: var(--accent3); color: var(--accent3); }
-    .files-toolbar button.new-file-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .files-toolbar .btn-newfile:hover { border-color: var(--accent); color: var(--accent); }
+    .files-toolbar .btn-export:hover { border-color: var(--gold); color: var(--gold); }
 
-    .files-tree { flex: 1; overflow-y: auto; padding: 6px 0; }
+    .files-tree { flex: 1; overflow-y: auto; padding: 4px 0; }
 
-    /* Login notice for files */
-    .files-login-notice {
-      padding: 20px 14px; text-align: center;
-      font-size: 12px; color: var(--text-muted); line-height: 1.8;
+    .files-notice { padding: 18px 14px; text-align: center; font-size: 12px; color: var(--text-muted); line-height: 1.8; }
+
+    /* Google sign-in button in panel */
+    .google-signin-btn {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%; padding: 9px 12px; margin-bottom: 10px;
+      background: #fff; color: #3c4043; border: 1px solid #dadce0;
+      border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600;
+      transition: all 0.15s;
     }
-    .files-login-notice a { color: var(--accent); text-decoration: none; }
-    .files-login-notice a:hover { text-decoration: underline; }
+    .google-signin-btn:hover { background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+    .google-signin-btn svg { flex-shrink: 0; }
 
     /* Folder row */
-    .folder-row {
-      display: flex; align-items: center; gap: 6px;
-      padding: 5px 10px; cursor: pointer;
-      transition: background 0.12s; user-select: none;
-    }
+    .folder-row { display: flex; align-items: center; gap: 5px; padding: 5px 10px; cursor: pointer; transition: background 0.12s; user-select: none; }
     .folder-row:hover { background: var(--surface2); }
-    .folder-row.active { background: rgba(91,142,255,0.08); }
-
+    .folder-chevron { font-size: 9px; color: var(--text-muted); transition: transform 0.15s; flex-shrink: 0; width: 10px; }
+    .folder-chevron.open { transform: rotate(90deg); }
     .folder-icon { font-size: 13px; flex-shrink: 0; }
     .folder-name { flex: 1; font-size: 12px; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .folder-chevron { font-size: 10px; color: var(--text-muted); transition: transform 0.2s; flex-shrink: 0; }
-    .folder-chevron.open { transform: rotate(90deg); }
-
-    .folder-children { padding-left: 14px; }
+    .folder-children { padding-left: 12px; }
 
     /* File row */
-    .file-row {
-      display: flex; align-items: center; gap: 6px;
-      padding: 4px 10px 4px 22px; cursor: pointer;
-      transition: background 0.12s; border-radius: 0;
-    }
+    .file-row { display: flex; align-items: center; gap: 5px; padding: 4px 10px 4px 20px; cursor: pointer; transition: background 0.12s; }
     .file-row:hover { background: var(--surface2); }
-    .file-row.active { background: rgba(91,142,255,0.12); border-left: 2px solid var(--accent); padding-left: 20px; }
-
-    .file-icon { font-size: 12px; flex-shrink: 0; color: var(--text-muted); }
+    .file-row.active { background: rgba(91,142,255,0.12); border-left: 2px solid var(--accent); padding-left: 18px; }
+    .file-icon { font-size: 12px; flex-shrink: 0; }
     .file-name { flex: 1; font-size: 11px; font-family: var(--font-mono); color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .file-lang { font-size: 9px; color: var(--text-muted); flex-shrink: 0; letter-spacing: 0.5px; text-transform: uppercase; }
+    .file-lang-tag { font-size: 9px; color: var(--text-muted); flex-shrink: 0; text-transform: uppercase; letter-spacing: 0.3px; }
 
-    /* Row action buttons (shown on hover) */
-    .row-actions { display: none; gap: 2px; flex-shrink: 0; }
-    .folder-row:hover .row-actions,
-    .file-row:hover .row-actions { display: flex; }
-    .row-act { padding: 1px 5px; background: transparent; border: 1px solid var(--border); color: var(--text-muted); border-radius: 3px; cursor: pointer; font-size: 9px; transition: all 0.12s; }
+    /* Row hover actions */
+    .row-acts { display: none; gap: 2px; flex-shrink: 0; }
+    .folder-row:hover .row-acts,
+    .file-row:hover .row-acts { display: flex; }
+    .row-act { padding: 1px 4px; background: transparent; border: 1px solid var(--border); color: var(--text-muted); border-radius: 3px; cursor: pointer; font-size: 9px; line-height: 1.4; transition: all 0.12s; }
     .row-act:hover { border-color: var(--accent2); color: var(--accent2); }
-    .row-act.open-act:hover { border-color: var(--accent); color: var(--accent); }
+    .row-act.act-open:hover { border-color: var(--accent); color: var(--accent); }
+    .row-act.act-dl:hover { border-color: var(--gold); color: var(--gold); }
 
-    /* Current file bar */
-    #current-file-bar {
-      display: none; align-items: center; gap: 8px;
-      padding: 4px 12px; background: var(--surface2);
-      border-bottom: 1px solid var(--border); flex-shrink: 0;
-      font-size: 11px; font-family: var(--font-mono);
-    }
-    #current-file-bar.visible { display: flex; }
-    #current-file-name { color: var(--accent3); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    #save-indicator { font-size: 10px; color: var(--text-muted); }
-    #save-indicator.unsaved { color: var(--gold); }
-
-    /* ══ EDITOR PANEL ═════════════════════════════════════════ */
+    /* ══ EDITOR PANEL ══ */
     #editor-panel { display: flex; flex-direction: column; flex: 1; overflow: hidden; min-width: 0; }
-
     #stdin-bar { display: flex; align-items: center; gap: 8px; padding: 4px 12px; background: var(--surface); border-bottom: 1px solid var(--border); flex-shrink: 0; }
     #stdin-bar label { font-size: 11px; color: var(--text-muted); white-space: nowrap; font-family: var(--font-mono); }
     #stdinInput { flex: 1; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; color: var(--text); font-family: var(--font-mono); font-size: 11px; padding: 3px 8px; outline: none; transition: border-color 0.15s; }
     #stdinInput:focus { border-color: var(--accent); }
-
     #lockOverlay { display: none; position: absolute; inset: 0; background: rgba(15,17,23,0.7); z-index: 5; align-items: center; justify-content: center; font-size: 13px; color: var(--text-muted); pointer-events: none; }
     #lockOverlay.visible { display: flex; }
-
     .cm-wrapper { position: relative; flex: 1; overflow: hidden; }
     .CodeMirror { height: 100% !important; font-family: var(--font-mono) !important; font-size: 13px !important; background: var(--bg) !important; }
     .CodeMirror-scroll { padding-bottom: 0 !important; }
-
     #output-panel { height: 180px; flex-shrink: 0; background: var(--surface); border-top: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
     .output-header { display: flex; align-items: center; justify-content: space-between; padding: 6px 12px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
     .output-label { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); font-family: var(--font-mono); }
@@ -234,7 +237,7 @@
     #output { flex: 1; overflow-y: auto; padding: 10px 14px; font-family: var(--font-mono); font-size: 12px; white-space: pre-wrap; word-break: break-all; color: var(--text); line-height: 1.6; }
     #output.has-error { color: var(--error); }
 
-    /* ══ RIGHT PANEL ══════════════════════════════════════════ */
+    /* ══ RIGHT PANEL ══ */
     #right-panel { width: 200px; flex-shrink: 0; background: var(--surface); border-left: 1px solid var(--border); display: none; flex-direction: column; overflow-y: auto; }
     #right-panel.visible { display: flex; }
     .video-grid { padding: 8px; display: flex; flex-direction: column; gap: 6px; }
@@ -242,14 +245,13 @@
     .video-tile video { width: 100%; height: 100%; object-fit: cover; display: block; }
     .cam-off { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 11px; }
     .tile-label { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.6); color: #fff; font-size: 10px; padding: 3px 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
     #media-bar { display: none; align-items: center; gap: 6px; padding: 6px 12px; background: var(--surface); border-top: 1px solid var(--border); flex-shrink: 0; }
     #media-bar.visible { display: flex; }
     .tool-btn { padding: 5px 12px; background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: 5px; cursor: pointer; font-size: 12px; transition: all 0.15s; }
     .tool-btn:hover { border-color: var(--accent); color: var(--accent); }
     .tool-btn.off { border-color: var(--error); color: var(--error); }
 
-    /* ══ LOBBY ════════════════════════════════════════════════ */
+    /* ══ LOBBY ══ */
     #lobby { position: fixed; inset: 0; background: rgba(10,12,18,0.92); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 100; }
     #lobby.visible { display: flex; }
     .lobby-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 28px 32px; width: 380px; box-shadow: var(--shadow); }
@@ -273,15 +275,15 @@
     .share-url:hover { text-decoration: underline; }
     .lobby-error { color: var(--error); font-size: 12px; margin-top: 8px; min-height: 16px; }
 
-    /* ══ MODAL (new file / folder) ════════════════════════════ */
+    /* ══ MODALS ══ */
     .modal-overlay { position: fixed; inset: 0; background: rgba(10,12,18,0.85); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 300; }
     .modal-overlay.visible { display: flex; }
     .modal-box { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 24px 28px; width: 340px; box-shadow: var(--shadow); }
     .modal-box h3 { font-family: var(--font-mono); font-size: 15px; color: var(--accent); margin-bottom: 16px; }
+    .modal-label { font-size: 11px; color: var(--text-muted); margin-bottom: 5px; display: block; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
     .modal-box input, .modal-box select { width: 100%; padding: 8px 10px; background: var(--bg); border: 1px solid var(--border); border-radius: 5px; color: var(--text); font-size: 13px; font-family: var(--font-mono); outline: none; margin-bottom: 10px; transition: border-color 0.15s; }
     .modal-box input:focus, .modal-box select:focus { border-color: var(--accent); }
     .modal-box select option { background: var(--surface); }
-    .modal-label { font-size: 11px; color: var(--text-muted); margin-bottom: 5px; display: block; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
     .modal-btns { display: flex; gap: 8px; margin-top: 4px; }
     .modal-btns button { flex: 1; padding: 9px; border: none; border-radius: 6px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.15s; }
     .modal-confirm { background: var(--accent); color: #fff; }
@@ -289,8 +291,8 @@
     .modal-cancel { background: var(--surface2); color: var(--text-muted); border: 1px solid var(--border); }
     .modal-cancel:hover { color: var(--text); }
 
-    /* ══ TOAST ════════════════════════════════════════════════ */
-    #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 8px 18px; border-radius: 20px; font-size: 12px; opacity: 0; transition: all 0.25s; z-index: 400; pointer-events: none; white-space: nowrap; }
+    /* ══ TOAST ══ */
+    #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 8px 18px; border-radius: 20px; font-size: 12px; opacity: 0; transition: all 0.25s; z-index: 500; pointer-events: none; white-space: nowrap; }
     #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
     ::-webkit-scrollbar { width: 5px; }
@@ -299,9 +301,9 @@
   </style>
 </head>
 <body>
-
 <div id="app-shell">
-  <!-- ══ TOPBAR ══════════════════════════════════════════════ -->
+
+  <!-- ══ TOPBAR ══ -->
   <div id="topbar">
     <span class="logo-text">Code<span>Forge</span></span>
 
@@ -317,17 +319,26 @@
       <button class="lang-pill" data-lang="java">Java</button>
     </div>
 
-    <!-- File save/open buttons -->
-    <button class="topbar-file-btn save-btn" id="topbarSaveBtn" title="Save current file (Ctrl+S)">💾 Save</button>
-    <button class="topbar-file-btn" id="topbarFilesBtn" title="Toggle file manager">📁 Files</button>
+    <div class="topbar-sep"></div>
+    <button class="topbar-btn save" id="topbarSaveBtn" title="Save to cloud (Ctrl+S)">💾 Save</button>
+    <button class="topbar-btn" id="topbarExportBtn" title="Download to PC">⬇ Export</button>
+    <button class="topbar-btn" id="topbarFilesBtn" title="Toggle file manager">📁 Files</button>
+    <div class="topbar-sep"></div>
+    <a href="landing.html" class="topbar-btn">🏠 Home</a>
+    <a href="documentation.html" class="topbar-btn">📖 Docs</a>
+    <div class="topbar-sep"></div>
 
-    <button class="lang-pill"><a href="landing.html" style="color:inherit;text-decoration:none;">Home</a></button>
-    <div class="documentation">
-      <button class="mode-btn" style="background:transparent;color:var(--text-muted);border:none;font-size:12px;cursor:pointer;">
-        <a href="documentation.html" style="color:rgb(78,93,102);text-decoration:none;">Documentation</a>
-      </button>
+    <!-- Auth -->
+    <div id="authArea">
+      <button id="signInBtn">🔑 Sign In</button>
+      <div id="userInfo">
+        <img class="user-avatar" id="userAvatar" src="" alt="avatar">
+        <span class="user-name" id="userName"></span>
+        <button id="signOutBtn">Sign out</button>
+      </div>
     </div>
 
+    <!-- Room bar (team mode) -->
     <div id="room-bar">
       <span id="editor-status"></span>
       <span class="room-badge" id="roomIdBadge" title="Click to copy">Room: —</span>
@@ -337,19 +348,18 @@
     <button id="runBtn">▶ Run</button>
   </div>
 
-  <!-- ── Current file indicator ── -->
+  <!-- ══ CURRENT FILE BAR ══ -->
   <div id="current-file-bar">
     <span>📄</span>
     <span id="current-file-name">Untitled</span>
     <span id="save-indicator">● Unsaved</span>
-    <button class="topbar-file-btn save-btn" id="inlineCloseFileBtn" style="margin-left:auto;font-size:10px;">✕ Close</button>
+    <button class="topbar-btn" id="inlineCloseFileBtn" style="margin-left:auto;font-size:10px;padding:2px 7px;">✕ Close</button>
   </div>
 
   <div id="main-area">
-    <!-- ══ LEFT PANEL ══════════════════════════════════════════ -->
-    <div id="left-panel">
 
-      <!-- Panel tabs -->
+    <!-- ══ LEFT PANEL ══ -->
+    <div id="left-panel">
       <div class="panel-tabs" id="panelTabs" style="display:none;">
         <button class="panel-tab active" id="tabMembers">Members</button>
         <button class="panel-tab" id="tabFiles">Files</button>
@@ -367,7 +377,7 @@
             <div id="notifText" style="font-size:11px;line-height:1.4"></div>
             <div class="banner-btns">
               <button class="bbtn yes" id="grantBtn">Grant</button>
-              <button class="bbtn no"  id="denyBtn">Deny</button>
+              <button class="bbtn no" id="denyBtn">Deny</button>
             </div>
           </div>
         </div>
@@ -377,30 +387,26 @@
       <div class="panel-tab-content" id="filesTabContent">
         <div id="files-panel">
           <div class="files-toolbar">
-            <button class="new-file-btn" id="newFileBtn" title="New File">+ File</button>
-            <button id="newFolderBtn" title="New Folder">+ Folder</button>
+            <button class="btn-newfile" id="newFileBtn">+ File</button>
+            <button id="newFolderBtn">+ Folder</button>
+            <button class="btn-export" id="exportAllBtn" title="Export all as ZIP">↓ ZIP</button>
             <button id="refreshFilesBtn" title="Refresh">↺</button>
           </div>
           <div class="files-tree" id="filesTree">
-            <div class="files-login-notice">
-              <a href="/auth/google">Sign in with Google</a> to save and access your files from anywhere.
-            </div>
+            <div class="files-notice">Loading…</div>
           </div>
         </div>
       </div>
-
     </div>
 
-    <!-- ══ EDITOR PANEL ════════════════════════════════════════ -->
+    <!-- ══ EDITOR PANEL ══ -->
     <div id="editor-panel">
       <div id="stdin-bar">
         <label>stdin:</label>
         <input id="stdinInput" type="text" placeholder="Input for your program (optional)…" autocomplete="off"/>
       </div>
       <div class="cm-wrapper">
-        <div id="lockOverlay">
-          <span id="lockMsg">🔒 Another member is editing</span>
-        </div>
+        <div id="lockOverlay"><span id="lockMsg">🔒 Another member is editing</span></div>
         <textarea id="editor"></textarea>
       </div>
       <div id="output-panel">
@@ -412,7 +418,7 @@
       </div>
     </div>
 
-    <!-- ══ RIGHT PANEL (Video) ════════════════════════════════ -->
+    <!-- ══ RIGHT PANEL (Video) ══ -->
     <div id="right-panel">
       <div class="panel-section"><div class="panel-title">Live Video</div></div>
       <div class="video-grid" id="videoGrid"></div>
@@ -425,7 +431,7 @@
   </div>
 </div>
 
-<!-- ══ LOBBY MODAL ═════════════════════════════════════════════ -->
+<!-- ══ LOBBY ══ -->
 <div id="lobby">
   <div class="lobby-card">
     <h2>CodeForge — Team Room</h2>
@@ -463,7 +469,7 @@
   </div>
 </div>
 
-<!-- ══ NEW FILE MODAL ══════════════════════════════════════════ -->
+<!-- ══ NEW FILE MODAL ══ -->
 <div class="modal-overlay" id="newFileModal">
   <div class="modal-box">
     <h3>📄 New File</h3>
@@ -476,7 +482,7 @@
       <option value="c">C</option>
       <option value="java">Java</option>
     </select>
-    <label class="modal-label">Folder <span style="color:var(--text-muted);font-weight:normal">(optional)</span></label>
+    <label class="modal-label">Folder <span style="font-weight:normal;color:var(--text-muted)">(optional)</span></label>
     <select id="newFileFolder"><option value="">— Root —</option></select>
     <div class="modal-btns">
       <button class="modal-cancel" id="newFileCancel">Cancel</button>
@@ -485,7 +491,7 @@
   </div>
 </div>
 
-<!-- ══ NEW FOLDER MODAL ════════════════════════════════════════ -->
+<!-- ══ NEW FOLDER MODAL ══ -->
 <div class="modal-overlay" id="newFolderModal">
   <div class="modal-box">
     <h3>📁 New Folder</h3>
@@ -498,7 +504,7 @@
   </div>
 </div>
 
-<!-- ══ RENAME MODAL ════════════════════════════════════════════ -->
+<!-- ══ RENAME MODAL ══ -->
 <div class="modal-overlay" id="renameModal">
   <div class="modal-box">
     <h3 id="renameTitle">Rename</h3>
@@ -513,42 +519,100 @@
 
 <div id="toast"></div>
 
+<!-- ══════════════════════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════════════════════ -->
 <script>
-// ════════════════════════════════════════════════════════════════════
-//  CONFIG
-// ════════════════════════════════════════════════════════════════════
-const LANG_MODE = { python: 'python', cpp: 'text/x-c++src', c: 'text/x-csrc', java: 'text/x-java' };
-const LANG_EXT  = { python: '.py', cpp: '.cpp', c: '.c', java: '.java' };
-const LANG_ICON = { python: '🐍', cpp: '⚙️', c: '🔧', java: '☕' };
-
-const STARTER_CODE = {
+// ════════════════════════════════════════════════════════
+//  CONSTANTS
+// ════════════════════════════════════════════════════════
+const LANG_MODE = { python:'python', cpp:'text/x-c++src', c:'text/x-csrc', java:'text/x-java' };
+const LANG_EXT  = { python:'.py', cpp:'.cpp', c:'.c', java:'.java' };
+const LANG_ICON = { python:'🐍', cpp:'⚙️', c:'🔧', java:'☕' };
+const STARTER   = {
   python: '# Python\nprint("Hello, World!")\n',
   cpp:    '#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "Hello, World!" << endl;\n    return 0;\n}\n',
   c:      '#include <stdio.h>\n\nint main() {\n    printf("Hello, World!\\n");\n    return 0;\n}\n',
   java:   'public class Main {\n    public static void main(String[] args) {\n        System.out.println("Hello, World!");\n    }\n}\n',
 };
 
-// ════════════════════════════════════════════════════════════════════
-//  STATE
-// ════════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
+//  FIREBASE — init from server config
+// ════════════════════════════════════════════════════════
+let db = null;
+let fbAuth = null;
+let currentUser = null; // Firebase user object
+
+async function initFirebase() {
+  try {
+    const cfg = await fetch('/api/firebase-config').then(r => r.json());
+    if (!firebase.apps.length) firebase.initializeApp(cfg);
+    fbAuth = firebase.auth();
+    db     = firebase.firestore();
+
+    fbAuth.onAuthStateChanged(user => {
+      currentUser = user;
+      updateAuthUI(user);
+      loadFileTree();
+    });
+  } catch (e) {
+    console.warn('Firebase init failed:', e.message);
+  }
+}
+
+function updateAuthUI(user) {
+  const signInBtn = document.getElementById('signInBtn');
+  const userInfo  = document.getElementById('userInfo');
+  if (user) {
+    signInBtn.style.display = 'none';
+    userInfo.classList.add('visible');
+    document.getElementById('userAvatar').src = user.photoURL || '';
+    document.getElementById('userAvatar').style.display = user.photoURL ? 'block' : 'none';
+    document.getElementById('userName').textContent = user.displayName || user.email || 'User';
+  } else {
+    signInBtn.style.display = '';
+    userInfo.classList.remove('visible');
+  }
+}
+
+async function signInWithGoogle() {
+  if (!fbAuth) { toast('Firebase not ready', 'var(--error)'); return; }
+  try {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    await fbAuth.signInWithPopup(provider);
+    toast('✓ Signed in!', 'var(--success)');
+  } catch (e) {
+    toast('Sign-in failed: ' + e.message, 'var(--error)');
+  }
+}
+
+async function signOutUser() {
+  if (!fbAuth) return;
+  await fbAuth.signOut();
+  fsFolders = []; fsFiles = [];
+  openFileId = null; openFileName = null; filesDirty = false;
+  hideCurrentFileBar();
+  toast('Signed out');
+}
+
+// ════════════════════════════════════════════════════════
+//  EDITOR STATE
+// ════════════════════════════════════════════════════════
 let appMode = 'solo', currentLang = 'python', cmEditor = null, suppressSync = false;
 let socket = null, mySocketId = null, myName = '', myIsHost = false;
 let roomId = '', editorOwner = null, myStream = null;
 let micOn = true, camOn = true, peers = {}, roomUsers = [];
 let pendingRequest = null, pendingHostToken = null, pendingRoomId = null;
 
-// File manager state
-let fsUser        = null;   // logged-in user from /api/me
-let fsFolders     = [];
-let fsFiles       = [];
-let openFileId    = null;   // currently open file _id
-let openFileName  = null;
-let filesDirty    = false;  // unsaved changes?
+// File state
+let fsFolders = [], fsFiles = [];
+let openFileId = null, openFileName = null, filesDirty = false;
 let expandedFolderIds = new Set();
+let filesPanelOpen = false;
 
-// ════════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
 //  UTILS
-// ════════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
 let toastTimer;
 function toast(msg, color) {
   const el = document.getElementById('toast');
@@ -558,13 +622,12 @@ function toast(msg, color) {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
 }
-function escapeOutput(text) {
-  return String(text).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
+function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escAttr(s) { return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
 
-// ════════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
 //  CODEMIRROR
-// ════════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
 function destroyEditor() {
   if (cmEditor) {
     const wrap = cmEditor.getWrapperElement();
@@ -583,14 +646,13 @@ function initEditor(initialCode) {
     indentWithTabs: false, lineWrapping: true,
   });
   suppressSync = true;
-  cmEditor.setValue(initialCode !== undefined ? initialCode : STARTER_CODE[currentLang]);
+  cmEditor.setValue(initialCode !== undefined ? initialCode : STARTER[currentLang]);
   suppressSync = false;
   cmEditor.setSize('100%', '100%');
   cmEditor.on('change', () => {
     if (suppressSync) return;
     if (appMode === 'team' && editorOwner !== mySocketId) return;
     if (appMode === 'team' && socket) socket.emit('code-change', { code: cmEditor.getValue() });
-    // Mark dirty if a file is open
     if (openFileId) markDirty(true);
   });
 }
@@ -601,12 +663,11 @@ function setLanguage(lang) {
   if (cmEditor) {
     cmEditor.setOption('mode', LANG_MODE[lang] || 'python');
     const cur = cmEditor.getValue();
-    if (!cur.trim() || cur === STARTER_CODE[prev]) {
-      suppressSync = true; cmEditor.setValue(STARTER_CODE[lang]); suppressSync = false;
+    if (!cur.trim() || cur === STARTER[prev]) {
+      suppressSync = true; cmEditor.setValue(STARTER[lang]); suppressSync = false;
     }
   }
   document.querySelectorAll('.lang-pill').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
-  // Sync new-file modal lang
   const sel = document.getElementById('newFileLang');
   if (sel) sel.value = lang;
 }
@@ -620,108 +681,106 @@ function applyRemoteCode(code) {
   suppressSync = false;
 }
 
-// ════════════════════════════════════════════════════════════════════
-//  FILE MANAGER — DIRTY STATE
-// ════════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
+//  DIRTY STATE
+// ════════════════════════════════════════════════════════
 function markDirty(dirty) {
   filesDirty = dirty;
   const ind = document.getElementById('save-indicator');
-  if (ind) {
-    ind.textContent = dirty ? '● Unsaved' : '✓ Saved';
-    ind.className = dirty ? 'unsaved' : '';
-  }
+  if (ind) { ind.textContent = dirty ? '● Unsaved' : '✓ Saved'; ind.className = dirty ? 'unsaved' : ''; }
 }
 
-// ════════════════════════════════════════════════════════════════════
-//  FILE MANAGER — LOAD TREE
-// ════════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
+//  FIRESTORE HELPERS
+// ════════════════════════════════════════════════════════
+function userFilesRef()   { return db.collection(`users/${currentUser.uid}/files`); }
+function userFoldersRef() { return db.collection(`users/${currentUser.uid}/folders`); }
+function tsNow()          { return firebase.firestore.FieldValue.serverTimestamp(); }
+
+// ════════════════════════════════════════════════════════
+//  LOAD FILE TREE
+// ════════════════════════════════════════════════════════
 async function loadFileTree() {
   const tree = document.getElementById('filesTree');
-  if (!fsUser || !fsUser.loggedIn) {
-    tree.innerHTML = `<div class="files-login-notice">
-      <a href="/auth/google">Sign in with Google</a> to save and access your files from anywhere.
+  if (!currentUser) {
+    tree.innerHTML = `<div class="files-notice">
+      <button class="google-signin-btn" onclick="signInWithGoogle()">
+        <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#4285F4" d="M43.6 20H24v8h11.3C33.6 33.1 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3 0 5.7 1.1 7.8 2.9l5.7-5.7C33.9 6.5 29.2 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20c11 0 19.6-7.9 19.6-20 0-1.3-.1-2.7-.3-4h.3z"/></svg>
+        Sign in with Google to save files
+      </button>
+      <div style="font-size:11px">Your files are stored privately in the cloud.</div>
     </div>`;
     return;
   }
+  tree.innerHTML = '<div class="files-notice">Loading…</div>';
   try {
-    const res = await fetch('/api/fs');
-    if (!res.ok) throw new Error('Failed to load files');
-    const data = await res.json();
-    fsFolders = data.folders;
-    fsFiles   = data.files;
+    const [fSnap, dSnap] = await Promise.all([
+      userFoldersRef().orderBy('createdAt').get(),
+      userFilesRef().orderBy('createdAt').get(),
+    ]);
+    fsFolders = fSnap.docs.map(d => ({ _id: d.id, ...d.data() }));
+    fsFiles   = dSnap.docs.map(d => ({ _id: d.id, ...d.data() }));
     renderFileTree();
     populateFolderDropdowns();
   } catch (e) {
-    tree.innerHTML = `<div class="files-login-notice" style="color:var(--error)">Failed to load files.<br><small>${e.message}</small></div>`;
+    tree.innerHTML = `<div class="files-notice" style="color:var(--error)">Failed to load.<br><small>${escHtml(e.message)}</small></div>`;
   }
 }
 
 function renderFileTree() {
   const tree = document.getElementById('filesTree');
   tree.innerHTML = '';
-
-  // Root-level files (no folder)
-  const rootFiles = fsFiles.filter(f => !f.folderId);
-  // Root-level folders
   const rootFolders = fsFolders.filter(f => !f.parentId);
-
-  if (rootFolders.length === 0 && rootFiles.length === 0) {
-    tree.innerHTML = `<div class="files-login-notice" style="color:var(--text-muted)">No files yet.<br>Click <strong>+ File</strong> or <strong>+ Folder</strong> to start.</div>`;
+  const rootFiles   = fsFiles.filter(f => !f.folderId);
+  if (!rootFolders.length && !rootFiles.length) {
+    tree.innerHTML = '<div class="files-notice">No files yet.<br>Click <strong>+ File</strong> to start.</div>';
     return;
   }
-
-  rootFolders.forEach(folder => tree.appendChild(buildFolderRow(folder)));
-  rootFiles.forEach(file => tree.appendChild(buildFileRow(file)));
+  rootFolders.forEach(f => tree.appendChild(buildFolderRow(f)));
+  rootFiles.forEach(f => tree.appendChild(buildFileRow(f)));
 }
 
 function buildFolderRow(folder) {
   const isOpen = expandedFolderIds.has(folder._id);
-  const wrapper = document.createElement('div');
+  const wrap = document.createElement('div');
 
   const row = document.createElement('div');
-  row.className = 'folder-row' + (isOpen ? ' active' : '');
+  row.className = 'folder-row';
   row.innerHTML = `
     <span class="folder-chevron ${isOpen ? 'open' : ''}">▶</span>
     <span class="folder-icon">📁</span>
-    <span class="folder-name">${esc(folder.name)}</span>
-    <div class="row-actions">
-      <button class="row-act open-act" data-action="add-file" data-id="${folder._id}" title="New file here">+</button>
-      <button class="row-act" data-action="rename-folder" data-id="${folder._id}" data-name="${esc(folder.name)}" title="Rename">✎</button>
-      <button class="row-act" data-action="delete-folder" data-id="${folder._id}" title="Delete folder">✕</button>
+    <span class="folder-name">${escHtml(folder.name)}</span>
+    <div class="row-acts">
+      <button class="row-act act-open" data-act="add" data-id="${folder._id}" title="New file here">+</button>
+      <button class="row-act" data-act="ren-folder" data-id="${folder._id}" data-name="${escAttr(folder.name)}" title="Rename">✎</button>
+      <button class="row-act" data-act="del-folder" data-id="${folder._id}" title="Delete">✕</button>
     </div>`;
 
   const children = document.createElement('div');
   children.className = 'folder-children';
   children.style.display = isOpen ? 'block' : 'none';
-
   if (isOpen) {
-    const subFolders = fsFolders.filter(f => f.parentId === folder._id);
-    const subFiles   = fsFiles.filter(f => f.folderId === folder._id);
-    subFolders.forEach(sf => children.appendChild(buildFolderRow(sf)));
-    subFiles.forEach(file => children.appendChild(buildFileRow(file)));
+    fsFolders.filter(f => f.parentId === folder._id).forEach(sf => children.appendChild(buildFolderRow(sf)));
+    fsFiles.filter(f => f.folderId === folder._id).forEach(f => children.appendChild(buildFileRow(f)));
   }
 
-  row.addEventListener('click', (e) => {
-    if (e.target.closest('.row-actions')) return;
-    const open = expandedFolderIds.has(folder._id);
-    if (open) expandedFolderIds.delete(folder._id);
-    else expandedFolderIds.add(folder._id);
+  row.addEventListener('click', async e => {
+    const btn = e.target.closest('[data-act]');
+    if (btn) {
+      e.stopPropagation();
+      const { act, id, name } = btn.dataset;
+      if (act === 'add')        openNewFileModal(id);
+      if (act === 'ren-folder') openRenameModal('folder', id, name);
+      if (act === 'del-folder') await fsDeleteFolder(id, folder.name);
+      return;
+    }
+    expandedFolderIds.has(folder._id) ? expandedFolderIds.delete(folder._id) : expandedFolderIds.add(folder._id);
     renderFileTree();
   });
 
-  row.addEventListener('click', async (e) => {
-    const btn = e.target.closest('[data-action]');
-    if (!btn) return;
-    e.stopPropagation();
-    const action = btn.dataset.action;
-    if (action === 'add-file')      openNewFileModal(btn.dataset.id);
-    if (action === 'rename-folder') openRenameModal('folder', btn.dataset.id, btn.dataset.name);
-    if (action === 'delete-folder') await deleteFolder(btn.dataset.id, folder.name);
-  });
-
-  wrapper.appendChild(row);
-  wrapper.appendChild(children);
-  return wrapper;
+  wrap.appendChild(row);
+  wrap.appendChild(children);
+  return wrap;
 }
 
 function buildFileRow(file) {
@@ -729,184 +788,199 @@ function buildFileRow(file) {
   row.className = 'file-row' + (file._id === openFileId ? ' active' : '');
   row.innerHTML = `
     <span class="file-icon">${LANG_ICON[file.language] || '📄'}</span>
-    <span class="file-name">${esc(file.name)}</span>
-    <span class="file-lang">${file.language}</span>
-    <div class="row-actions">
-      <button class="row-act open-act" data-action="open" data-id="${file._id}" title="Open">Open</button>
-      <button class="row-act" data-action="rename-file" data-id="${file._id}" data-name="${esc(file.name)}" title="Rename">✎</button>
-      <button class="row-act" data-action="delete-file" data-id="${file._id}" title="Delete">✕</button>
+    <span class="file-name">${escHtml(file.name)}</span>
+    <span class="file-lang-tag">${file.language}</span>
+    <div class="row-acts">
+      <button class="row-act act-open" data-act="open" data-id="${file._id}" title="Open">Open</button>
+      <button class="row-act act-dl"   data-act="dl"   data-id="${file._id}" title="Download to PC">↓</button>
+      <button class="row-act" data-act="ren-file" data-id="${file._id}" data-name="${escAttr(file.name)}" title="Rename">✎</button>
+      <button class="row-act" data-act="del-file" data-id="${file._id}" title="Delete">✕</button>
     </div>`;
 
-  row.addEventListener('click', async (e) => {
-    const btn = e.target.closest('[data-action]');
+  row.addEventListener('click', async e => {
+    const btn = e.target.closest('[data-act]');
     if (btn) {
       e.stopPropagation();
-      const action = btn.dataset.action;
-      if (action === 'open')        await openFile(btn.dataset.id);
-      if (action === 'rename-file') openRenameModal('file', btn.dataset.id, btn.dataset.name);
-      if (action === 'delete-file') await deleteFile(btn.dataset.id, file.name);
+      const { act, id, name } = btn.dataset;
+      if (act === 'open')     await fsOpenFile(id);
+      if (act === 'dl')       await fsDownloadFile(id);
+      if (act === 'ren-file') openRenameModal('file', id, name);
+      if (act === 'del-file') await fsDeleteFile(id, file.name);
     } else {
-      await openFile(file._id);
+      await fsOpenFile(file._id);
     }
   });
   return row;
 }
 
-function esc(str) { return String(str).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
-
-// ════════════════════════════════════════════════════════════════════
-//  FILE MANAGER — OPEN / SAVE / CLOSE
-// ════════════════════════════════════════════════════════════════════
-async function openFile(fileId) {
+// ════════════════════════════════════════════════════════
+//  FILE OPERATIONS — OPEN / SAVE / CLOSE / EXPORT
+// ════════════════════════════════════════════════════════
+async function fsOpenFile(fileId) {
   if (filesDirty && openFileId) {
-    if (!confirm('You have unsaved changes. Discard and open new file?')) return;
+    if (!confirm('Unsaved changes. Discard and open?')) return;
   }
   try {
-    const res = await fetch(`/api/fs/file/${fileId}`);
-    if (!res.ok) throw new Error('File not found');
-    const file = await res.json();
+    const doc = await userFilesRef().doc(fileId).get();
+    if (!doc.exists) { toast('File not found', 'var(--error)'); return; }
+    const file = { _id: doc.id, ...doc.data() };
 
-    openFileId   = file._id;
-    openFileName = file.name;
-    currentLang  = file.language;
-
+    openFileId = file._id; openFileName = file.name; currentLang = file.language;
     document.querySelectorAll('.lang-pill').forEach(b => b.classList.toggle('active', b.dataset.lang === currentLang));
     if (cmEditor) cmEditor.setOption('mode', LANG_MODE[currentLang]);
-
     suppressSync = true;
-    if (cmEditor) cmEditor.setValue(file.content || STARTER_CODE[currentLang]);
+    if (cmEditor) cmEditor.setValue(file.content || STARTER[currentLang]);
     suppressSync = false;
-
     markDirty(false);
     showCurrentFileBar(file.name);
     renderFileTree();
     toast(`📄 Opened: ${file.name}`, 'var(--accent3)');
   } catch (e) {
-    toast('❌ Could not open file: ' + e.message, 'var(--error)');
+    toast('Could not open: ' + e.message, 'var(--error)');
   }
 }
 
-async function saveCurrentFile() {
-  if (!openFileId) {
-    // No file open — prompt to save as new
-    if (fsUser && fsUser.loggedIn) openNewFileModal(null, true);
-    else toast('Sign in to save files', 'var(--accent2)');
-    return;
-  }
+async function fsSaveCurrentFile() {
+  if (!currentUser) { toast('Sign in to save files', 'var(--accent2)'); return; }
+  if (!openFileId) { openNewFileModal(null, true); return; }
   const content = cmEditor ? cmEditor.getValue() : '';
   try {
-    const res = await fetch(`/api/fs/file/${openFileId}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ content, language: currentLang }),
-    });
-    if (!res.ok) throw new Error((await res.json()).error);
+    await userFilesRef().doc(openFileId).update({ content, language: currentLang, updatedAt: tsNow() });
     markDirty(false);
     toast('✓ Saved', 'var(--success)');
   } catch (e) {
-    toast('❌ Save failed: ' + e.message, 'var(--error)');
+    toast('Save failed: ' + e.message, 'var(--error)');
+  }
+}
+
+// Export current editor content to local PC
+function exportCurrentToPC() {
+  const code     = cmEditor ? cmEditor.getValue() : '';
+  const filename = (openFileName || ('code' + LANG_EXT[currentLang]));
+  const blob     = new Blob([code], { type: 'text/plain' });
+  const url      = URL.createObjectURL(blob);
+  const a        = document.createElement('a');
+  a.href = url; a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast(`⬇ Downloaded: ${filename}`, 'var(--gold)');
+}
+
+// Download a specific file from Firestore to PC
+async function fsDownloadFile(fileId) {
+  try {
+    const doc  = await userFilesRef().doc(fileId).get();
+    if (!doc.exists) { toast('File not found', 'var(--error)'); return; }
+    const file = { _id: doc.id, ...doc.data() };
+    const blob = new Blob([file.content || ''], { type: 'text/plain' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url; a.download = file.name;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast(`⬇ Downloaded: ${file.name}`, 'var(--gold)');
+  } catch (e) {
+    toast('Download failed: ' + e.message, 'var(--error)');
+  }
+}
+
+// Export ALL files as individual downloads (ZIP-like without a library)
+async function exportAllFiles() {
+  if (!currentUser || !fsFiles.length) { toast('No files to export', 'var(--accent2)'); return; }
+  toast('⬇ Downloading all files…', 'var(--gold)');
+  for (const file of fsFiles) {
+    try {
+      const doc  = await userFilesRef().doc(file._id).get();
+      if (!doc.exists) continue;
+      const data = doc.data();
+      const blob = new Blob([data.content || ''], { type: 'text/plain' });
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement('a');
+      a.href = url; a.download = data.name;
+      a.click();
+      URL.revokeObjectURL(url);
+      await new Promise(r => setTimeout(r, 200)); // small delay between downloads
+    } catch {}
   }
 }
 
 function closeCurrentFile() {
-  if (filesDirty) {
-    if (!confirm('Unsaved changes will be lost. Close anyway?')) return;
-  }
-  openFileId   = null;
-  openFileName = null;
-  filesDirty   = false;
-  hideCurrentFileBar();
-  renderFileTree();
+  if (filesDirty && !confirm('Unsaved changes. Close anyway?')) return;
+  openFileId = null; openFileName = null; filesDirty = false;
+  hideCurrentFileBar(); renderFileTree();
   suppressSync = true;
-  if (cmEditor) cmEditor.setValue(STARTER_CODE[currentLang]);
+  if (cmEditor) cmEditor.setValue(STARTER[currentLang]);
   suppressSync = false;
 }
 
 function showCurrentFileBar(name) {
-  const bar = document.getElementById('current-file-bar');
   document.getElementById('current-file-name').textContent = name;
-  bar.classList.add('visible');
+  document.getElementById('current-file-bar').classList.add('visible');
 }
 function hideCurrentFileBar() {
   document.getElementById('current-file-bar').classList.remove('visible');
 }
 
-// ════════════════════════════════════════════════════════════════════
-//  FILE MANAGER — CREATE
-// ════════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
+//  FILE OPERATIONS — CREATE
+// ════════════════════════════════════════════════════════
 function populateFolderDropdowns() {
-  [document.getElementById('newFileFolder')].forEach(sel => {
-    if (!sel) return;
-    sel.innerHTML = '<option value="">— Root —</option>';
-    fsFolders.filter(f => !f.parentId).forEach(f => {
-      const opt = document.createElement('option');
-      opt.value = f._id; opt.textContent = f.name;
-      sel.appendChild(opt);
-    });
+  const sel = document.getElementById('newFileFolder');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">— Root —</option>';
+  fsFolders.filter(f => !f.parentId).forEach(f => {
+    const opt = document.createElement('option');
+    opt.value = f._id; opt.textContent = f.name;
+    sel.appendChild(opt);
   });
 }
 
 function openNewFileModal(folderId = null, fromSave = false) {
-  const modal = document.getElementById('newFileModal');
   document.getElementById('newFileName').value = '';
   document.getElementById('newFileLang').value = currentLang;
-  if (folderId) document.getElementById('newFileFolder').value = folderId;
-  else          document.getElementById('newFileFolder').value = '';
-  modal._fromSave = fromSave;
-  modal.classList.add('visible');
+  document.getElementById('newFileFolder').value = folderId || '';
+  document.getElementById('newFileModal')._fromSave = fromSave;
+  document.getElementById('newFileModal').classList.add('visible');
   document.getElementById('newFileName').focus();
 }
 
-async function createFile() {
-  const modal    = document.getElementById('newFileModal');
+async function fsCreateFile() {
+  if (!currentUser) { toast('Sign in first', 'var(--accent2)'); return; }
   const name     = document.getElementById('newFileName').value.trim();
   const language = document.getElementById('newFileLang').value;
   const folderId = document.getElementById('newFileFolder').value || null;
-  const fromSave = modal._fromSave;
-
+  const fromSave = document.getElementById('newFileModal')._fromSave;
   if (!name) { toast('Enter a file name', 'var(--accent2)'); return; }
-
-  const content = fromSave && cmEditor ? cmEditor.getValue() : STARTER_CODE[language];
-
+  const content  = fromSave && cmEditor ? cmEditor.getValue() : STARTER[language];
   try {
-    const res = await fetch('/api/fs/file', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, language, content, folderId }),
-    });
-    if (!res.ok) throw new Error((await res.json()).error);
-    const file = await res.json();
-    modal.classList.remove('visible');
-    toast(`📄 Created: ${file.name}`, 'var(--success)');
+    const ref = await userFilesRef().add({ name, language, content, folderId: folderId || null, createdAt: tsNow(), updatedAt: tsNow() });
+    document.getElementById('newFileModal').classList.remove('visible');
+    toast(`📄 Created: ${name}`, 'var(--success)');
     await loadFileTree();
-    if (fromSave || !openFileId) await openFile(file._id);
+    if (fromSave || !openFileId) await fsOpenFile(ref.id);
   } catch (e) {
-    toast('❌ ' + e.message, 'var(--error)');
+    toast('Create failed: ' + e.message, 'var(--error)');
   }
 }
 
-async function createFolder() {
+async function fsCreateFolder() {
+  if (!currentUser) { toast('Sign in first', 'var(--accent2)'); return; }
   const name = document.getElementById('newFolderName').value.trim();
   if (!name) { toast('Enter a folder name', 'var(--accent2)'); return; }
   try {
-    const res = await fetch('/api/fs/folder', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name }),
-    });
-    if (!res.ok) throw new Error((await res.json()).error);
+    await userFoldersRef().add({ name, parentId: null, createdAt: tsNow() });
     document.getElementById('newFolderModal').classList.remove('visible');
     document.getElementById('newFolderName').value = '';
-    toast(`📁 Folder created: ${name}`, 'var(--success)');
+    toast(`📁 Created: ${name}`, 'var(--success)');
     await loadFileTree();
   } catch (e) {
-    toast('❌ ' + e.message, 'var(--error)');
+    toast('Create failed: ' + e.message, 'var(--error)');
   }
 }
 
-// ════════════════════════════════════════════════════════════════════
-//  FILE MANAGER — RENAME
-// ════════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
+//  FILE OPERATIONS — RENAME
+// ════════════════════════════════════════════════════════
 function openRenameModal(type, id, currentName) {
   const modal = document.getElementById('renameModal');
   document.getElementById('renameTitle').textContent = type === 'folder' ? '📁 Rename Folder' : '📄 Rename File';
@@ -916,65 +990,64 @@ function openRenameModal(type, id, currentName) {
   document.getElementById('renameInput').focus();
 }
 
-async function doRename() {
+async function fsDoRename() {
   const modal = document.getElementById('renameModal');
   const name  = document.getElementById('renameInput').value.trim();
   if (!name) { toast('Enter a name', 'var(--accent2)'); return; }
-  const url = modal._type === 'folder' ? `/api/fs/folder/${modal._id}` : `/api/fs/file/${modal._id}`;
   try {
-    const res = await fetch(url, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name }) });
-    if (!res.ok) throw new Error((await res.json()).error);
-    modal.classList.remove('visible');
+    if (modal._type === 'folder') await userFoldersRef().doc(modal._id).update({ name });
+    else                          await userFilesRef().doc(modal._id).update({ name, updatedAt: tsNow() });
     if (modal._type === 'file' && modal._id === openFileId) {
       openFileName = name;
       document.getElementById('current-file-name').textContent = name;
     }
+    modal.classList.remove('visible');
     toast(`Renamed to: ${name}`, 'var(--success)');
     await loadFileTree();
   } catch (e) {
-    toast('❌ ' + e.message, 'var(--error)');
+    toast('Rename failed: ' + e.message, 'var(--error)');
   }
 }
 
-// ════════════════════════════════════════════════════════════════════
-//  FILE MANAGER — DELETE
-// ════════════════════════════════════════════════════════════════════
-async function deleteFile(fileId, fileName) {
-  if (!confirm(`Delete "${fileName}"? This cannot be undone.`)) return;
+// ════════════════════════════════════════════════════════
+//  FILE OPERATIONS — DELETE
+// ════════════════════════════════════════════════════════
+async function fsDeleteFile(fileId, fileName) {
+  if (!confirm(`Delete "${fileName}"? Cannot be undone.`)) return;
   try {
-    const res = await fetch(`/api/fs/file/${fileId}`, { method: 'DELETE' });
-    if (!res.ok) throw new Error((await res.json()).error);
+    await userFilesRef().doc(fileId).delete();
     if (fileId === openFileId) closeCurrentFile();
     toast(`🗑 Deleted: ${fileName}`, 'var(--accent2)');
     await loadFileTree();
   } catch (e) {
-    toast('❌ ' + e.message, 'var(--error)');
+    toast('Delete failed: ' + e.message, 'var(--error)');
   }
 }
 
-async function deleteFolder(folderId, folderName) {
-  if (!confirm(`Delete folder "${folderName}" and ALL its files? This cannot be undone.`)) return;
+async function fsDeleteFolder(folderId, folderName) {
+  if (!confirm(`Delete folder "${folderName}" and ALL its files? Cannot be undone.`)) return;
   try {
-    const res = await fetch(`/api/fs/folder/${folderId}`, { method: 'DELETE' });
-    if (!res.ok) throw new Error((await res.json()).error);
+    // Delete all files inside folder
+    const snap  = await userFilesRef().where('folderId', '==', folderId).get();
+    const batch = db.batch();
+    snap.docs.forEach(d => batch.delete(d.ref));
+    batch.delete(userFoldersRef().doc(folderId));
+    await batch.commit();
     toast(`🗑 Deleted folder: ${folderName}`, 'var(--accent2)');
     await loadFileTree();
   } catch (e) {
-    toast('❌ ' + e.message, 'var(--error)');
+    toast('Delete failed: ' + e.message, 'var(--error)');
   }
 }
 
-// ════════════════════════════════════════════════════════════════════
-//  FILE PANEL VISIBILITY
-// ════════════════════════════════════════════════════════════════════
-let filesPanelOpen = false;
-
+// ════════════════════════════════════════════════════════
+//  FILE PANEL TOGGLE
+// ════════════════════════════════════════════════════════
 function toggleFilesPanel() {
   filesPanelOpen = !filesPanelOpen;
   const panel = document.getElementById('left-panel');
   if (filesPanelOpen) {
     panel.classList.add('visible');
-    // Show file tab content directly if not in team mode
     if (appMode !== 'team') {
       document.getElementById('panelTabs').style.display = 'none';
       document.getElementById('membersTabContent').classList.remove('active');
@@ -982,15 +1055,13 @@ function toggleFilesPanel() {
     }
     loadFileTree();
   } else {
-    if (appMode !== 'team') {
-      panel.classList.remove('visible');
-    }
+    if (appMode !== 'team') panel.classList.remove('visible');
   }
 }
 
-// ════════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
 //  MODE SWITCHING
-// ════════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
 function setMode(mode) {
   appMode = mode;
   const isTeam = mode === 'team';
@@ -1000,11 +1071,9 @@ function setMode(mode) {
   document.getElementById('right-panel').classList.toggle('visible', isTeam);
   document.getElementById('media-bar').classList.toggle('visible', isTeam);
   document.getElementById('room-bar').classList.toggle('visible', isTeam);
-
   const panelTabs = document.getElementById('panelTabs');
   if (isTeam) {
     panelTabs.style.display = 'flex';
-    // Show members tab by default in team mode
     switchPanelTab('members');
     document.getElementById('lobby').classList.add('visible');
   } else {
@@ -1024,25 +1093,25 @@ function switchPanelTab(tab) {
   if (tab === 'files') loadFileTree();
 }
 
-// ════════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
 //  RUN CODE
-// ════════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
 async function runCode() {
   const code = cmEditor ? cmEditor.getValue().trim() : '';
   const stdin = document.getElementById('stdinInput').value;
   const outputEl = document.getElementById('output');
-  const runBtn = document.getElementById('runBtn');
+  const runBtn   = document.getElementById('runBtn');
   if (!code) { toast('No code to run'); return; }
   runBtn.disabled = true; runBtn.textContent = '⏳';
   outputEl.textContent = 'Running…'; outputEl.className = ''; outputEl.style.borderTop = '';
   try {
-    const res = await fetch('/api/run', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code, language: currentLang, stdin }) });
+    const res  = await fetch('/api/run', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ code, language: currentLang, stdin }) });
     const text = await res.text();
-    outputEl.innerHTML = escapeOutput(text || '(No output)');
-    outputEl.className = res.ok ? 'has-success' : 'has-error';
+    outputEl.innerHTML = escHtml(text || '(No output)');
+    outputEl.className = res.ok ? '' : 'has-error';
     outputEl.style.borderTop = `2px solid var(--${res.ok ? 'success' : 'error'})`;
   } catch (e) {
-    outputEl.innerHTML = escapeOutput('❌ Could not reach the server.');
+    outputEl.innerHTML = escHtml('❌ Could not reach the server.');
     outputEl.className = 'has-error';
     outputEl.style.borderTop = '2px solid var(--error)';
   } finally {
@@ -1050,27 +1119,27 @@ async function runCode() {
   }
 }
 
-// ════════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
 //  LOBBY
-// ════════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
 function switchTab(tab) {
-  const isCreate = tab === 'create';
-  document.getElementById('tabBtnCreate').classList.toggle('active', isCreate);
-  document.getElementById('tabBtnJoin').classList.toggle('active', !isCreate);
-  document.getElementById('tab-create').classList.toggle('active', isCreate);
-  document.getElementById('tab-join').classList.toggle('active', !isCreate);
+  const c = tab === 'create';
+  document.getElementById('tabBtnCreate').classList.toggle('active', c);
+  document.getElementById('tabBtnJoin').classList.toggle('active', !c);
+  document.getElementById('tab-create').classList.toggle('active', c);
+  document.getElementById('tab-join').classList.toggle('active', !c);
 }
 
 async function createRoom() {
   const name = document.getElementById('createName').value.trim();
-  const password = document.getElementById('createPassword').value;
+  const pw   = document.getElementById('createPassword').value;
   const errEl = document.getElementById('createError');
   errEl.textContent = '';
   if (!name) { errEl.textContent = 'Enter your name.'; return; }
   const btn = document.getElementById('createRoomBtn');
   btn.disabled = true; btn.textContent = 'Creating…';
   try {
-    const res = await fetch('/api/create-room', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, password: password || undefined }) });
+    const res  = await fetch('/api/create-room', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ name, password: pw || undefined }) });
     const data = await res.json();
     if (!res.ok) { errEl.textContent = data.error || 'Server error.'; return; }
     pendingHostToken = data.token; pendingRoomId = data.roomId;
@@ -1085,14 +1154,13 @@ async function createRoom() {
 }
 
 async function enterAsHost() {
-  const name = document.getElementById('createName').value.trim();
-  await startSession(pendingRoomId, name, pendingHostToken, true);
+  await startSession(pendingRoomId, document.getElementById('createName').value.trim(), pendingHostToken, true);
 }
 
 async function joinRoom() {
   const name = document.getElementById('joinName').value.trim();
   const rid  = document.getElementById('joinRoomId').value.trim();
-  const password = document.getElementById('joinPassword').value;
+  const pw   = document.getElementById('joinPassword').value;
   const errEl = document.getElementById('joinError');
   errEl.textContent = '';
   if (!name) { errEl.textContent = 'Enter your name.'; return; }
@@ -1100,7 +1168,7 @@ async function joinRoom() {
   const btn = document.getElementById('joinRoomBtn');
   btn.disabled = true; btn.textContent = 'Joining…';
   try {
-    const res = await fetch('/api/join-room', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ roomId: rid, name, password: password || undefined }) });
+    const res  = await fetch('/api/join-room', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ roomId: rid, name, password: pw || undefined }) });
     const data = await res.json();
     if (!res.ok) { errEl.textContent = data.error || 'Could not join.'; return; }
     await startSession(rid, name, data.token, false);
@@ -1113,27 +1181,24 @@ async function joinRoom() {
 
 async function startSession(rid, name, token, isHost) {
   myName = name; myIsHost = isHost; roomId = rid;
-  try {
-    myStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-  } catch (e) {
-    toast('Camera/mic denied — video disabled'); myStream = null;
-  }
+  try { myStream = await navigator.mediaDevices.getUserMedia({ video:true, audio:true }); }
+  catch (e) { toast('Camera/mic denied — video disabled'); myStream = null; }
   renderMyTile();
   socket = io({ auth: { token } });
   bindSocketEvents();
   document.getElementById('lobby').classList.remove('visible');
-  document.getElementById('roomIdBadge').textContent = `Room: ${rid.slice(0, 8)}…`;
+  document.getElementById('roomIdBadge').textContent = `Room: ${rid.slice(0,8)}…`;
 }
 
-// ════════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
 //  SOCKET EVENTS
-// ════════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
 function bindSocketEvents() {
   socket.on('connect', () => { mySocketId = socket.id; });
-  socket.on('connect_error', (err) => toast('Connection error: ' + err.message));
+  socket.on('connect_error', err => toast('Connection error: ' + err.message));
   socket.on('room-state', ({ users, editorOwner: eo, code, yourSocketId }) => {
     mySocketId = yourSocketId; roomUsers = users; editorOwner = eo;
-    initEditor(code); renderMyTile(); renderMembers(); updateEditorState();
+    initEditor(code); renderMyTile(); renderMembers(); updateEditorLock();
   });
   socket.on('user-joined', async ({ socketId, name, isHost }) => {
     toast(`${name} joined`); roomUsers.push({ socketId, name, isHost });
@@ -1142,7 +1207,8 @@ function bindSocketEvents() {
   socket.on('user-left', ({ socketId, name }) => {
     toast(`${name} left`);
     if (peers[socketId]) { peers[socketId].pc.close(); delete peers[socketId]; }
-    removeTile(socketId); roomUsers = roomUsers.filter(u => u.socketId !== socketId); renderMembers();
+    removeTile(socketId);
+    roomUsers = roomUsers.filter(u => u.socketId !== socketId); renderMembers();
   });
   socket.on('rtc-offer', async ({ from, name, offer }) => {
     await createPeerConnection(from, name, false);
@@ -1158,7 +1224,7 @@ function bindSocketEvents() {
   socket.on('rtc-ice', async ({ from, candidate }) => {
     if (peers[from]) try { await peers[from].pc.addIceCandidate(new RTCIceCandidate(candidate)); } catch(e){}
   });
-  socket.on('editor-assigned', ({ editorOwner: eo }) => { editorOwner = eo; updateEditorState(); renderMembers(); });
+  socket.on('editor-assigned', ({ editorOwner: eo }) => { editorOwner = eo; updateEditorLock(); renderMembers(); });
   socket.on('editor-request', ({ fromSocketId, fromName }) => {
     pendingRequest = { fromSocketId, fromName };
     document.getElementById('notifText').textContent = `"${fromName}" wants editor access`;
@@ -1172,70 +1238,62 @@ function bindSocketEvents() {
   socket.on('code-update', ({ code }) => { if (editorOwner !== mySocketId) applyRemoteCode(code); });
 }
 
-// ════════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
 //  WebRTC
-// ════════════════════════════════════════════════════════════════════
-const ICE = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' },{ urls: 'stun:stun1.l.google.com:19302' },{ urls: 'stun:stun2.l.google.com:19302' }] };
+// ════════════════════════════════════════════════════════
+const ICE = { iceServers: [
+  { urls: 'stun:stun.l.google.com:19302' },
+  { urls: 'stun:stun1.l.google.com:19302' },
+]};
 
 async function createPeerConnection(peerId, peerName, isInitiator) {
   if (peers[peerId]) return;
   const pc = new RTCPeerConnection(ICE);
-  peers[peerId] = { pc, name: peerName, stream: null };
-  if (myStream) myStream.getTracks().forEach(track => pc.addTrack(track, myStream));
-  pc.onicecandidate = (e) => { if (e.candidate) socket.emit('rtc-ice', { to: peerId, candidate: e.candidate }); };
-  pc.ontrack = (e) => { if (e.streams?.[0]) { peers[peerId].stream = e.streams[0]; attachRemoteStream(peerId, e.streams[0]); } };
+  peers[peerId] = { pc, name: peerName };
+  if (myStream) myStream.getTracks().forEach(t => pc.addTrack(t, myStream));
+  pc.onicecandidate = e => { if (e.candidate) socket.emit('rtc-ice', { to: peerId, candidate: e.candidate }); };
+  pc.ontrack = e => { if (e.streams?.[0]) attachRemoteStream(peerId, e.streams[0]); };
   addTile(peerId, peerName);
   if (isInitiator) {
-    const offer = await pc.createOffer({ offerToReceiveAudio: true, offerToReceiveVideo: true });
+    const offer = await pc.createOffer({ offerToReceiveAudio:true, offerToReceiveVideo:true });
     await pc.setLocalDescription(offer);
     socket.emit('rtc-offer', { to: peerId, offer });
   }
 }
 
-// ════════════════════════════════════════════════════════════════════
-//  VIDEO TILES
-// ════════════════════════════════════════════════════════════════════
 function renderMyTile() {
-  const existing = document.getElementById('tile-me');
-  if (existing) existing.remove();
-  const tile = document.createElement('div');
-  tile.className = 'video-tile'; tile.id = 'tile-me';
+  const ex = document.getElementById('tile-me'); if (ex) ex.remove();
+  const tile = document.createElement('div'); tile.className='video-tile'; tile.id='tile-me';
   if (myStream && camOn) {
-    const video = document.createElement('video');
-    video.autoplay = true; video.muted = true; video.playsInline = true; video.srcObject = myStream;
-    tile.appendChild(video);
+    const v = document.createElement('video'); v.autoplay=true; v.muted=true; v.playsInline=true; v.srcObject=myStream; tile.appendChild(v);
   } else {
-    const off = document.createElement('div'); off.className = 'cam-off';
-    off.textContent = myStream ? 'Cam Off' : '🚫 No Camera'; tile.appendChild(off);
+    const o = document.createElement('div'); o.className='cam-off'; o.textContent = myStream ? 'Cam Off' : '🚫 No Camera'; tile.appendChild(o);
   }
-  const label = document.createElement('div'); label.className = 'tile-label';
-  label.textContent = myName + (myIsHost ? ' 👑' : '') + ' (you)'; tile.appendChild(label);
-  const grid = document.getElementById('videoGrid');
-  grid.insertBefore(tile, grid.firstChild);
+  const lbl = document.createElement('div'); lbl.className='tile-label'; lbl.textContent = myName + (myIsHost?' 👑':'') + ' (you)'; tile.appendChild(lbl);
+  document.getElementById('videoGrid').insertBefore(tile, document.getElementById('videoGrid').firstChild);
 }
 
-function addTile(socketId, name) {
-  if (document.getElementById('tile-' + socketId)) return;
-  const tile = document.createElement('div'); tile.className = 'video-tile'; tile.id = 'tile-' + socketId;
-  const off = document.createElement('div'); off.className = 'cam-off'; off.textContent = 'Connecting…'; tile.appendChild(off);
-  const label = document.createElement('div'); label.className = 'tile-label'; label.textContent = name; tile.appendChild(label);
+function addTile(id, name) {
+  if (document.getElementById('tile-'+id)) return;
+  const tile = document.createElement('div'); tile.className='video-tile'; tile.id='tile-'+id;
+  const o = document.createElement('div'); o.className='cam-off'; o.textContent='Connecting…'; tile.appendChild(o);
+  const lbl = document.createElement('div'); lbl.className='tile-label'; lbl.textContent=name; tile.appendChild(lbl);
   document.getElementById('videoGrid').appendChild(tile);
 }
 
-function attachRemoteStream(socketId, stream) {
-  const tile = document.getElementById('tile-' + socketId); if (!tile) return;
-  const off = tile.querySelector('.cam-off'); if (off) off.remove();
-  let video = tile.querySelector('video');
-  if (!video) { video = document.createElement('video'); video.autoplay = true; video.playsInline = true; video.muted = false; tile.insertBefore(video, tile.querySelector('.tile-label')); }
-  video.srcObject = stream; video.play().catch(() => {});
+function attachRemoteStream(id, stream) {
+  const tile = document.getElementById('tile-'+id); if (!tile) return;
+  const o = tile.querySelector('.cam-off'); if (o) o.remove();
+  let v = tile.querySelector('video');
+  if (!v) { v = document.createElement('video'); v.autoplay=true; v.playsInline=true; tile.insertBefore(v, tile.querySelector('.tile-label')); }
+  v.srcObject = stream; v.play().catch(()=>{});
 }
+function removeTile(id) { const t = document.getElementById('tile-'+id); if (t) t.remove(); }
 
-function removeTile(socketId) { const t = document.getElementById('tile-' + socketId); if (t) t.remove(); }
-
-// ════════════════════════════════════════════════════════════════════
-//  EDITOR STATE
-// ════════════════════════════════════════════════════════════════════
-function updateEditorState() {
+// ════════════════════════════════════════════════════════
+//  EDITOR LOCK
+// ════════════════════════════════════════════════════════
+function updateEditorLock() {
   if (!cmEditor || !mySocketId) return;
   const isMine = editorOwner === mySocketId;
   cmEditor.setOption('readOnly', isMine ? false : 'nocursor');
@@ -1246,72 +1304,68 @@ function updateEditorState() {
     const owner = roomUsers.find(u => u.socketId === editorOwner);
     statusEl.textContent = owner ? `🔒 ${owner.name} is editing` : '🔒 Locked';
     statusEl.style.color = 'var(--text-muted)';
+    document.getElementById('lockMsg').textContent = owner ? `🔒 ${owner.name} is editing` : '🔒 Editor locked';
   }
-  const owner = roomUsers.find(u => u.socketId === editorOwner);
-  document.getElementById('lockMsg').textContent = owner ? `🔒 ${owner.name} is editing — you are read-only` : '🔒 Editor locked';
   const sec = document.getElementById('requestSection'); sec.innerHTML = '';
   if (myIsHost) {
     if (!isMine) {
-      const btn = document.createElement('button'); btn.className = 'btn-action btn-reclaim'; btn.textContent = '↩ Take Back Editor';
-      btn.addEventListener('click', () => { socket.emit('reclaim-editor'); toast('Taking back editor…'); });
-      sec.appendChild(btn);
+      const b = document.createElement('button'); b.className='btn-action btn-reclaim'; b.textContent='↩ Take Back Editor';
+      b.onclick = () => socket.emit('reclaim-editor'); sec.appendChild(b);
     }
   } else {
     if (isMine) {
-      const btn = document.createElement('button'); btn.className = 'btn-action btn-handback'; btn.textContent = '↩ Hand Back Editor';
-      btn.addEventListener('click', () => { const host = roomUsers.find(u => u.isHost); if (host) { socket.emit('return-editor', { toSocketId: host.socketId }); toast('Editor returned to host'); } });
-      sec.appendChild(btn);
+      const b = document.createElement('button'); b.className='btn-action btn-handback'; b.textContent='↩ Hand Back Editor';
+      b.onclick = () => { const h = roomUsers.find(u=>u.isHost); if(h) socket.emit('return-editor',{toSocketId:h.socketId}); }; sec.appendChild(b);
     } else {
-      const btn = document.createElement('button'); btn.className = 'btn-action btn-request'; btn.id = 'requestBtn'; btn.textContent = '🙋 Request Editor Access';
-      btn.addEventListener('click', () => { socket.emit('request-editor'); btn.textContent = '⏳ Request sent…'; btn.disabled = true; toast('Request sent to host'); });
-      sec.appendChild(btn);
+      const b = document.createElement('button'); b.className='btn-action btn-request'; b.id='requestBtn'; b.textContent='🙋 Request Editor Access';
+      b.onclick = () => { socket.emit('request-editor'); b.textContent='⏳ Sent…'; b.disabled=true; }; sec.appendChild(b);
     }
   }
 }
 
 function renderMembers() {
   const list = document.getElementById('membersList'); list.innerHTML = '';
-  const allUsers = [...roomUsers];
-  if (!allUsers.find(u => u.socketId === mySocketId)) allUsers.unshift({ socketId: mySocketId, name: myName, isHost: myIsHost });
-  allUsers.forEach(u => {
-    const isMe = u.socketId === mySocketId, isEditing = u.socketId === editorOwner;
+  const all  = [...roomUsers];
+  if (!all.find(u => u.socketId === mySocketId)) all.unshift({ socketId: mySocketId, name: myName, isHost: myIsHost });
+  all.forEach(u => {
+    const isMe = u.socketId === mySocketId, isEd = u.socketId === editorOwner;
     const div = document.createElement('div'); div.className = 'member-item';
     const dot = document.createElement('div'); dot.className = 'member-dot'; div.appendChild(dot);
-    const nameDiv = document.createElement('div'); nameDiv.className = 'member-name'; nameDiv.textContent = u.name + (u.isHost ? ' 👑' : ''); div.appendChild(nameDiv);
-    if (isMe) { const you = document.createElement('span'); you.className = 'member-you'; you.textContent = 'you'; div.appendChild(you); }
-    if (isEditing) { const ed = document.createElement('span'); ed.className = 'member-editing'; ed.textContent = '✏️'; div.appendChild(ed); }
+    const nm  = document.createElement('div'); nm.className = 'member-name'; nm.textContent = u.name + (u.isHost?' 👑':''); div.appendChild(nm);
+    if (isMe) { const y = document.createElement('span'); y.className='member-you'; y.textContent='you'; div.appendChild(y); }
+    if (isEd) { const e = document.createElement('span'); e.className='member-editing'; e.textContent='✏️'; div.appendChild(e); }
     if (myIsHost && !isMe) {
-      const btn = document.createElement('button'); btn.className = 'btn-assign'; btn.textContent = isEditing ? 'Take' : 'Give';
-      btn.addEventListener('click', () => isEditing ? socket.emit('reclaim-editor') : socket.emit('assign-editor', { toSocketId: u.socketId }));
-      div.appendChild(btn);
+      const b = document.createElement('button'); b.className='btn-assign'; b.textContent = isEd ? 'Take' : 'Give';
+      b.onclick = () => isEd ? socket.emit('reclaim-editor') : socket.emit('assign-editor',{toSocketId:u.socketId});
+      div.appendChild(b);
     }
     list.appendChild(div);
   });
 }
 
-// ════════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
 //  MIC / CAM
-// ════════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
 function toggleMic() {
-  if (!myStream) { toast('No microphone available'); return; }
+  if (!myStream) { toast('No mic'); return; }
   micOn = !micOn; myStream.getAudioTracks().forEach(t => t.enabled = micOn);
-  const btn = document.getElementById('micBtn'); btn.textContent = micOn ? '🎙 Mic On' : '🔇 Mic Off'; btn.classList.toggle('off', !micOn);
+  const b = document.getElementById('micBtn'); b.textContent = micOn ? '🎙 Mic On' : '🔇 Mic Off'; b.classList.toggle('off', !micOn);
 }
 function toggleCam() {
-  if (!myStream) { toast('No camera available'); return; }
+  if (!myStream) { toast('No camera'); return; }
   camOn = !camOn; myStream.getVideoTracks().forEach(t => t.enabled = camOn);
-  const btn = document.getElementById('camBtn'); btn.textContent = camOn ? '📹 Cam On' : '🚫 Cam Off'; btn.classList.toggle('off', !camOn);
+  const b = document.getElementById('camBtn'); b.textContent = camOn ? '📹 Cam On' : '🚫 Cam Off'; b.classList.toggle('off', !camOn);
   const tile = document.getElementById('tile-me'); if (!tile) return;
-  const video = tile.querySelector('video'); let off = tile.querySelector('.cam-off');
-  if (camOn) { if (off) off.remove(); if (video) video.style.display = 'block'; }
-  else { if (video) video.style.display = 'none'; if (!off) { off = document.createElement('div'); off.className = 'cam-off'; off.textContent = 'Cam Off'; tile.insertBefore(off, tile.querySelector('.tile-label')); } }
+  const v = tile.querySelector('video'); let o = tile.querySelector('.cam-off');
+  if (camOn) { if(o) o.remove(); if(v) v.style.display='block'; }
+  else { if(v) v.style.display='none'; if(!o){o=document.createElement('div');o.className='cam-off';o.textContent='Cam Off';tile.insertBefore(o,tile.querySelector('.tile-label'));} }
 }
 
-// ════════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
 //  LEAVE
-// ════════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
 function performLeave() {
-  if (myStream) { myStream.getTracks().forEach(t => t.stop()); myStream = null; }
+  if (myStream) { myStream.getTracks().forEach(t=>t.stop()); myStream = null; }
   Object.values(peers).forEach(p => p.pc.close()); peers = {};
   if (socket) { socket.disconnect(); socket = null; }
   roomUsers = []; micOn = true; camOn = true; pendingRequest = null;
@@ -1326,12 +1380,14 @@ function performLeave() {
   document.getElementById('roomIdBadge').textContent = 'Room: —';
   document.getElementById('micBtn').textContent = '🎙 Mic On'; document.getElementById('camBtn').textContent = '📹 Cam On';
   document.getElementById('micBtn').classList.remove('off'); document.getElementById('camBtn').classList.remove('off');
-  initEditor(STARTER_CODE[currentLang]);
+  initEditor(STARTER[currentLang]);
   appMode = 'solo';
-  document.getElementById('modeTeam').classList.remove('active'); document.getElementById('modeSolo').classList.add('active');
-  document.getElementById('right-panel').classList.remove('visible');
-  document.getElementById('media-bar').classList.remove('visible'); document.getElementById('room-bar').classList.remove('visible');
-  document.getElementById('lobby').classList.remove('visible');
+  ['modeTeam','right-panel','media-bar','room-bar','lobby'].forEach(id => {
+    const el = document.getElementById(id);
+    if (id === 'modeTeam') el.classList.remove('active');
+    else el.classList.remove('visible');
+  });
+  document.getElementById('modeSolo').classList.add('active');
   document.getElementById('panelTabs').style.display = 'none';
   if (!filesPanelOpen) document.getElementById('left-panel').classList.remove('visible');
 }
@@ -1339,66 +1395,84 @@ function performLeave() {
 function respondRequest(grant) {
   document.getElementById('notifBanner').style.display = 'none';
   if (grant && pendingRequest) { socket.emit('assign-editor', { toSocketId: pendingRequest.fromSocketId }); toast(`Editor given to ${pendingRequest.fromName}`); }
-  else if (pendingRequest) { socket.emit('deny-editor-request', { toSocketId: pendingRequest.fromSocketId }); toast('Request denied'); }
+  else if (pendingRequest)     { socket.emit('deny-editor-request', { toSocketId: pendingRequest.fromSocketId }); toast('Request denied'); }
   pendingRequest = null;
 }
 
-// ════════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
 //  BOOT
-// ════════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', async () => {
   initEditor();
+  await initFirebase(); // kicks off auth state listener which calls loadFileTree
 
-  // Check login status for file manager
-  try {
-    const meRes = await fetch('/api/me');
-    fsUser = await meRes.json();
-  } catch(e) { fsUser = { loggedIn: false }; }
-
-  // ── Editor events ──
-  document.getElementById('modeSolo').addEventListener('click', () => { if (appMode === 'team') performLeave(); else setMode('solo'); });
+  // Mode
+  document.getElementById('modeSolo').addEventListener('click', () => { if (appMode==='team') performLeave(); else setMode('solo'); });
   document.getElementById('modeTeam').addEventListener('click', () => setMode('team'));
-  document.querySelectorAll('.lang-pill').forEach(btn => btn.addEventListener('click', () => { if (btn.dataset.lang) setLanguage(btn.dataset.lang); }));
+
+  // Language
+  document.querySelectorAll('.lang-pill').forEach(b => b.addEventListener('click', () => { if (b.dataset.lang) setLanguage(b.dataset.lang); }));
+
+  // Run / output
   document.getElementById('runBtn').addEventListener('click', runCode);
-  document.getElementById('clearOutputBtn').addEventListener('click', () => { const o = document.getElementById('output'); o.textContent = '// Run your code to see output here'; o.className = ''; o.style.borderTop = ''; });
-  document.addEventListener('keydown', (e) => {
-    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); runCode(); }
-    if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); saveCurrentFile(); }
+  document.getElementById('clearOutputBtn').addEventListener('click', () => {
+    const o = document.getElementById('output'); o.textContent='// Run your code to see output here'; o.className=''; o.style.borderTop='';
   });
 
-  // ── File manager events ──
-  document.getElementById('topbarSaveBtn').addEventListener('click', saveCurrentFile);
+  // Keyboard shortcuts
+  document.addEventListener('keydown', e => {
+    if ((e.ctrlKey||e.metaKey) && e.key==='Enter') { e.preventDefault(); runCode(); }
+    if ((e.ctrlKey||e.metaKey) && e.key==='s')     { e.preventDefault(); fsSaveCurrentFile(); }
+  });
+
+  // Topbar file buttons
+  document.getElementById('topbarSaveBtn').addEventListener('click', fsSaveCurrentFile);
+  document.getElementById('topbarExportBtn').addEventListener('click', exportCurrentToPC);
   document.getElementById('topbarFilesBtn').addEventListener('click', toggleFilesPanel);
   document.getElementById('inlineCloseFileBtn').addEventListener('click', closeCurrentFile);
-  document.getElementById('newFileBtn').addEventListener('click', () => { if (!fsUser?.loggedIn) { toast('Sign in to save files', 'var(--accent2)'); return; } openNewFileModal(); });
-  document.getElementById('newFolderBtn').addEventListener('click', () => { if (!fsUser?.loggedIn) { toast('Sign in to save files', 'var(--accent2)'); return; } document.getElementById('newFolderModal').classList.add('visible'); document.getElementById('newFolderName').focus(); });
-  document.getElementById('refreshFilesBtn').addEventListener('click', loadFileTree);
+
+  // Auth
+  document.getElementById('signInBtn').addEventListener('click', signInWithGoogle);
+  document.getElementById('signOutBtn').addEventListener('click', signOutUser);
 
   // Panel tabs
   document.getElementById('tabMembers').addEventListener('click', () => switchPanelTab('members'));
   document.getElementById('tabFiles').addEventListener('click', () => switchPanelTab('files'));
 
+  // File toolbar
+  document.getElementById('newFileBtn').addEventListener('click', () => {
+    if (!currentUser) { toast('Sign in to save files', 'var(--accent2)'); return; }
+    openNewFileModal();
+  });
+  document.getElementById('newFolderBtn').addEventListener('click', () => {
+    if (!currentUser) { toast('Sign in to save files', 'var(--accent2)'); return; }
+    document.getElementById('newFolderModal').classList.add('visible');
+    document.getElementById('newFolderName').focus();
+  });
+  document.getElementById('exportAllBtn').addEventListener('click', exportAllFiles);
+  document.getElementById('refreshFilesBtn').addEventListener('click', loadFileTree);
+
   // New file modal
-  document.getElementById('newFileConfirm').addEventListener('click', createFile);
+  document.getElementById('newFileConfirm').addEventListener('click', fsCreateFile);
   document.getElementById('newFileCancel').addEventListener('click', () => document.getElementById('newFileModal').classList.remove('visible'));
-  document.getElementById('newFileName').addEventListener('keydown', e => { if (e.key === 'Enter') createFile(); });
+  document.getElementById('newFileName').addEventListener('keydown', e => { if (e.key==='Enter') fsCreateFile(); });
 
   // New folder modal
-  document.getElementById('newFolderConfirm').addEventListener('click', createFolder);
+  document.getElementById('newFolderConfirm').addEventListener('click', fsCreateFolder);
   document.getElementById('newFolderCancel').addEventListener('click', () => document.getElementById('newFolderModal').classList.remove('visible'));
-  document.getElementById('newFolderName').addEventListener('keydown', e => { if (e.key === 'Enter') createFolder(); });
+  document.getElementById('newFolderName').addEventListener('keydown', e => { if (e.key==='Enter') fsCreateFolder(); });
 
   // Rename modal
-  document.getElementById('renameConfirm').addEventListener('click', doRename);
+  document.getElementById('renameConfirm').addEventListener('click', fsDoRename);
   document.getElementById('renameCancel').addEventListener('click', () => document.getElementById('renameModal').classList.remove('visible'));
-  document.getElementById('renameInput').addEventListener('keydown', e => { if (e.key === 'Enter') doRename(); });
+  document.getElementById('renameInput').addEventListener('keydown', e => { if (e.key==='Enter') fsDoRename(); });
 
-  // Close modals on overlay click
+  // Close modals on backdrop click
   ['newFileModal','newFolderModal','renameModal'].forEach(id => {
-    document.getElementById(id).addEventListener('click', (e) => { if (e.target.id === id) document.getElementById(id).classList.remove('visible'); });
+    document.getElementById(id).addEventListener('click', e => { if (e.target.id===id) document.getElementById(id).classList.remove('visible'); });
   });
 
-  // Lobby events
+  // Lobby
   document.getElementById('tabBtnCreate').addEventListener('click', () => switchTab('create'));
   document.getElementById('tabBtnJoin').addEventListener('click', () => switchTab('join'));
   document.getElementById('createRoomBtn').addEventListener('click', createRoom);
@@ -1412,9 +1486,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('micBtn').addEventListener('click', toggleMic);
   document.getElementById('camBtn').addEventListener('click', toggleCam);
 
-  // Room URL param
-  const urlRoomId = new URLSearchParams(window.location.search).get('room');
-  if (urlRoomId) { document.getElementById('joinRoomId').value = urlRoomId; switchTab('join'); setMode('team'); }
+  // Auto-join room from URL
+  const urlRoom = new URLSearchParams(window.location.search).get('room');
+  if (urlRoom) { document.getElementById('joinRoomId').value = urlRoom; switchTab('join'); setMode('team'); }
 });
 </script>
 
