@@ -852,6 +852,73 @@
       background: var(--border);
       border-radius: 3px;
     }
+
+    /* =========================
+   FOOTER
+========================= */
+
+    .site-footer {
+      width: 100%;
+      background: #0f1724;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      margin-top: 40px;
+      padding: 35px 20px 20px;
+      color: #94a3b8;
+      font-family: sans-serif;
+    }
+
+    .footer-container {
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .footer-left {
+      margin-bottom: 20px;
+    }
+
+    .footer-logo {
+      font-size: 22px;
+      font-weight: 700;
+      color: white;
+    }
+
+    .footer-logo span {
+      color: #4f8cff;
+    }
+
+    .footer-text {
+      margin-top: 8px;
+      font-size: 14px;
+      color: #7c8aa5;
+      max-width: 420px;
+      line-height: 1.6;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+      margin: 18px 0;
+    }
+
+    .footer-links a {
+      color: #94a3b8;
+      text-decoration: none;
+      font-size: 14px;
+      transition: 0.25s ease;
+    }
+
+    .footer-links a:hover {
+      color: white;
+    }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      margin-top: 20px;
+      padding-top: 16px;
+      font-size: 13px;
+      color: #64748b;
+    }
   </style>
 </head>
 
@@ -918,7 +985,8 @@
         </div>
         <div class="cm-wrapper">
           <div id="lockOverlay">
-            <span id="lockMsg">🔒 Another member is editing</span>
+            <span id="lockMsg"><img src="lock.png" alt="Lock" style="width:16px;height:16px;" />Another member is
+              editing</span>
           </div>
           <textarea id="editor"></textarea>
         </div>
@@ -940,8 +1008,10 @@
     </div>
 
     <div id="media-bar">
-      <button class="tool-btn" id="micBtn">🎙 Mic On</button>
-      <button class="tool-btn" id="camBtn">📹 Cam On</button>
+      <button class="tool-btn" id="micBtn"><img src="mic.png" alt="Microphone"
+          style="width:16px;height:16px; margin-right: 5px;" />Mic On</button>
+      <button class="tool-btn" id="camBtn"><img src="rec-button.png" alt="Record" style="width:16px;height:16px;" />Cam
+        On</button>
     </div>
   </div>
 
@@ -992,6 +1062,28 @@
   </div>
 
   <div id="toast"></div>
+
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-left">
+        <span class="footer-logo">Code<span>Forge</span></span>
+        <p class="footer-text">
+          Real-time collaborative coding platform for teams and solo developers.
+        </p>
+      </div>
+
+      <div class="footer-links">
+        <a href="landing.html">Home</a>
+        <a href="documentation.html">Docs</a>
+        <a href="#">Privacy</a>
+        <a href="#">Contact</a>
+      </div>
+
+      <div class="footer-bottom">
+        © 2026 CodeForge. All rights reserved.
+      </div>
+    </div>
+  </footer>
 
   <script>
     // ════════════════════════════════════════════════════════════════════
@@ -1143,7 +1235,7 @@
       if (!code) { toast('No code to run'); return; }
 
       runBtn.disabled = true;
-      runBtn.textContent = '⏳';
+      runBtn.innerHTML = '<img src="hourglass.png" alt="Loading" width="20" height="20">';
       outputEl.textContent = 'Running…';
       outputEl.className = '';
       outputEl.style.borderTop = '';
@@ -1353,7 +1445,7 @@
       socket.on('editor-request-denied', () => {
         toast('Your editor request was denied.');
         const btn = document.getElementById('requestBtn');
-        if (btn) { btn.textContent = '🙋 Request Editor Access'; btn.disabled = false; }
+        if (btn) { btn.textContent = '✋ Request Editor Access'; btn.disabled = false; }
       });
 
       socket.on('code-update', ({ code }) => {
