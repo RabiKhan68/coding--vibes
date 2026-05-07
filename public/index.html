@@ -23,19 +23,17 @@
   <title>CodeForge — Editor</title>
   <link rel="icon" type="image/png" href="/logo.png">
 
-  <!-- CodeMirror -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.20/codemirror.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.20/theme/dracula.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.20/codemirror.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.20/mode/python/python.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.20/mode/clike/clike.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.20/mode/shell/shell.min.js"></script>
 
-  <!-- Firebase SDKs (compat — works with simple firebase.xxx() calls) -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
-  <!-- Socket.IO -->
   <script src="/socket.io/socket.io.js"></script>
 
   <style>
@@ -98,7 +96,6 @@
     #runBtn:hover:not(:disabled) { background: #4070ee; transform: translateY(-1px); }
     #runBtn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-    /* Auth area */
     #authArea { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
     #signInBtn { padding: 4px 10px; background: transparent; border: 1px solid var(--accent3); color: var(--accent3); border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: 600; white-space: nowrap; transition: all 0.15s; }
     #signInBtn:hover { background: var(--accent3); color: #000; }
@@ -109,7 +106,6 @@
     #signOutBtn { padding: 2px 7px; background: transparent; border: 1px solid var(--border); color: var(--text-muted); border-radius: 3px; cursor: pointer; font-size: 10px; transition: all 0.15s; }
     #signOutBtn:hover { border-color: var(--accent2); color: var(--accent2); }
 
-    /* Room bar */
     #room-bar { display: none; align-items: center; gap: 6px; font-size: 12px; flex-shrink: 0; }
     #room-bar.visible { display: flex; }
     .room-badge { background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; padding: 3px 8px; font-family: var(--font-mono); font-size: 11px; cursor: pointer; white-space: nowrap; }
@@ -119,12 +115,7 @@
     #leaveBtn:hover { background: var(--accent2); color: #fff; }
 
     /* ══ CURRENT FILE BAR ══ */
-    #current-file-bar {
-      display: none; align-items: center; gap: 8px;
-      padding: 3px 12px; background: var(--surface2);
-      border-bottom: 1px solid var(--border); flex-shrink: 0;
-      font-size: 11px; font-family: var(--font-mono);
-    }
+    #current-file-bar { display: none; align-items: center; gap: 8px; padding: 3px 12px; background: var(--surface2); border-bottom: 1px solid var(--border); flex-shrink: 0; font-size: 11px; font-family: var(--font-mono); }
     #current-file-bar.visible { display: flex; }
     #current-file-name { color: var(--accent3); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     #save-indicator { font-size: 10px; color: var(--text-muted); white-space: nowrap; }
@@ -146,7 +137,6 @@
     .panel-section { padding: 10px 12px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
     .panel-title { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; }
 
-    /* Members */
     .member-item { display: flex; align-items: center; gap: 6px; padding: 5px 0; font-size: 12px; border-bottom: 1px solid var(--border); }
     .member-item:last-child { border-bottom: none; }
     .member-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--success); flex-shrink: 0; }
@@ -156,43 +146,32 @@
     .btn-assign { font-size: 10px; padding: 2px 6px; background: transparent; border: 1px solid var(--border); color: var(--text-muted); border-radius: 3px; cursor: pointer; transition: all 0.15s; }
     .btn-assign:hover { border-color: var(--accent3); color: var(--accent3); }
     .btn-action { width: 100%; padding: 7px; border: none; border-radius: 5px; font-size: 11px; font-weight: 600; cursor: pointer; margin-top: 6px; transition: all 0.15s; }
-    .btn-request { background: var(--surface2); border: 1px solid var(--accent); color: var(--accent); }
-    .btn-request:hover { background: var(--accent); color: #fff; }
-    .btn-reclaim { background: var(--surface2); border: 1px solid var(--accent2); color: var(--accent2); }
-    .btn-reclaim:hover { background: var(--accent2); color: #fff; }
+    .btn-request  { background: var(--surface2); border: 1px solid var(--accent);  color: var(--accent);  }
+    .btn-request:hover  { background: var(--accent);  color: #fff; }
+    .btn-reclaim  { background: var(--surface2); border: 1px solid var(--accent2); color: var(--accent2); }
+    .btn-reclaim:hover  { background: var(--accent2); color: #fff; }
     .btn-handback { background: var(--surface2); border: 1px solid var(--accent3); color: var(--accent3); }
     .btn-handback:hover { background: var(--accent3); color: #000; }
     #notifBanner { display: none; background: var(--surface2); border: 1px solid var(--accent); border-radius: 6px; padding: 8px; margin-top: 6px; font-size: 11px; }
     #notifBanner .banner-btns { display: flex; gap: 4px; margin-top: 6px; }
     .bbtn { flex: 1; padding: 4px; border: none; border-radius: 4px; font-size: 11px; font-weight: 700; cursor: pointer; }
     .bbtn.yes { background: var(--success); color: #000; }
-    .bbtn.no  { background: var(--error); color: #fff; }
+    .bbtn.no  { background: var(--error);   color: #fff; }
 
     /* ══ FILE PANEL ══ */
     #files-panel { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
-
     .files-toolbar { display: flex; gap: 4px; padding: 8px 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
     .files-toolbar button { flex: 1; padding: 5px 4px; border: 1px solid var(--border); background: var(--surface2); color: var(--text-muted); border-radius: 4px; cursor: pointer; font-size: 10px; font-weight: 600; transition: all 0.15s; }
     .files-toolbar button:hover { border-color: var(--accent3); color: var(--accent3); }
     .files-toolbar .btn-newfile:hover { border-color: var(--accent); color: var(--accent); }
-    .files-toolbar .btn-export:hover { border-color: var(--gold); color: var(--gold); }
-
+    .files-toolbar .btn-export:hover  { border-color: var(--gold);   color: var(--gold);   }
     .files-tree { flex: 1; overflow-y: auto; padding: 4px 0; }
-
     .files-notice { padding: 18px 14px; text-align: center; font-size: 12px; color: var(--text-muted); line-height: 1.8; }
 
-    /* Google sign-in button in panel */
-    .google-signin-btn {
-      display: flex; align-items: center; justify-content: center; gap: 8px;
-      width: 100%; padding: 9px 12px; margin-bottom: 10px;
-      background: #fff; color: #3c4043; border: 1px solid #dadce0;
-      border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600;
-      transition: all 0.15s;
-    }
+    .google-signin-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 9px 12px; margin-bottom: 10px; background: #fff; color: #3c4043; border: 1px solid #dadce0; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; transition: all 0.15s; }
     .google-signin-btn:hover { background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
     .google-signin-btn svg { flex-shrink: 0; }
 
-    /* Folder row */
     .folder-row { display: flex; align-items: center; gap: 5px; padding: 5px 10px; cursor: pointer; transition: background 0.12s; user-select: none; }
     .folder-row:hover { background: var(--surface2); }
     .folder-chevron { font-size: 9px; color: var(--text-muted); transition: transform 0.15s; flex-shrink: 0; width: 10px; }
@@ -201,7 +180,6 @@
     .folder-name { flex: 1; font-size: 12px; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .folder-children { padding-left: 12px; }
 
-    /* File row */
     .file-row { display: flex; align-items: center; gap: 5px; padding: 4px 10px 4px 20px; cursor: pointer; transition: background 0.12s; }
     .file-row:hover { background: var(--surface2); }
     .file-row.active { background: rgba(91,142,255,0.12); border-left: 2px solid var(--accent); padding-left: 18px; }
@@ -209,26 +187,43 @@
     .file-name { flex: 1; font-size: 11px; font-family: var(--font-mono); color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .file-lang-tag { font-size: 9px; color: var(--text-muted); flex-shrink: 0; text-transform: uppercase; letter-spacing: 0.3px; }
 
-    /* Row hover actions */
     .row-acts { display: none; gap: 2px; flex-shrink: 0; }
-    .folder-row:hover .row-acts,
-    .file-row:hover .row-acts { display: flex; }
+    .folder-row:hover .row-acts, .file-row:hover .row-acts { display: flex; }
     .row-act { padding: 1px 4px; background: transparent; border: 1px solid var(--border); color: var(--text-muted); border-radius: 3px; cursor: pointer; font-size: 9px; line-height: 1.4; transition: all 0.12s; }
     .row-act:hover { border-color: var(--accent2); color: var(--accent2); }
     .row-act.act-open:hover { border-color: var(--accent); color: var(--accent); }
-    .row-act.act-dl:hover { border-color: var(--gold); color: var(--gold); }
+    .row-act.act-dl:hover   { border-color: var(--gold);   color: var(--gold);   }
 
     /* ══ EDITOR PANEL ══ */
     #editor-panel { display: flex; flex-direction: column; flex: 1; overflow: hidden; min-width: 0; }
-    #stdin-bar { display: flex; align-items: center; gap: 8px; padding: 4px 12px; background: var(--surface); border-bottom: 1px solid var(--border); flex-shrink: 0; }
-    #stdin-bar label { font-size: 11px; color: var(--text-muted); white-space: nowrap; font-family: var(--font-mono); }
-    #stdinInput { flex: 1; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; color: var(--text); font-family: var(--font-mono); font-size: 11px; padding: 3px 8px; outline: none; transition: border-color 0.15s; }
+
+    /* ══ STDIN BAR — textarea for multi-line input ══ */
+    #stdin-bar {
+      display: flex; align-items: flex-start; gap: 8px;
+      padding: 6px 12px; background: var(--surface);
+      border-bottom: 1px solid var(--border); flex-shrink: 0;
+    }
+    #stdin-bar label {
+      font-size: 11px; color: var(--text-muted); white-space: nowrap;
+      font-family: var(--font-mono); padding-top: 4px; flex-shrink: 0;
+    }
+    #stdin-wrap { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+    #stdinInput {
+      width: 100%; background: var(--bg); border: 1px solid var(--border);
+      border-radius: 4px; color: var(--text); font-family: var(--font-mono);
+      font-size: 11px; padding: 4px 8px; outline: none;
+      transition: border-color 0.15s; resize: vertical;
+      min-height: 30px; max-height: 90px; line-height: 1.5;
+    }
     #stdinInput:focus { border-color: var(--accent); }
+    #stdin-hint { font-size: 10px; color: var(--text-muted); }
+
     #lockOverlay { display: none; position: absolute; inset: 0; background: rgba(15,17,23,0.7); z-index: 5; align-items: center; justify-content: center; font-size: 13px; color: var(--text-muted); pointer-events: none; }
     #lockOverlay.visible { display: flex; }
     .cm-wrapper { position: relative; flex: 1; overflow: hidden; }
     .CodeMirror { height: 100% !important; font-family: var(--font-mono) !important; font-size: 13px !important; background: var(--bg) !important; }
     .CodeMirror-scroll { padding-bottom: 0 !important; }
+
     #output-panel { height: 180px; flex-shrink: 0; background: var(--surface); border-top: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
     .output-header { display: flex; align-items: center; justify-content: space-between; padding: 6px 12px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
     .output-label { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); font-family: var(--font-mono); }
@@ -256,7 +251,7 @@
     #lobby.visible { display: flex; }
     .lobby-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 28px 32px; width: 380px; box-shadow: var(--shadow); }
     .lobby-card h2 { font-family: var(--font-mono); font-size: 18px; color: var(--accent); margin-bottom: 4px; }
-    .lobby-card p { color: var(--text-muted); font-size: 13px; margin-bottom: 20px; }
+    .lobby-card p  { color: var(--text-muted); font-size: 13px; margin-bottom: 20px; }
     .tabs { display: flex; gap: 4px; margin-bottom: 18px; background: var(--bg); border-radius: 6px; padding: 3px; }
     .tab-btn { flex: 1; padding: 7px; border: none; background: transparent; color: var(--text-muted); border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.15s; }
     .tab-btn.active { background: var(--accent); color: #fff; }
@@ -317,6 +312,7 @@
       <button class="lang-pill" data-lang="cpp">C++</button>
       <button class="lang-pill" data-lang="c">C</button>
       <button class="lang-pill" data-lang="java">Java</button>
+      <button class="lang-pill" data-lang="bash">Bash</button>
     </div>
 
     <div class="topbar-sep"></div>
@@ -328,7 +324,6 @@
     <a href="documentation.html" class="topbar-btn">📖 Docs</a>
     <div class="topbar-sep"></div>
 
-    <!-- Auth -->
     <div id="authArea">
       <button id="signInBtn">🔑 Sign In</button>
       <div id="userInfo">
@@ -338,7 +333,6 @@
       </div>
     </div>
 
-    <!-- Room bar (team mode) -->
     <div id="room-bar">
       <span id="editor-status"></span>
       <span class="room-badge" id="roomIdBadge" title="Click to copy">Room: —</span>
@@ -365,7 +359,6 @@
         <button class="panel-tab" id="tabFiles">Files</button>
       </div>
 
-      <!-- Members tab -->
       <div class="panel-tab-content active" id="membersTabContent">
         <div class="panel-section">
           <div class="panel-title">Members</div>
@@ -377,19 +370,18 @@
             <div id="notifText" style="font-size:11px;line-height:1.4"></div>
             <div class="banner-btns">
               <button class="bbtn yes" id="grantBtn">Grant</button>
-              <button class="bbtn no" id="denyBtn">Deny</button>
+              <button class="bbtn no"  id="denyBtn">Deny</button>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Files tab -->
       <div class="panel-tab-content" id="filesTabContent">
         <div id="files-panel">
           <div class="files-toolbar">
             <button class="btn-newfile" id="newFileBtn">+ File</button>
             <button id="newFolderBtn">+ Folder</button>
-            <button class="btn-export" id="exportAllBtn" title="Export all as ZIP">↓ ZIP</button>
+            <button class="btn-export" id="exportAllBtn" title="Export all">↓ ZIP</button>
             <button id="refreshFilesBtn" title="Refresh">↺</button>
           </div>
           <div class="files-tree" id="filesTree">
@@ -401,10 +393,21 @@
 
     <!-- ══ EDITOR PANEL ══ -->
     <div id="editor-panel">
+
+      <!-- ✅ FIXED: textarea for multi-line stdin -->
       <div id="stdin-bar">
         <label>stdin:</label>
-        <input id="stdinInput" type="text" placeholder="Input for your program (optional)…" autocomplete="off"/>
+        <div id="stdin-wrap">
+          <textarea
+            id="stdinInput"
+            rows="2"
+            placeholder="Type program input before running. Use Enter for multiple inputs (e.g. name on line 1, age on line 2)."
+            autocomplete="off"
+          ></textarea>
+          <span id="stdin-hint">↑ Pre-run input · separate multiple values with Enter</span>
+        </div>
       </div>
+
       <div class="cm-wrapper">
         <div id="lockOverlay"><span id="lockMsg">🔒 Another member is editing</span></div>
         <textarea id="editor"></textarea>
@@ -418,7 +421,7 @@
       </div>
     </div>
 
-    <!-- ══ RIGHT PANEL (Video) ══ -->
+    <!-- ══ RIGHT PANEL ══ -->
     <div id="right-panel">
       <div class="panel-section"><div class="panel-title">Live Video</div></div>
       <div class="video-grid" id="videoGrid"></div>
@@ -481,6 +484,7 @@
       <option value="cpp">C++</option>
       <option value="c">C</option>
       <option value="java">Java</option>
+      <option value="bash">Bash</option>
     </select>
     <label class="modal-label">Folder <span style="font-weight:normal;color:var(--text-muted)">(optional)</span></label>
     <select id="newFileFolder"><option value="">— Root —</option></select>
@@ -519,29 +523,35 @@
 
 <div id="toast"></div>
 
-<!-- ══════════════════════════════════════════════════════════
-     JAVASCRIPT
-═══════════════════════════════════════════════════════════ -->
 <script>
 // ════════════════════════════════════════════════════════
-//  CONSTANTS
+//  CONSTANTS — ✅ Added bash everywhere
 // ════════════════════════════════════════════════════════
-const LANG_MODE = { python:'python', cpp:'text/x-c++src', c:'text/x-csrc', java:'text/x-java' };
-const LANG_EXT  = { python:'.py', cpp:'.cpp', c:'.c', java:'.java' };
-const LANG_ICON = { python:'🐍', cpp:'⚙️', c:'🔧', java:'☕' };
-const STARTER   = {
+const LANG_MODE = {
+  python: 'python',
+  cpp:    'text/x-c++src',
+  c:      'text/x-csrc',
+  java:   'text/x-java',
+  bash:   'shell',           // ✅ bash
+};
+const LANG_EXT = {
+  python: '.py', cpp: '.cpp', c: '.c', java: '.java', bash: '.sh',
+};
+const LANG_ICON = {
+  python: '🐍', cpp: '⚙️', c: '🔧', java: '☕', bash: '💻',
+};
+const STARTER = {
   python: '# Python\nprint("Hello, World!")\n',
   cpp:    '#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "Hello, World!" << endl;\n    return 0;\n}\n',
   c:      '#include <stdio.h>\n\nint main() {\n    printf("Hello, World!\\n");\n    return 0;\n}\n',
   java:   'public class Main {\n    public static void main(String[] args) {\n        System.out.println("Hello, World!");\n    }\n}\n',
+  bash:   '#!/bin/bash\necho "Hello, World!"\n',  // ✅ bash
 };
 
 // ════════════════════════════════════════════════════════
-//  FIREBASE — init from server config
+//  FIREBASE
 // ════════════════════════════════════════════════════════
-let db = null;
-let fbAuth = null;
-let currentUser = null; // Firebase user object
+let db = null, fbAuth = null, currentUser = null;
 
 async function initFirebase() {
   try {
@@ -549,7 +559,6 @@ async function initFirebase() {
     if (!firebase.apps.length) firebase.initializeApp(cfg);
     fbAuth = firebase.auth();
     db     = firebase.firestore();
-
     fbAuth.onAuthStateChanged(user => {
       currentUser = user;
       updateAuthUI(user);
@@ -578,8 +587,7 @@ function updateAuthUI(user) {
 async function signInWithGoogle() {
   if (!fbAuth) { toast('Firebase not ready', 'var(--error)'); return; }
   try {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    await fbAuth.signInWithPopup(provider);
+    await fbAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
     toast('✓ Signed in!', 'var(--success)');
   } catch (e) {
     toast('Sign-in failed: ' + e.message, 'var(--error)');
@@ -596,15 +604,13 @@ async function signOutUser() {
 }
 
 // ════════════════════════════════════════════════════════
-//  EDITOR STATE
+//  STATE
 // ════════════════════════════════════════════════════════
 let appMode = 'solo', currentLang = 'python', cmEditor = null, suppressSync = false;
 let socket = null, mySocketId = null, myName = '', myIsHost = false;
 let roomId = '', editorOwner = null, myStream = null;
 let micOn = true, camOn = true, peers = {}, roomUsers = [];
 let pendingRequest = null, pendingHostToken = null, pendingRoomId = null;
-
-// File state
 let fsFolders = [], fsFiles = [];
 let openFileId = null, openFileName = null, filesDirty = false;
 let expandedFolderIds = new Set();
@@ -622,8 +628,8 @@ function toast(msg, color) {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
 }
-function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function escAttr(s) { return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+function escHtml(s)  { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escAttr(s)  { return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
 
 // ════════════════════════════════════════════════════════
 //  CODEMIRROR
@@ -743,17 +749,16 @@ function renderFileTree() {
 function buildFolderRow(folder) {
   const isOpen = expandedFolderIds.has(folder._id);
   const wrap = document.createElement('div');
-
-  const row = document.createElement('div');
+  const row  = document.createElement('div');
   row.className = 'folder-row';
   row.innerHTML = `
     <span class="folder-chevron ${isOpen ? 'open' : ''}">▶</span>
     <span class="folder-icon">📁</span>
     <span class="folder-name">${escHtml(folder.name)}</span>
     <div class="row-acts">
-      <button class="row-act act-open" data-act="add" data-id="${folder._id}" title="New file here">+</button>
-      <button class="row-act" data-act="ren-folder" data-id="${folder._id}" data-name="${escAttr(folder.name)}" title="Rename">✎</button>
-      <button class="row-act" data-act="del-folder" data-id="${folder._id}" title="Delete">✕</button>
+      <button class="row-act act-open" data-act="add"        data-id="${folder._id}" title="New file here">+</button>
+      <button class="row-act"          data-act="ren-folder" data-id="${folder._id}" data-name="${escAttr(folder.name)}" title="Rename">✎</button>
+      <button class="row-act"          data-act="del-folder" data-id="${folder._id}" title="Delete">✕</button>
     </div>`;
 
   const children = document.createElement('div');
@@ -778,8 +783,7 @@ function buildFolderRow(folder) {
     renderFileTree();
   });
 
-  wrap.appendChild(row);
-  wrap.appendChild(children);
+  wrap.appendChild(row); wrap.appendChild(children);
   return wrap;
 }
 
@@ -791,12 +795,11 @@ function buildFileRow(file) {
     <span class="file-name">${escHtml(file.name)}</span>
     <span class="file-lang-tag">${file.language}</span>
     <div class="row-acts">
-      <button class="row-act act-open" data-act="open" data-id="${file._id}" title="Open">Open</button>
-      <button class="row-act act-dl"   data-act="dl"   data-id="${file._id}" title="Download to PC">↓</button>
-      <button class="row-act" data-act="ren-file" data-id="${file._id}" data-name="${escAttr(file.name)}" title="Rename">✎</button>
-      <button class="row-act" data-act="del-file" data-id="${file._id}" title="Delete">✕</button>
+      <button class="row-act act-open" data-act="open"     data-id="${file._id}" title="Open">Open</button>
+      <button class="row-act act-dl"   data-act="dl"       data-id="${file._id}" title="Download">↓</button>
+      <button class="row-act"          data-act="ren-file" data-id="${file._id}" data-name="${escAttr(file.name)}" title="Rename">✎</button>
+      <button class="row-act"          data-act="del-file" data-id="${file._id}" title="Delete">✕</button>
     </div>`;
-
   row.addEventListener('click', async e => {
     const btn = e.target.closest('[data-act]');
     if (btn) {
@@ -806,100 +809,77 @@ function buildFileRow(file) {
       if (act === 'dl')       await fsDownloadFile(id);
       if (act === 'ren-file') openRenameModal('file', id, name);
       if (act === 'del-file') await fsDeleteFile(id, file.name);
-    } else {
-      await fsOpenFile(file._id);
-    }
+    } else { await fsOpenFile(file._id); }
   });
   return row;
 }
 
 // ════════════════════════════════════════════════════════
-//  FILE OPERATIONS — OPEN / SAVE / CLOSE / EXPORT
+//  FILE OPERATIONS
 // ════════════════════════════════════════════════════════
 async function fsOpenFile(fileId) {
-  if (filesDirty && openFileId) {
-    if (!confirm('Unsaved changes. Discard and open?')) return;
-  }
+  if (filesDirty && openFileId && !confirm('Unsaved changes. Discard and open?')) return;
   try {
     const doc = await userFilesRef().doc(fileId).get();
     if (!doc.exists) { toast('File not found', 'var(--error)'); return; }
     const file = { _id: doc.id, ...doc.data() };
-
     openFileId = file._id; openFileName = file.name; currentLang = file.language;
     document.querySelectorAll('.lang-pill').forEach(b => b.classList.toggle('active', b.dataset.lang === currentLang));
     if (cmEditor) cmEditor.setOption('mode', LANG_MODE[currentLang]);
     suppressSync = true;
     if (cmEditor) cmEditor.setValue(file.content || STARTER[currentLang]);
     suppressSync = false;
-    markDirty(false);
-    showCurrentFileBar(file.name);
-    renderFileTree();
+    markDirty(false); showCurrentFileBar(file.name); renderFileTree();
     toast(`📄 Opened: ${file.name}`, 'var(--accent3)');
-  } catch (e) {
-    toast('Could not open: ' + e.message, 'var(--error)');
-  }
+  } catch (e) { toast('Could not open: ' + e.message, 'var(--error)'); }
 }
 
 async function fsSaveCurrentFile() {
   if (!currentUser) { toast('Sign in to save files', 'var(--accent2)'); return; }
-  if (!openFileId) { openNewFileModal(null, true); return; }
+  if (!openFileId)  { openNewFileModal(null, true); return; }
   const content = cmEditor ? cmEditor.getValue() : '';
   try {
     await userFilesRef().doc(openFileId).update({ content, language: currentLang, updatedAt: tsNow() });
-    markDirty(false);
-    toast('✓ Saved', 'var(--success)');
-  } catch (e) {
-    toast('Save failed: ' + e.message, 'var(--error)');
-  }
+    markDirty(false); toast('✓ Saved', 'var(--success)');
+  } catch (e) { toast('Save failed: ' + e.message, 'var(--error)'); }
 }
 
-// Export current editor content to local PC
 function exportCurrentToPC() {
   const code     = cmEditor ? cmEditor.getValue() : '';
-  const filename = (openFileName || ('code' + LANG_EXT[currentLang]));
-  const blob     = new Blob([code], { type: 'text/plain' });
-  const url      = URL.createObjectURL(blob);
-  const a        = document.createElement('a');
-  a.href = url; a.download = filename;
-  a.click();
+  const filename = openFileName || ('code' + LANG_EXT[currentLang]);
+  const blob = new Blob([code], { type: 'text/plain' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a'); a.href = url; a.download = filename; a.click();
   URL.revokeObjectURL(url);
   toast(`⬇ Downloaded: ${filename}`, 'var(--gold)');
 }
 
-// Download a specific file from Firestore to PC
 async function fsDownloadFile(fileId) {
   try {
-    const doc  = await userFilesRef().doc(fileId).get();
+    const doc = await userFilesRef().doc(fileId).get();
     if (!doc.exists) { toast('File not found', 'var(--error)'); return; }
     const file = { _id: doc.id, ...doc.data() };
     const blob = new Blob([file.content || ''], { type: 'text/plain' });
     const url  = URL.createObjectURL(blob);
-    const a    = document.createElement('a');
-    a.href = url; a.download = file.name;
-    a.click();
+    const a    = document.createElement('a'); a.href = url; a.download = file.name; a.click();
     URL.revokeObjectURL(url);
     toast(`⬇ Downloaded: ${file.name}`, 'var(--gold)');
-  } catch (e) {
-    toast('Download failed: ' + e.message, 'var(--error)');
-  }
+  } catch (e) { toast('Download failed: ' + e.message, 'var(--error)'); }
 }
 
-// Export ALL files as individual downloads (ZIP-like without a library)
 async function exportAllFiles() {
   if (!currentUser || !fsFiles.length) { toast('No files to export', 'var(--accent2)'); return; }
   toast('⬇ Downloading all files…', 'var(--gold)');
   for (const file of fsFiles) {
     try {
-      const doc  = await userFilesRef().doc(file._id).get();
+      const doc = await userFilesRef().doc(file._id).get();
       if (!doc.exists) continue;
       const data = doc.data();
       const blob = new Blob([data.content || ''], { type: 'text/plain' });
       const url  = URL.createObjectURL(blob);
-      const a    = document.createElement('a');
-      a.href = url; a.download = data.name;
-      a.click();
+      const a    = document.createElement('a'); a.href = url; a.download = data.name; a.click();
       URL.revokeObjectURL(url);
-      await new Promise(r => setTimeout(r, 200)); // small delay between downloads
+      await new Promise(r => setTimeout(r, 200));
     } catch {}
   }
 }
@@ -921,17 +901,13 @@ function hideCurrentFileBar() {
   document.getElementById('current-file-bar').classList.remove('visible');
 }
 
-// ════════════════════════════════════════════════════════
-//  FILE OPERATIONS — CREATE
-// ════════════════════════════════════════════════════════
 function populateFolderDropdowns() {
   const sel = document.getElementById('newFileFolder');
   if (!sel) return;
   sel.innerHTML = '<option value="">— Root —</option>';
   fsFolders.filter(f => !f.parentId).forEach(f => {
     const opt = document.createElement('option');
-    opt.value = f._id; opt.textContent = f.name;
-    sel.appendChild(opt);
+    opt.value = f._id; opt.textContent = f.name; sel.appendChild(opt);
   });
 }
 
@@ -951,16 +927,14 @@ async function fsCreateFile() {
   const folderId = document.getElementById('newFileFolder').value || null;
   const fromSave = document.getElementById('newFileModal')._fromSave;
   if (!name) { toast('Enter a file name', 'var(--accent2)'); return; }
-  const content  = fromSave && cmEditor ? cmEditor.getValue() : STARTER[language];
+  const content = fromSave && cmEditor ? cmEditor.getValue() : STARTER[language];
   try {
     const ref = await userFilesRef().add({ name, language, content, folderId: folderId || null, createdAt: tsNow(), updatedAt: tsNow() });
     document.getElementById('newFileModal').classList.remove('visible');
     toast(`📄 Created: ${name}`, 'var(--success)');
     await loadFileTree();
     if (fromSave || !openFileId) await fsOpenFile(ref.id);
-  } catch (e) {
-    toast('Create failed: ' + e.message, 'var(--error)');
-  }
+  } catch (e) { toast('Create failed: ' + e.message, 'var(--error)'); }
 }
 
 async function fsCreateFolder() {
@@ -973,14 +947,9 @@ async function fsCreateFolder() {
     document.getElementById('newFolderName').value = '';
     toast(`📁 Created: ${name}`, 'var(--success)');
     await loadFileTree();
-  } catch (e) {
-    toast('Create failed: ' + e.message, 'var(--error)');
-  }
+  } catch (e) { toast('Create failed: ' + e.message, 'var(--error)'); }
 }
 
-// ════════════════════════════════════════════════════════
-//  FILE OPERATIONS — RENAME
-// ════════════════════════════════════════════════════════
 function openRenameModal(type, id, currentName) {
   const modal = document.getElementById('renameModal');
   document.getElementById('renameTitle').textContent = type === 'folder' ? '📁 Rename Folder' : '📄 Rename File';
@@ -1004,14 +973,9 @@ async function fsDoRename() {
     modal.classList.remove('visible');
     toast(`Renamed to: ${name}`, 'var(--success)');
     await loadFileTree();
-  } catch (e) {
-    toast('Rename failed: ' + e.message, 'var(--error)');
-  }
+  } catch (e) { toast('Rename failed: ' + e.message, 'var(--error)'); }
 }
 
-// ════════════════════════════════════════════════════════
-//  FILE OPERATIONS — DELETE
-// ════════════════════════════════════════════════════════
 async function fsDeleteFile(fileId, fileName) {
   if (!confirm(`Delete "${fileName}"? Cannot be undone.`)) return;
   try {
@@ -1019,15 +983,12 @@ async function fsDeleteFile(fileId, fileName) {
     if (fileId === openFileId) closeCurrentFile();
     toast(`🗑 Deleted: ${fileName}`, 'var(--accent2)');
     await loadFileTree();
-  } catch (e) {
-    toast('Delete failed: ' + e.message, 'var(--error)');
-  }
+  } catch (e) { toast('Delete failed: ' + e.message, 'var(--error)'); }
 }
 
 async function fsDeleteFolder(folderId, folderName) {
   if (!confirm(`Delete folder "${folderName}" and ALL its files? Cannot be undone.`)) return;
   try {
-    // Delete all files inside folder
     const snap  = await userFilesRef().where('folderId', '==', folderId).get();
     const batch = db.batch();
     snap.docs.forEach(d => batch.delete(d.ref));
@@ -1035,9 +996,7 @@ async function fsDeleteFolder(folderId, folderName) {
     await batch.commit();
     toast(`🗑 Deleted folder: ${folderName}`, 'var(--accent2)');
     await loadFileTree();
-  } catch (e) {
-    toast('Delete failed: ' + e.message, 'var(--error)');
-  }
+  } catch (e) { toast('Delete failed: ' + e.message, 'var(--error)'); }
 }
 
 // ════════════════════════════════════════════════════════
@@ -1094,18 +1053,29 @@ function switchPanelTab(tab) {
 }
 
 // ════════════════════════════════════════════════════════
-//  RUN CODE
+//  RUN CODE — ✅ FIXED stdin handling
 // ════════════════════════════════════════════════════════
 async function runCode() {
-  const code = cmEditor ? cmEditor.getValue().trim() : '';
-  const stdin = document.getElementById('stdinInput').value;
+  const code     = cmEditor ? cmEditor.getValue().trim() : '';
   const outputEl = document.getElementById('output');
   const runBtn   = document.getElementById('runBtn');
+
+  // ✅ Get stdin from textarea and ensure trailing newline
+  const stdinRaw = document.getElementById('stdinInput').value;
+  const stdin    = stdinRaw
+    ? (stdinRaw.endsWith('\n') ? stdinRaw : stdinRaw + '\n')
+    : '';
+
   if (!code) { toast('No code to run'); return; }
   runBtn.disabled = true; runBtn.textContent = '⏳';
   outputEl.textContent = 'Running…'; outputEl.className = ''; outputEl.style.borderTop = '';
+
   try {
-    const res  = await fetch('/api/run', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ code, language: currentLang, stdin }) });
+    const res  = await fetch('/api/run', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ code, language: currentLang, stdin }),
+    });
     const text = await res.text();
     outputEl.innerHTML = escHtml(text || '(No output)');
     outputEl.className = res.ok ? '' : 'has-error';
@@ -1131,8 +1101,8 @@ function switchTab(tab) {
 }
 
 async function createRoom() {
-  const name = document.getElementById('createName').value.trim();
-  const pw   = document.getElementById('createPassword').value;
+  const name  = document.getElementById('createName').value.trim();
+  const pw    = document.getElementById('createPassword').value;
   const errEl = document.getElementById('createError');
   errEl.textContent = '';
   if (!name) { errEl.textContent = 'Enter your name.'; return; }
@@ -1146,11 +1116,8 @@ async function createRoom() {
     document.getElementById('shareUrl').textContent = data.shareUrl;
     document.getElementById('shareBox').style.display = 'block';
     btn.style.display = 'none';
-  } catch (e) {
-    errEl.textContent = 'Could not reach server.';
-  } finally {
-    btn.disabled = false; btn.textContent = 'Create Room';
-  }
+  } catch (e) { errEl.textContent = 'Could not reach server.'; }
+  finally { btn.disabled = false; btn.textContent = 'Create Room'; }
 }
 
 async function enterAsHost() {
@@ -1158,9 +1125,9 @@ async function enterAsHost() {
 }
 
 async function joinRoom() {
-  const name = document.getElementById('joinName').value.trim();
-  const rid  = document.getElementById('joinRoomId').value.trim();
-  const pw   = document.getElementById('joinPassword').value;
+  const name  = document.getElementById('joinName').value.trim();
+  const rid   = document.getElementById('joinRoomId').value.trim();
+  const pw    = document.getElementById('joinPassword').value;
   const errEl = document.getElementById('joinError');
   errEl.textContent = '';
   if (!name) { errEl.textContent = 'Enter your name.'; return; }
@@ -1172,17 +1139,24 @@ async function joinRoom() {
     const data = await res.json();
     if (!res.ok) { errEl.textContent = data.error || 'Could not join.'; return; }
     await startSession(rid, name, data.token, false);
-  } catch (e) {
-    errEl.textContent = 'Could not reach server.';
-  } finally {
-    btn.disabled = false; btn.textContent = 'Join Room';
-  }
+  } catch (e) { errEl.textContent = 'Could not reach server.'; }
+  finally { btn.disabled = false; btn.textContent = 'Join Room'; }
 }
 
+// ════════════════════════════════════════════════════════
+//  START SESSION — ✅ get media BEFORE connecting socket
+// ════════════════════════════════════════════════════════
 async function startSession(rid, name, token, isHost) {
   myName = name; myIsHost = isHost; roomId = rid;
-  try { myStream = await navigator.mediaDevices.getUserMedia({ video:true, audio:true }); }
-  catch (e) { toast('Camera/mic denied — video disabled'); myStream = null; }
+
+  // ✅ Get camera/mic first so tracks are ready for peer connections
+  try {
+    myStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+  } catch (e) {
+    toast('Camera/mic denied — video disabled');
+    myStream = null;
+  }
+
   renderMyTile();
   socket = io({ auth: { token } });
   bindSocketEvents();
@@ -1194,22 +1168,30 @@ async function startSession(rid, name, token, isHost) {
 //  SOCKET EVENTS
 // ════════════════════════════════════════════════════════
 function bindSocketEvents() {
-  socket.on('connect', () => { mySocketId = socket.id; });
+  socket.on('connect',       () => { mySocketId = socket.id; });
   socket.on('connect_error', err => toast('Connection error: ' + err.message));
+
   socket.on('room-state', ({ users, editorOwner: eo, code, yourSocketId }) => {
     mySocketId = yourSocketId; roomUsers = users; editorOwner = eo;
     initEditor(code); renderMyTile(); renderMembers(); updateEditorLock();
   });
+
+  // ✅ Push user to roomUsers BEFORE creating peer connection
   socket.on('user-joined', async ({ socketId, name, isHost }) => {
-    toast(`${name} joined`); roomUsers.push({ socketId, name, isHost });
-    renderMembers(); await createPeerConnection(socketId, name, true);
+    toast(`${name} joined`);
+    roomUsers.push({ socketId, name, isHost });
+    renderMembers();
+    await createPeerConnection(socketId, name, true);
   });
+
   socket.on('user-left', ({ socketId, name }) => {
     toast(`${name} left`);
     if (peers[socketId]) { peers[socketId].pc.close(); delete peers[socketId]; }
     removeTile(socketId);
-    roomUsers = roomUsers.filter(u => u.socketId !== socketId); renderMembers();
+    roomUsers = roomUsers.filter(u => u.socketId !== socketId);
+    renderMembers();
   });
+
   socket.on('rtc-offer', async ({ from, name, offer }) => {
     await createPeerConnection(from, name, false);
     const pc = peers[from].pc;
@@ -1218,77 +1200,123 @@ function bindSocketEvents() {
     await pc.setLocalDescription(answer);
     socket.emit('rtc-answer', { to: from, answer });
   });
+
   socket.on('rtc-answer', async ({ from, answer }) => {
     if (peers[from]) await peers[from].pc.setRemoteDescription(new RTCSessionDescription(answer));
   });
+
   socket.on('rtc-ice', async ({ from, candidate }) => {
     if (peers[from]) try { await peers[from].pc.addIceCandidate(new RTCIceCandidate(candidate)); } catch(e){}
   });
-  socket.on('editor-assigned', ({ editorOwner: eo }) => { editorOwner = eo; updateEditorLock(); renderMembers(); });
+
+  socket.on('editor-assigned', ({ editorOwner: eo }) => {
+    editorOwner = eo; updateEditorLock(); renderMembers();
+  });
+
   socket.on('editor-request', ({ fromSocketId, fromName }) => {
     pendingRequest = { fromSocketId, fromName };
     document.getElementById('notifText').textContent = `"${fromName}" wants editor access`;
     document.getElementById('notifBanner').style.display = 'block';
   });
+
   socket.on('editor-request-denied', () => {
     toast('Your editor request was denied.');
     const btn = document.getElementById('requestBtn');
     if (btn) { btn.textContent = '🙋 Request Editor Access'; btn.disabled = false; }
   });
-  socket.on('code-update', ({ code }) => { if (editorOwner !== mySocketId) applyRemoteCode(code); });
+
+  socket.on('code-update', ({ code }) => {
+    if (editorOwner !== mySocketId) applyRemoteCode(code);
+  });
 }
 
 // ════════════════════════════════════════════════════════
-//  WebRTC
+//  WebRTC — ✅ Multiple STUN servers + muted=false for remote
 // ════════════════════════════════════════════════════════
-const ICE = { iceServers: [
-  { urls: 'stun:stun.l.google.com:19302' },
-  { urls: 'stun:stun1.l.google.com:19302' },
-]};
+const ICE = {
+  iceServers: [
+    { urls: 'stun:stun.l.google.com:19302'  },
+    { urls: 'stun:stun1.l.google.com:19302' },
+    { urls: 'stun:stun2.l.google.com:19302' },
+    { urls: 'stun:stun3.l.google.com:19302' },
+  ]
+};
 
 async function createPeerConnection(peerId, peerName, isInitiator) {
   if (peers[peerId]) return;
   const pc = new RTCPeerConnection(ICE);
   peers[peerId] = { pc, name: peerName };
-  if (myStream) myStream.getTracks().forEach(t => pc.addTrack(t, myStream));
-  pc.onicecandidate = e => { if (e.candidate) socket.emit('rtc-ice', { to: peerId, candidate: e.candidate }); };
-  pc.ontrack = e => { if (e.streams?.[0]) attachRemoteStream(peerId, e.streams[0]); };
+
+  // ✅ Add all local tracks
+  if (myStream) {
+    myStream.getTracks().forEach(t => pc.addTrack(t, myStream));
+  }
+
+  pc.onicecandidate = e => {
+    if (e.candidate) socket.emit('rtc-ice', { to: peerId, candidate: e.candidate });
+  };
+
+  // ✅ Properly attach remote stream
+  pc.ontrack = e => {
+    if (e.streams && e.streams[0]) {
+      peers[peerId].stream = e.streams[0];
+      attachRemoteStream(peerId, e.streams[0]);
+    }
+  };
+
   addTile(peerId, peerName);
+
   if (isInitiator) {
-    const offer = await pc.createOffer({ offerToReceiveAudio:true, offerToReceiveVideo:true });
+    const offer = await pc.createOffer({ offerToReceiveAudio: true, offerToReceiveVideo: true });
     await pc.setLocalDescription(offer);
     socket.emit('rtc-offer', { to: peerId, offer });
   }
 }
 
+// ════════════════════════════════════════════════════════
+//  VIDEO TILES
+// ════════════════════════════════════════════════════════
 function renderMyTile() {
   const ex = document.getElementById('tile-me'); if (ex) ex.remove();
-  const tile = document.createElement('div'); tile.className='video-tile'; tile.id='tile-me';
+  const tile = document.createElement('div'); tile.className = 'video-tile'; tile.id = 'tile-me';
   if (myStream && camOn) {
-    const v = document.createElement('video'); v.autoplay=true; v.muted=true; v.playsInline=true; v.srcObject=myStream; tile.appendChild(v);
+    const v = document.createElement('video');
+    v.autoplay = true; v.muted = true; v.playsInline = true; // ✅ mute only self
+    v.srcObject = myStream; tile.appendChild(v);
   } else {
-    const o = document.createElement('div'); o.className='cam-off'; o.textContent = myStream ? 'Cam Off' : '🚫 No Camera'; tile.appendChild(o);
+    const o = document.createElement('div'); o.className = 'cam-off';
+    o.textContent = myStream ? 'Cam Off' : '🚫 No Camera'; tile.appendChild(o);
   }
-  const lbl = document.createElement('div'); lbl.className='tile-label'; lbl.textContent = myName + (myIsHost?' 👑':'') + ' (you)'; tile.appendChild(lbl);
+  const lbl = document.createElement('div'); lbl.className = 'tile-label';
+  lbl.textContent = myName + (myIsHost ? ' 👑' : '') + ' (you)'; tile.appendChild(lbl);
   document.getElementById('videoGrid').insertBefore(tile, document.getElementById('videoGrid').firstChild);
 }
 
 function addTile(id, name) {
-  if (document.getElementById('tile-'+id)) return;
-  const tile = document.createElement('div'); tile.className='video-tile'; tile.id='tile-'+id;
-  const o = document.createElement('div'); o.className='cam-off'; o.textContent='Connecting…'; tile.appendChild(o);
-  const lbl = document.createElement('div'); lbl.className='tile-label'; lbl.textContent=name; tile.appendChild(lbl);
+  if (document.getElementById('tile-' + id)) return;
+  const tile = document.createElement('div'); tile.className = 'video-tile'; tile.id = 'tile-' + id;
+  const o = document.createElement('div'); o.className = 'cam-off'; o.textContent = 'Connecting…'; tile.appendChild(o);
+  const lbl = document.createElement('div'); lbl.className = 'tile-label'; lbl.textContent = name; tile.appendChild(lbl);
   document.getElementById('videoGrid').appendChild(tile);
 }
 
 function attachRemoteStream(id, stream) {
-  const tile = document.getElementById('tile-'+id); if (!tile) return;
+  const tile = document.getElementById('tile-' + id); if (!tile) return;
   const o = tile.querySelector('.cam-off'); if (o) o.remove();
   let v = tile.querySelector('video');
-  if (!v) { v = document.createElement('video'); v.autoplay=true; v.playsInline=true; tile.insertBefore(v, tile.querySelector('.tile-label')); }
-  v.srcObject = stream; v.play().catch(()=>{});
+  if (!v) {
+    v = document.createElement('video');
+    v.autoplay = true; v.playsInline = true;
+    v.muted = false; // ✅ remote peers must NOT be muted
+    tile.insertBefore(v, tile.querySelector('.tile-label'));
+  }
+  v.srcObject = stream;
+  v.play().catch(() => {}); // ✅ force play
 }
-function removeTile(id) { const t = document.getElementById('tile-'+id); if (t) t.remove(); }
+
+function removeTile(id) {
+  const t = document.getElementById('tile-' + id); if (t) t.remove();
+}
 
 // ════════════════════════════════════════════════════════
 //  EDITOR LOCK
@@ -1298,27 +1326,43 @@ function updateEditorLock() {
   const isMine = editorOwner === mySocketId;
   cmEditor.setOption('readOnly', isMine ? false : 'nocursor');
   document.getElementById('lockOverlay').classList.toggle('visible', !isMine);
+
   const statusEl = document.getElementById('editor-status');
-  if (isMine) { statusEl.textContent = '✏️ You are editing'; statusEl.style.color = 'var(--accent3)'; }
-  else {
+  if (isMine) {
+    statusEl.textContent = '✏️ You are editing';
+    statusEl.style.color = 'var(--accent3)';
+  } else {
     const owner = roomUsers.find(u => u.socketId === editorOwner);
     statusEl.textContent = owner ? `🔒 ${owner.name} is editing` : '🔒 Locked';
     statusEl.style.color = 'var(--text-muted)';
     document.getElementById('lockMsg').textContent = owner ? `🔒 ${owner.name} is editing` : '🔒 Editor locked';
   }
+
   const sec = document.getElementById('requestSection'); sec.innerHTML = '';
+
   if (myIsHost) {
+    // ✅ Host always sees reclaim when someone else has editor
     if (!isMine) {
-      const b = document.createElement('button'); b.className='btn-action btn-reclaim'; b.textContent='↩ Take Back Editor';
-      b.onclick = () => socket.emit('reclaim-editor'); sec.appendChild(b);
+      const b = document.createElement('button');
+      b.className = 'btn-action btn-reclaim'; b.textContent = '↩ Take Back Editor';
+      b.onclick = () => { socket.emit('reclaim-editor'); toast('Taking back editor…'); };
+      sec.appendChild(b);
     }
   } else {
     if (isMine) {
-      const b = document.createElement('button'); b.className='btn-action btn-handback'; b.textContent='↩ Hand Back Editor';
-      b.onclick = () => { const h = roomUsers.find(u=>u.isHost); if(h) socket.emit('return-editor',{toSocketId:h.socketId}); }; sec.appendChild(b);
+      // ✅ Member with editor can hand it back
+      const b = document.createElement('button');
+      b.className = 'btn-action btn-handback'; b.textContent = '↩ Hand Back Editor';
+      b.onclick = () => {
+        const h = roomUsers.find(u => u.isHost);
+        if (h) socket.emit('return-editor', { toSocketId: h.socketId });
+      };
+      sec.appendChild(b);
     } else {
-      const b = document.createElement('button'); b.className='btn-action btn-request'; b.id='requestBtn'; b.textContent='🙋 Request Editor Access';
-      b.onclick = () => { socket.emit('request-editor'); b.textContent='⏳ Sent…'; b.disabled=true; }; sec.appendChild(b);
+      const b = document.createElement('button');
+      b.className = 'btn-action btn-request'; b.id = 'requestBtn'; b.textContent = '🙋 Request Editor Access';
+      b.onclick = () => { socket.emit('request-editor'); b.textContent = '⏳ Sent…'; b.disabled = true; };
+      sec.appendChild(b);
     }
   }
 }
@@ -1331,12 +1375,12 @@ function renderMembers() {
     const isMe = u.socketId === mySocketId, isEd = u.socketId === editorOwner;
     const div = document.createElement('div'); div.className = 'member-item';
     const dot = document.createElement('div'); dot.className = 'member-dot'; div.appendChild(dot);
-    const nm  = document.createElement('div'); nm.className = 'member-name'; nm.textContent = u.name + (u.isHost?' 👑':''); div.appendChild(nm);
-    if (isMe) { const y = document.createElement('span'); y.className='member-you'; y.textContent='you'; div.appendChild(y); }
-    if (isEd) { const e = document.createElement('span'); e.className='member-editing'; e.textContent='✏️'; div.appendChild(e); }
+    const nm  = document.createElement('div'); nm.className = 'member-name'; nm.textContent = u.name + (u.isHost ? ' 👑' : ''); div.appendChild(nm);
+    if (isMe) { const y = document.createElement('span'); y.className = 'member-you'; y.textContent = 'you'; div.appendChild(y); }
+    if (isEd) { const e = document.createElement('span'); e.className = 'member-editing'; e.textContent = '✏️'; div.appendChild(e); }
     if (myIsHost && !isMe) {
-      const b = document.createElement('button'); b.className='btn-assign'; b.textContent = isEd ? 'Take' : 'Give';
-      b.onclick = () => isEd ? socket.emit('reclaim-editor') : socket.emit('assign-editor',{toSocketId:u.socketId});
+      const b = document.createElement('button'); b.className = 'btn-assign'; b.textContent = isEd ? 'Take' : 'Give';
+      b.onclick = () => isEd ? socket.emit('reclaim-editor') : socket.emit('assign-editor', { toSocketId: u.socketId });
       div.appendChild(b);
     }
     list.appendChild(div);
@@ -1347,45 +1391,55 @@ function renderMembers() {
 //  MIC / CAM
 // ════════════════════════════════════════════════════════
 function toggleMic() {
-  if (!myStream) { toast('No mic'); return; }
-  micOn = !micOn; myStream.getAudioTracks().forEach(t => t.enabled = micOn);
-  const b = document.getElementById('micBtn'); b.textContent = micOn ? '🎙 Mic On' : '🔇 Mic Off'; b.classList.toggle('off', !micOn);
+  if (!myStream) { toast('No microphone available'); return; }
+  micOn = !micOn;
+  myStream.getAudioTracks().forEach(t => t.enabled = micOn);
+  const b = document.getElementById('micBtn');
+  b.textContent = micOn ? '🎙 Mic On' : '🔇 Mic Off'; b.classList.toggle('off', !micOn);
 }
+
 function toggleCam() {
-  if (!myStream) { toast('No camera'); return; }
-  camOn = !camOn; myStream.getVideoTracks().forEach(t => t.enabled = camOn);
-  const b = document.getElementById('camBtn'); b.textContent = camOn ? '📹 Cam On' : '🚫 Cam Off'; b.classList.toggle('off', !camOn);
+  if (!myStream) { toast('No camera available'); return; }
+  camOn = !camOn;
+  myStream.getVideoTracks().forEach(t => t.enabled = camOn);
+  const b = document.getElementById('camBtn');
+  b.textContent = camOn ? '📹 Cam On' : '🚫 Cam Off'; b.classList.toggle('off', !camOn);
   const tile = document.getElementById('tile-me'); if (!tile) return;
   const v = tile.querySelector('video'); let o = tile.querySelector('.cam-off');
-  if (camOn) { if(o) o.remove(); if(v) v.style.display='block'; }
-  else { if(v) v.style.display='none'; if(!o){o=document.createElement('div');o.className='cam-off';o.textContent='Cam Off';tile.insertBefore(o,tile.querySelector('.tile-label'));} }
+  if (camOn) { if (o) o.remove(); if (v) v.style.display = 'block'; }
+  else {
+    if (v) v.style.display = 'none';
+    if (!o) { o = document.createElement('div'); o.className = 'cam-off'; o.textContent = 'Cam Off'; tile.insertBefore(o, tile.querySelector('.tile-label')); }
+  }
 }
 
 // ════════════════════════════════════════════════════════
 //  LEAVE
 // ════════════════════════════════════════════════════════
 function performLeave() {
-  if (myStream) { myStream.getTracks().forEach(t=>t.stop()); myStream = null; }
+  if (myStream) { myStream.getTracks().forEach(t => t.stop()); myStream = null; }
   Object.values(peers).forEach(p => p.pc.close()); peers = {};
   if (socket) { socket.disconnect(); socket = null; }
   roomUsers = []; micOn = true; camOn = true; pendingRequest = null;
-  document.getElementById('videoGrid').innerHTML = '';
-  document.getElementById('membersList').innerHTML = '';
-  document.getElementById('shareBox').style.display = 'none';
-  document.getElementById('createRoomBtn').style.display = 'block';
-  document.getElementById('notifBanner').style.display = 'none';
-  document.getElementById('output').textContent = '// Run your code to see output here';
-  document.getElementById('output').style.borderTop = ''; document.getElementById('output').className = '';
-  document.getElementById('editor-status').textContent = '';
-  document.getElementById('roomIdBadge').textContent = 'Room: —';
-  document.getElementById('micBtn').textContent = '🎙 Mic On'; document.getElementById('camBtn').textContent = '📹 Cam On';
-  document.getElementById('micBtn').classList.remove('off'); document.getElementById('camBtn').classList.remove('off');
+  document.getElementById('videoGrid').innerHTML    = '';
+  document.getElementById('membersList').innerHTML  = '';
+  document.getElementById('shareBox').style.display       = 'none';
+  document.getElementById('createRoomBtn').style.display  = 'block';
+  document.getElementById('notifBanner').style.display    = 'none';
+  document.getElementById('output').textContent           = '// Run your code to see output here';
+  document.getElementById('output').style.borderTop       = '';
+  document.getElementById('output').className             = '';
+  document.getElementById('editor-status').textContent    = '';
+  document.getElementById('roomIdBadge').textContent      = 'Room: —';
+  document.getElementById('micBtn').textContent           = '🎙 Mic On';
+  document.getElementById('camBtn').textContent           = '📹 Cam On';
+  document.getElementById('micBtn').classList.remove('off');
+  document.getElementById('camBtn').classList.remove('off');
   initEditor(STARTER[currentLang]);
   appMode = 'solo';
   ['modeTeam','right-panel','media-bar','room-bar','lobby'].forEach(id => {
     const el = document.getElementById(id);
-    if (id === 'modeTeam') el.classList.remove('active');
-    else el.classList.remove('visible');
+    if (id === 'modeTeam') el.classList.remove('active'); else el.classList.remove('visible');
   });
   document.getElementById('modeSolo').classList.add('active');
   document.getElementById('panelTabs').style.display = 'none';
@@ -1394,8 +1448,8 @@ function performLeave() {
 
 function respondRequest(grant) {
   document.getElementById('notifBanner').style.display = 'none';
-  if (grant && pendingRequest) { socket.emit('assign-editor', { toSocketId: pendingRequest.fromSocketId }); toast(`Editor given to ${pendingRequest.fromName}`); }
-  else if (pendingRequest)     { socket.emit('deny-editor-request', { toSocketId: pendingRequest.fromSocketId }); toast('Request denied'); }
+  if (grant && pendingRequest)  { socket.emit('assign-editor', { toSocketId: pendingRequest.fromSocketId }); toast(`Editor given to ${pendingRequest.fromName}`); }
+  else if (pendingRequest)      { socket.emit('deny-editor-request', { toSocketId: pendingRequest.fromSocketId }); toast('Request denied'); }
   pendingRequest = null;
 }
 
@@ -1404,42 +1458,33 @@ function respondRequest(grant) {
 // ════════════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', async () => {
   initEditor();
-  await initFirebase(); // kicks off auth state listener which calls loadFileTree
+  await initFirebase();
 
-  // Mode
-  document.getElementById('modeSolo').addEventListener('click', () => { if (appMode==='team') performLeave(); else setMode('solo'); });
+  document.getElementById('modeSolo').addEventListener('click', () => { if (appMode === 'team') performLeave(); else setMode('solo'); });
   document.getElementById('modeTeam').addEventListener('click', () => setMode('team'));
-
-  // Language
   document.querySelectorAll('.lang-pill').forEach(b => b.addEventListener('click', () => { if (b.dataset.lang) setLanguage(b.dataset.lang); }));
 
-  // Run / output
   document.getElementById('runBtn').addEventListener('click', runCode);
   document.getElementById('clearOutputBtn').addEventListener('click', () => {
-    const o = document.getElementById('output'); o.textContent='// Run your code to see output here'; o.className=''; o.style.borderTop='';
+    const o = document.getElementById('output'); o.textContent = '// Run your code to see output here'; o.className = ''; o.style.borderTop = '';
   });
 
-  // Keyboard shortcuts
   document.addEventListener('keydown', e => {
-    if ((e.ctrlKey||e.metaKey) && e.key==='Enter') { e.preventDefault(); runCode(); }
-    if ((e.ctrlKey||e.metaKey) && e.key==='s')     { e.preventDefault(); fsSaveCurrentFile(); }
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); runCode(); }
+    if ((e.ctrlKey || e.metaKey) && e.key === 's')     { e.preventDefault(); fsSaveCurrentFile(); }
   });
 
-  // Topbar file buttons
   document.getElementById('topbarSaveBtn').addEventListener('click', fsSaveCurrentFile);
   document.getElementById('topbarExportBtn').addEventListener('click', exportCurrentToPC);
   document.getElementById('topbarFilesBtn').addEventListener('click', toggleFilesPanel);
   document.getElementById('inlineCloseFileBtn').addEventListener('click', closeCurrentFile);
 
-  // Auth
   document.getElementById('signInBtn').addEventListener('click', signInWithGoogle);
   document.getElementById('signOutBtn').addEventListener('click', signOutUser);
 
-  // Panel tabs
   document.getElementById('tabMembers').addEventListener('click', () => switchPanelTab('members'));
-  document.getElementById('tabFiles').addEventListener('click', () => switchPanelTab('files'));
+  document.getElementById('tabFiles').addEventListener('click',   () => switchPanelTab('files'));
 
-  // File toolbar
   document.getElementById('newFileBtn').addEventListener('click', () => {
     if (!currentUser) { toast('Sign in to save files', 'var(--accent2)'); return; }
     openNewFileModal();
@@ -1452,41 +1497,35 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('exportAllBtn').addEventListener('click', exportAllFiles);
   document.getElementById('refreshFilesBtn').addEventListener('click', loadFileTree);
 
-  // New file modal
   document.getElementById('newFileConfirm').addEventListener('click', fsCreateFile);
   document.getElementById('newFileCancel').addEventListener('click', () => document.getElementById('newFileModal').classList.remove('visible'));
-  document.getElementById('newFileName').addEventListener('keydown', e => { if (e.key==='Enter') fsCreateFile(); });
+  document.getElementById('newFileName').addEventListener('keydown', e => { if (e.key === 'Enter') fsCreateFile(); });
 
-  // New folder modal
   document.getElementById('newFolderConfirm').addEventListener('click', fsCreateFolder);
   document.getElementById('newFolderCancel').addEventListener('click', () => document.getElementById('newFolderModal').classList.remove('visible'));
-  document.getElementById('newFolderName').addEventListener('keydown', e => { if (e.key==='Enter') fsCreateFolder(); });
+  document.getElementById('newFolderName').addEventListener('keydown', e => { if (e.key === 'Enter') fsCreateFolder(); });
 
-  // Rename modal
   document.getElementById('renameConfirm').addEventListener('click', fsDoRename);
   document.getElementById('renameCancel').addEventListener('click', () => document.getElementById('renameModal').classList.remove('visible'));
-  document.getElementById('renameInput').addEventListener('keydown', e => { if (e.key==='Enter') fsDoRename(); });
+  document.getElementById('renameInput').addEventListener('keydown', e => { if (e.key === 'Enter') fsDoRename(); });
 
-  // Close modals on backdrop click
   ['newFileModal','newFolderModal','renameModal'].forEach(id => {
-    document.getElementById(id).addEventListener('click', e => { if (e.target.id===id) document.getElementById(id).classList.remove('visible'); });
+    document.getElementById(id).addEventListener('click', e => { if (e.target.id === id) document.getElementById(id).classList.remove('visible'); });
   });
 
-  // Lobby
   document.getElementById('tabBtnCreate').addEventListener('click', () => switchTab('create'));
-  document.getElementById('tabBtnJoin').addEventListener('click', () => switchTab('join'));
+  document.getElementById('tabBtnJoin').addEventListener('click',   () => switchTab('join'));
   document.getElementById('createRoomBtn').addEventListener('click', createRoom);
-  document.getElementById('enterRoomBtn').addEventListener('click', enterAsHost);
-  document.getElementById('joinRoomBtn').addEventListener('click', joinRoom);
+  document.getElementById('enterRoomBtn').addEventListener('click',  enterAsHost);
+  document.getElementById('joinRoomBtn').addEventListener('click',   joinRoom);
   document.getElementById('shareUrl').addEventListener('click', () => navigator.clipboard.writeText(document.getElementById('shareUrl').textContent).then(() => toast('Link copied!')));
   document.getElementById('roomIdBadge').addEventListener('click', () => navigator.clipboard.writeText(roomId).then(() => toast('Room ID copied!')));
   document.getElementById('leaveBtn').addEventListener('click', performLeave);
   document.getElementById('grantBtn').addEventListener('click', () => respondRequest(true));
-  document.getElementById('denyBtn').addEventListener('click', () => respondRequest(false));
+  document.getElementById('denyBtn').addEventListener('click',  () => respondRequest(false));
   document.getElementById('micBtn').addEventListener('click', toggleMic);
   document.getElementById('camBtn').addEventListener('click', toggleCam);
 
-  // Auto-join room from URL
   const urlRoom = new URLSearchParams(window.location.search).get('room');
   if (urlRoom) { document.getElementById('joinRoomId').value = urlRoom; switchTab('join'); setMode('team'); }
 });
