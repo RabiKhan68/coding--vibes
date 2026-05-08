@@ -919,6 +919,7 @@ async function startSession(rid,name,token,isHost) {
   myName=name; myIsHost=isHost; roomId=rid;
   await requestMedia();
   updateMediaBtnUI();
+  buildMyTile();
   socket=io({auth:{token}});
   bindSocketEvents();
   document.getElementById('lobby').classList.remove('visible');
@@ -929,46 +930,79 @@ async function startSession(rid,name,token,isHost) {
 //  SOCKET EVENTS
 // ════════════════════════════════════════════════════════
 function bindSocketEvents() {
-  socket.on('connect',()=>{ mySocketId=socket.id; });
-  socket.on('connect_error',err=>toast('Connection error: '+err.message));
-  socket.on('room-state',({users,editorOwner:eo,code,yourSocketId})=>{
-    mySocketId=yourSocketId; roomUsers=users; editorOwner=eo;
-    initEditor(code); buildMyTile(); renderMembers(); updateEditorLock();
+  socket.on('connect', () => {
+    mySocketId = socket.id;
+    console.log('✅ Connected, socket ID:', mySocketId);
   });
-  socket.on('user-joined',async({socketId,name,isHost})=>{
-    toast(`${name} joined`); roomUsers.push({socketId,name,isHost}); renderMembers();
-    await createPeerConnection(socketId,name,true);
+  socket.on('connect_error', err => toast('Connection error: ' + err.message));
+
+  socket.on('room-state', ({ users, editorOwner: eo, code, yourSocketId }) => {
+    mySocketId = yourSocketId; // ✅ use server-confirmed ID
+    roomUsers = users; editorOwner = eo;
+    initEditor(code);
+    buildMyTile(); // ✅ rebuild tile now we have confirmed socket ID
+    renderMembers();
+    updateEditorLock();
+    // ✅ Initiate peer connections to ALL existing users in the room
+    users.forEach(async u => {
+      if (u.socketId !== mySocketId) {
+        await createPeerConnection(u.socketId, u.name, true);
+      }
+    });
   });
-  socket.on('user-left',({socketId,name})=>{
+
+  socket.on('user-joined', async ({ socketId, name, isHost }) => {
+    toast(`${name} joined`);
+    roomUsers.push({ socketId, name, isHost });
+    renderMembers();
+    // ✅ existing members initiate to the newcomer
+    await createPeerConnection(socketId, name, true);
+  });
+
+  socket.on('user-left', ({ socketId, name }) => {
     toast(`${name} left`);
-    if(peers[socketId]){peers[socketId].pc.close();delete peers[socketId];}
-    removeTile(socketId); roomUsers=roomUsers.filter(u=>u.socketId!==socketId); renderMembers();
+    if (peers[socketId]) { peers[socketId].pc.close(); delete peers[socketId]; }
+    removeTile(socketId);
+    roomUsers = roomUsers.filter(u => u.socketId !== socketId);
+    renderMembers();
   });
-  socket.on('rtc-offer',async({from,name,offer})=>{
-    await createPeerConnection(from,name,false);
-    const pc=peers[from].pc;
+
+  socket.on('rtc-offer', async ({ from, name, offer }) => {
+    // ✅ newcomer receives offers from existing members and answers
+    await createPeerConnection(from, name, false);
+    const pc = peers[from].pc;
     await pc.setRemoteDescription(new RTCSessionDescription(offer));
-    const answer=await pc.createAnswer();
+    const answer = await pc.createAnswer();
     await pc.setLocalDescription(answer);
-    socket.emit('rtc-answer',{to:from,answer});
+    socket.emit('rtc-answer', { to: from, answer });
   });
-  socket.on('rtc-answer',async({from,answer})=>{
-    if(peers[from]) await peers[from].pc.setRemoteDescription(new RTCSessionDescription(answer));
+
+  socket.on('rtc-answer', async ({ from, answer }) => {
+    if (peers[from]) {
+      try { await peers[from].pc.setRemoteDescription(new RTCSessionDescription(answer)); }
+      catch(e) { console.error('setRemoteDescription failed:', e); }
+    }
   });
-  socket.on('rtc-ice',async({from,candidate})=>{
-    if(peers[from]) try{await peers[from].pc.addIceCandidate(new RTCIceCandidate(candidate));}catch(e){}
+
+  socket.on('rtc-ice', async ({ from, candidate }) => {
+    if (peers[from]) {
+      try { await peers[from].pc.addIceCandidate(new RTCIceCandidate(candidate)); }
+      catch(e) { console.warn('ICE candidate error:', e.message); }
+    }
   });
-  socket.on('editor-assigned',({editorOwner:eo})=>{ editorOwner=eo; updateEditorLock(); renderMembers(); });
-  socket.on('editor-request',({fromSocketId,fromName})=>{
-    pendingRequest={fromSocketId,fromName};
-    document.getElementById('notifText').textContent=`"${fromName}" wants editor access`;
-    document.getElementById('notifBanner').style.display='block';
+
+  socket.on('editor-assigned', ({ editorOwner: eo }) => { editorOwner = eo; updateEditorLock(); renderMembers(); });
+  socket.on('editor-request', ({ fromSocketId, fromName }) => {
+    pendingRequest = { fromSocketId, fromName };
+    document.getElementById('notifText').textContent = `"${fromName}" wants editor access`;
+    document.getElementById('notifBanner').style.display = 'block';
   });
-  socket.on('editor-request-denied',()=>{
+  socket.on('editor-request-denied', () => {
     toast('Your editor request was denied.');
-    const b=document.getElementById('requestBtn'); if(b){b.textContent='🙋 Request Editor Access';b.disabled=false;}
+    const b = document.getElementById('requestBtn');
+    if (b) { b.textContent = '🙋 Request Editor Access'; b.disabled = false; }
   });
-  socket.on('code-update',({code})=>{ if(editorOwner!==mySocketId) applyRemoteCode(code); });
+  socket.on('code-update', ({ code }) => { if (editorOwner !== mySocketId) applyRemoteCode(code); });
 }
 
 // ════════════════════════════════════════════════════════
@@ -982,28 +1016,63 @@ const ICE_CFG={iceServers:[
   {urls:'stun:stun3.l.google.com:19302'},
 ]};
 
-async function createPeerConnection(peerId,peerName,isInitiator) {
-  if (peers[peerId]) return;
-  const pc=new RTCPeerConnection(ICE_CFG);
-  peers[peerId]={pc,name:peerName};
+async function createPeerConnection(peerId, peerName, isInitiator) {
+  if (peers[peerId]) return; // already exists
 
-  // Add all local tracks BEFORE offer/answer
-  if (myStream) myStream.getTracks().forEach(track=>pc.addTrack(track,myStream));
+  console.log(`🔗 Creating peer connection to ${peerName} (initiator: ${isInitiator})`);
 
-  pc.onicecandidate=e=>{ if(e.candidate) socket.emit('rtc-ice',{to:peerId,candidate:e.candidate}); };
-  pc.oniceconnectionstatechange=()=>{ if(pc.iceConnectionState==='failed') pc.restartIce(); };
+  const pc = new RTCPeerConnection(ICE_CFG);
+  peers[peerId] = { pc, name: peerName };
 
-  // Remote stream handler — this is critical
-  pc.ontrack=e=>{
-    if (e.streams&&e.streams[0]) attachRemoteStream(peerId,e.streams[0]);
+  // ✅ Add ALL local tracks before offer/answer
+  if (myStream) {
+    myStream.getTracks().forEach(track => {
+      console.log(`➕ Adding ${track.kind} track to peer ${peerName}`);
+      pc.addTrack(track, myStream);
+    });
+  } else {
+    console.warn('⚠️ No local stream — remote peer will not see/hear us');
+  }
+
+  pc.onicecandidate = e => {
+    if (e.candidate) socket.emit('rtc-ice', { to: peerId, candidate: e.candidate });
   };
 
-  addTile(peerId,peerName);
+  pc.oniceconnectionstatechange = () => {
+    console.log(`ICE state (${peerName}):`, pc.iceConnectionState);
+    if (pc.iceConnectionState === 'failed') {
+      console.warn('ICE failed — restarting');
+      pc.restartIce();
+    }
+  };
+
+  pc.onconnectionstatechange = () => {
+    console.log(`Connection state (${peerName}):`, pc.connectionState);
+  };
+
+  // ✅ This is the most critical handler — fires when remote sends tracks
+  pc.ontrack = e => {
+    console.log(`📹 Got ${e.track.kind} track from ${peerName}`);
+    if (e.streams && e.streams[0]) {
+      peers[peerId].stream = e.streams[0];
+      attachRemoteStream(peerId, e.streams[0]);
+    }
+  };
+
+  addTile(peerId, peerName);
 
   if (isInitiator) {
-    const offer=await pc.createOffer({offerToReceiveAudio:true,offerToReceiveVideo:true});
-    await pc.setLocalDescription(offer);
-    socket.emit('rtc-offer',{to:peerId,offer});
+    try {
+      const offer = await pc.createOffer({
+        offerToReceiveAudio: true,
+        offerToReceiveVideo: true,
+      });
+      await pc.setLocalDescription(offer);
+      socket.emit('rtc-offer', { to: peerId, offer });
+      console.log(`📤 Sent offer to ${peerName}`);
+    } catch(e) {
+      console.error('createOffer failed:', e);
+    }
   }
 }
 
@@ -1041,25 +1110,45 @@ function addTile(socketId,name) {
   document.getElementById('videoGrid').appendChild(tile);
 }
 
-function attachRemoteStream(socketId,stream) {
-  const tile=document.getElementById('tile-'+socketId); if(!tile) return;
-  // Remove loading placeholder
-  const o=tile.querySelector('.cam-off'); if(o) o.remove();
-  // Reuse existing video or create new
-  let v=tile.querySelector('video');
-  if (!v) {
-    v=document.createElement('video');
-    v.autoplay=true;
-    v.muted=false;       // NOT muted — we need to hear remote users
-    v.playsInline=true;
-    v.style.cssText='width:100%;height:100%;object-fit:cover;display:block;';
-    tile.insertBefore(v,tile.querySelector('.tile-label'));
+function attachRemoteStream(socketId, stream) {
+  const tile = document.getElementById('tile-' + socketId);
+  if (!tile) {
+    console.warn('No tile found for', socketId);
+    return;
   }
-  v.srcObject=stream;
-  // Force play — needed in some browsers
-  const tryPlay=()=>v.play().catch(err=>console.warn('play() failed:',err));
-  if (v.readyState>=2) tryPlay();
-  else v.onloadedmetadata=tryPlay;
+
+  // Remove loading placeholder
+  const o = tile.querySelector('.cam-off'); if (o) o.remove();
+
+  // Reuse or create video element
+  let v = tile.querySelector('video');
+  if (!v) {
+    v = document.createElement('video');
+    v.autoplay    = true;
+    v.playsInline = true;
+    v.muted       = false; // ✅ NEVER mute remote peers
+    v.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;background:#000;';
+    tile.insertBefore(v, tile.querySelector('.tile-label'));
+  }
+
+  v.srcObject = stream;
+
+  // ✅ Force play — required in many browsers
+  const tryPlay = () => {
+    v.play().then(() => {
+      console.log('▶️ Remote video playing for', socketId);
+    }).catch(err => {
+      console.warn('play() failed:', err.message);
+    });
+  };
+
+  if (v.readyState >= 2) {
+    tryPlay();
+  } else {
+    v.onloadedmetadata = tryPlay;
+  }
+
+  console.log('📺 Attached remote stream to tile', socketId);
 }
 
 function removeTile(socketId) { const t=document.getElementById('tile-'+socketId); if(t) t.remove(); }
@@ -1717,19 +1806,17 @@ function switchPanelTab(tab) {
 //  RUN CODE — ✅ FIXED stdin handling
 // ════════════════════════════════════════════════════════
 async function runCode() {
-  const code     = cmEditor ? cmEditor.getValue().trim() : '';
-  const outputEl = document.getElementById('output');
-  const runBtn   = document.getElementById('runBtn');
+  const code = cmEditor ? cmEditor.getValue().trim() : '';
+  const out  = document.getElementById('output');
+  const btn  = document.getElementById('runBtn');
 
-  // ✅ Get stdin from textarea and ensure trailing newline
+  // ✅ ensure trailing newline so scanf/input() doesn't hang
   const stdinRaw = document.getElementById('stdinInput').value;
-  const stdin    = stdinRaw
-    ? (stdinRaw.endsWith('\n') ? stdinRaw : stdinRaw + '\n')
-    : '';
+  const stdin    = stdinRaw ? (stdinRaw.endsWith('\n') ? stdinRaw : stdinRaw + '\n') : '';
 
   if (!code) { toast('No code to run'); return; }
-  runBtn.disabled = true; runBtn.textContent = '⏳';
-  outputEl.textContent = 'Running…'; outputEl.className = ''; outputEl.style.borderTop = '';
+  btn.disabled = true; btn.textContent = '⏳';
+  out.textContent = 'Running…'; out.className = ''; out.style.borderTop = '';
 
   try {
     const res  = await fetch('/api/run', {
@@ -1738,15 +1825,14 @@ async function runCode() {
       body:    JSON.stringify({ code, language: currentLang, stdin }),
     });
     const text = await res.text();
-    outputEl.innerHTML = escHtml(text || '(No output)');
-    outputEl.className = res.ok ? '' : 'has-error';
-    outputEl.style.borderTop = `2px solid var(--${res.ok ? 'success' : 'error'})`;
-  } catch (e) {
-    outputEl.innerHTML = escHtml('❌ Could not reach the server.');
-    outputEl.className = 'has-error';
-    outputEl.style.borderTop = '2px solid var(--error)';
+    out.innerHTML = escHtml(text || '(No output)');
+    out.className = res.ok ? '' : 'has-error';
+    out.style.borderTop = `2px solid var(--${res.ok ? 'success' : 'error'})`;
+  } catch(e) {
+    out.innerHTML = escHtml('❌ Could not reach the server.');
+    out.className = 'has-error'; out.style.borderTop = '2px solid var(--error)';
   } finally {
-    runBtn.disabled = false; runBtn.textContent = '▶ Run';
+    btn.disabled = false; btn.textContent = '▶ Run';
   }
 }
 
@@ -2052,25 +2138,46 @@ function renderMembers() {
 //  MIC / CAM
 // ════════════════════════════════════════════════════════
 function toggleMic() {
-  if (!myStream) { toast('No microphone available'); return; }
+  if (!myStream || myStream.getAudioTracks().length === 0) {
+    toast('No microphone available'); return;
+  }
   micOn = !micOn;
-  myStream.getAudioTracks().forEach(t => t.enabled = micOn);
-  const b = document.getElementById('micBtn');
-  b.textContent = micOn ? '🎙 Mic On' : '🔇 Mic Off'; b.classList.toggle('off', !micOn);
+  myStream.getAudioTracks().forEach(t => { t.enabled = micOn; });
+  updateMediaBtnUI();
+  toast(micOn ? '🎙 Mic on' : '🔇 Mic muted');
 }
 
 function toggleCam() {
-  if (!myStream) { toast('No camera available'); return; }
+  if (!myStream || myStream.getVideoTracks().length === 0) {
+    toast('No camera available'); return;
+  }
   camOn = !camOn;
-  myStream.getVideoTracks().forEach(t => t.enabled = camOn);
-  const b = document.getElementById('camBtn');
-  b.textContent = camOn ? '📹 Cam On' : '🚫 Cam Off'; b.classList.toggle('off', !camOn);
+  myStream.getVideoTracks().forEach(t => { t.enabled = camOn; });
+  updateMediaBtnUI();
+  refreshMyTileVideo();
+  toast(camOn ? '📹 Camera on' : '🚫 Camera off');
+}
+
+function refreshMyTileVideo() {
   const tile = document.getElementById('tile-me'); if (!tile) return;
-  const v = tile.querySelector('video'); let o = tile.querySelector('.cam-off');
-  if (camOn) { if (o) o.remove(); if (v) v.style.display = 'block'; }
-  else {
-    if (v) v.style.display = 'none';
-    if (!o) { o = document.createElement('div'); o.className = 'cam-off'; o.textContent = 'Cam Off'; tile.insertBefore(o, tile.querySelector('.tile-label')); }
+  if (camOn) {
+    let o = tile.querySelector('.cam-off'); if (o) o.remove();
+    let v = tile.querySelector('video');
+    if (!v) {
+      v = document.createElement('video');
+      v.autoplay = true; v.muted = true; v.playsInline = true;
+      v.srcObject = myStream;
+      tile.insertBefore(v, tile.querySelector('.tile-label'));
+    }
+    v.style.display = 'block';
+    v.play().catch(() => {});
+  } else {
+    const v = tile.querySelector('video'); if (v) v.style.display = 'none';
+    if (!tile.querySelector('.cam-off')) {
+      const o = document.createElement('div'); o.className = 'cam-off';
+      o.innerHTML = '<span class="cam-off-icon">🚫</span><span>Cam Off</span>';
+      tile.insertBefore(o, tile.querySelector('.tile-label'));
+    }
   }
 }
 
