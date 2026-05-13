@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="CodeForge — Real-time collaborative coding platform. Write, run, and ship code together in Python, C++, Java and more. Built-in video, live sync, and instant execution." />
-  <meta name="keywords" content="collaborative coding, real-time code editor, online IDE, pair programming, code together, Python editor, C++ online, Java online, team coding, WebRTC coding" />
+  <meta name="description"
+    content="CodeForge — Real-time collaborative coding platform. Write, run, and ship code together in Python, C++, Java and more. Built-in video, live sync, and instant execution." />
+  <meta name="keywords"
+    content="collaborative coding, real-time code editor, online IDE, pair programming, code together, Python editor, C++ online, Java online, team coding, WebRTC coding" />
   <meta name="author" content="M. Rabi. K." />
   <meta name="robots" content="index, follow" />
   <meta name="theme-color" content="#0f1117" />
@@ -13,7 +16,8 @@
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://coding-vibes.onrender.com/" />
   <meta property="og:title" content="CodeForge — Where Code Gets Built" />
-  <meta property="og:description" content="Real-time collaborative coding with live video, instant execution, and team rooms." />
+  <meta property="og:description"
+    content="Real-time collaborative coding with live video, instant execution, and team rooms." />
   <meta property="og:image" content="https://coding-vibes.onrender.com/logo.png" />
   <meta property="og:site_name" content="CodeForge" />
   <meta name="twitter:card" content="summary_large_image" />
@@ -31,622 +35,1783 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <script src="/socket.io/socket.io.js"></script>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --bg:#0f1117; --surface:#181c27; --surface2:#1f2433; --border:#2a3044;
-      --accent:#5b8eff; --accent2:#ff6b6b; --accent3:#4ecdc4;
-      --text:#e2e8f0; --text-muted:#6b7a99;
-      --success:#4ade80; --error:#f87171; --gold:#f5a623;
-      --font-mono:'JetBrains Mono','Fira Code','Cascadia Code',monospace;
-      --shadow:0 4px 24px rgba(0,0,0,0.4);
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
-    html,body { height:100%; background:var(--bg); color:var(--text); font-family:'Segoe UI',system-ui,sans-serif; font-size:14px; overflow:hidden; }
-    #app-shell { display:flex; flex-direction:column; height:100vh; }
+
+    :root {
+      --bg: #0f1117;
+      --surface: #181c27;
+      --surface2: #1f2433;
+      --border: #2a3044;
+      --accent: #5b8eff;
+      --accent2: #ff6b6b;
+      --accent3: #4ecdc4;
+      --text: #e2e8f0;
+      --text-muted: #6b7a99;
+      --success: #4ade80;
+      --error: #f87171;
+      --gold: #f5a623;
+      --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+      --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+    }
+
+    html,
+    body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      font-size: 14px;
+      overflow: hidden;
+    }
+
+    #app-shell {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
 
     /* TOPBAR */
-    #topbar { display:flex; align-items:center; gap:8px; padding:0 14px; height:52px; background:var(--surface); border-bottom:1px solid var(--border); flex-shrink:0; z-index:10; overflow-x:auto; }
-    #topbar::-webkit-scrollbar { height:0; }
-    .logo-text { font-family:var(--font-mono); font-size:15px; font-weight:700; color:var(--accent); letter-spacing:-0.5px; margin-right:4px; white-space:nowrap; flex-shrink:0; }
-    .logo-text span { color:var(--accent2); }
-    .mode-toggle { display:flex; background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:3px; gap:2px; flex-shrink:0; }
-    .mode-btn { padding:4px 12px; border:none; background:transparent; color:var(--text-muted); border-radius:4px; cursor:pointer; font-size:12px; font-weight:600; transition:all 0.15s; white-space:nowrap; }
-    .mode-btn.active { background:var(--accent); color:#fff; }
-    .lang-pills { display:flex; gap:3px; flex-shrink:0; }
-    .lang-pill { padding:3px 9px; border:1px solid var(--border); background:transparent; color:var(--text-muted); border-radius:4px; cursor:pointer; font-size:11px; font-family:var(--font-mono); font-weight:600; transition:all 0.15s; white-space:nowrap; }
-    .lang-pill:hover { border-color:var(--accent); color:var(--accent); }
-    .lang-pill.active { background:var(--accent); border-color:var(--accent); color:#fff; }
-    .topbar-sep { width:1px; height:24px; background:var(--border); flex-shrink:0; margin:0 2px; }
-    .topbar-btn { padding:4px 10px; background:transparent; border:1px solid var(--border); color:var(--text-muted); border-radius:4px; cursor:pointer; font-size:11px; font-family:var(--font-mono); transition:all 0.15s; white-space:nowrap; flex-shrink:0; text-decoration:none; display:inline-flex; align-items:center; }
-    .topbar-btn:hover { border-color:var(--accent3); color:var(--accent3); }
-    .topbar-btn.save { border-color:var(--accent); color:var(--accent); }
-    .topbar-btn.save:hover { background:var(--accent); color:#fff; }
-    #runBtn { margin-left:auto; padding:6px 16px; background:var(--accent); color:#fff; border:none; border-radius:6px; font-weight:700; font-size:13px; cursor:pointer; transition:all 0.15s; display:flex; align-items:center; gap:6px; white-space:nowrap; flex-shrink:0; }
-    #runBtn:hover:not(:disabled) { background:#4070ee; transform:translateY(-1px); }
-    #runBtn:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
-    #authArea { display:flex; align-items:center; gap:6px; flex-shrink:0; }
-    #signInBtn { padding:4px 10px; background:transparent; border:1px solid var(--accent3); color:var(--accent3); border-radius:4px; cursor:pointer; font-size:11px; font-weight:600; white-space:nowrap; transition:all 0.15s; }
-    #signInBtn:hover { background:var(--accent3); color:#000; }
-    #userInfo { display:none; align-items:center; gap:6px; }
-    #userInfo.visible { display:flex; }
-    .user-avatar { width:22px; height:22px; border-radius:50%; border:1px solid var(--border); }
-    .user-name { font-size:11px; color:var(--text-muted); font-family:var(--font-mono); max-width:90px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-    #signOutBtn { padding:2px 7px; background:transparent; border:1px solid var(--border); color:var(--text-muted); border-radius:3px; cursor:pointer; font-size:10px; transition:all 0.15s; }
-    #signOutBtn:hover { border-color:var(--accent2); color:var(--accent2); }
-    #room-bar { display:none; align-items:center; gap:6px; font-size:12px; flex-shrink:0; }
-    #room-bar.visible { display:flex; }
-    .room-badge { background:var(--surface2); border:1px solid var(--border); border-radius:4px; padding:3px 8px; font-family:var(--font-mono); font-size:11px; cursor:pointer; white-space:nowrap; }
-    .room-badge:hover { border-color:var(--accent); }
-    #editor-status { font-size:11px; color:var(--text-muted); white-space:nowrap; }
-    #leaveBtn { padding:4px 8px; background:transparent; border:1px solid var(--accent2); color:var(--accent2); border-radius:4px; cursor:pointer; font-size:11px; font-weight:600; transition:all 0.15s; white-space:nowrap; }
-    #leaveBtn:hover { background:var(--accent2); color:#fff; }
+    #topbar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 14px;
+      height: 52px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+      z-index: 10;
+      overflow-x: auto;
+    }
+
+    #topbar::-webkit-scrollbar {
+      height: 0;
+    }
+
+    .logo-text {
+      font-family: var(--font-mono);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: -0.5px;
+      margin-right: 4px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .logo-text span {
+      color: var(--accent2);
+    }
+
+    .mode-toggle {
+      display: flex;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 3px;
+      gap: 2px;
+      flex-shrink: 0;
+    }
+
+    .mode-btn {
+      padding: 4px 12px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+
+    .mode-btn.active {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .lang-pills {
+      display: flex;
+      gap: 3px;
+      flex-shrink: 0;
+    }
+
+    .lang-pill {
+      padding: 3px 9px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-muted);
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 11px;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+
+    .lang-pill:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .lang-pill.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .topbar-sep {
+      width: 1px;
+      height: 24px;
+      background: var(--border);
+      flex-shrink: 0;
+      margin: 0 2px;
+    }
+
+    .topbar-btn {
+      padding: 4px 10px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 11px;
+      font-family: var(--font-mono);
+      transition: all 0.15s;
+      white-space: nowrap;
+      flex-shrink: 0;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .topbar-btn:hover {
+      border-color: var(--accent3);
+      color: var(--accent3);
+    }
+
+    .topbar-btn.save {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .topbar-btn.save:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    #runBtn {
+      margin-left: auto;
+      padding: 6px 16px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    #runBtn:hover:not(:disabled) {
+      background: #4070ee;
+      transform: translateY(-1px);
+    }
+
+    #runBtn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    #authArea {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    #signInBtn {
+      padding: 4px 10px;
+      background: transparent;
+      border: 1px solid var(--accent3);
+      color: var(--accent3);
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 600;
+      white-space: nowrap;
+      transition: all 0.15s;
+    }
+
+    #signInBtn:hover {
+      background: var(--accent3);
+      color: #000;
+    }
+
+    #userInfo {
+      display: none;
+      align-items: center;
+      gap: 6px;
+    }
+
+    #userInfo.visible {
+      display: flex;
+    }
+
+    .user-avatar {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+    }
+
+    .user-name {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      max-width: 90px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    #signOutBtn {
+      padding: 2px 7px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 10px;
+      transition: all 0.15s;
+    }
+
+    #signOutBtn:hover {
+      border-color: var(--accent2);
+      color: var(--accent2);
+    }
+
+    #room-bar {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+
+    #room-bar.visible {
+      display: flex;
+    }
+
+    .room-badge {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 3px 8px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .room-badge:hover {
+      border-color: var(--accent);
+    }
+
+    #editor-status {
+      font-size: 11px;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    #leaveBtn {
+      padding: 4px 8px;
+      background: transparent;
+      border: 1px solid var(--accent2);
+      color: var(--accent2);
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 600;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+
+    #leaveBtn:hover {
+      background: var(--accent2);
+      color: #fff;
+    }
 
     /* FILE BAR */
-    #current-file-bar { display:none; align-items:center; gap:8px; padding:3px 12px; background:var(--surface2); border-bottom:1px solid var(--border); flex-shrink:0; font-size:11px; font-family:var(--font-mono); }
-    #current-file-bar.visible { display:flex; }
-    #current-file-name { color:var(--accent3); flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-    #save-indicator { font-size:10px; color:var(--text-muted); white-space:nowrap; }
-    #save-indicator.unsaved { color:var(--gold); }
+    #current-file-bar {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      padding: 3px 12px;
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+      font-size: 11px;
+      font-family: var(--font-mono);
+    }
+
+    #current-file-bar.visible {
+      display: flex;
+    }
+
+    #current-file-name {
+      color: var(--accent3);
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    #save-indicator {
+      font-size: 10px;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    #save-indicator.unsaved {
+      color: var(--gold);
+    }
 
     /* MAIN */
-    #main-area { display:flex; flex:1; overflow:hidden; }
+    #main-area {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
 
     /* LEFT PANEL */
-    #left-panel { width:240px; flex-shrink:0; background:var(--surface); border-right:1px solid var(--border); display:none; flex-direction:column; overflow:hidden; }
-    #left-panel.visible { display:flex; }
-    .panel-tabs { display:flex; border-bottom:1px solid var(--border); flex-shrink:0; }
-    .panel-tab { flex:1; padding:8px 4px; border:none; background:transparent; color:var(--text-muted); font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; cursor:pointer; border-bottom:2px solid transparent; transition:all 0.15s; }
-    .panel-tab.active { color:var(--accent); border-bottom-color:var(--accent); }
-    .panel-tab-content { display:none; flex-direction:column; flex:1; overflow:hidden; }
-    .panel-tab-content.active { display:flex; }
-    .panel-section { padding:10px 12px; border-bottom:1px solid var(--border); flex-shrink:0; }
-    .panel-title { font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--text-muted); margin-bottom:8px; }
-    .member-item { display:flex; align-items:center; gap:6px; padding:5px 0; font-size:12px; border-bottom:1px solid var(--border); }
-    .member-item:last-child { border-bottom:none; }
-    .member-dot { width:6px; height:6px; border-radius:50%; background:var(--success); flex-shrink:0; }
-    .member-name { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-    .member-you { font-size:10px; color:var(--text-muted); }
-    .member-editing { font-size:10px; color:var(--accent3); }
-    .btn-assign { font-size:10px; padding:2px 6px; background:transparent; border:1px solid var(--border); color:var(--text-muted); border-radius:3px; cursor:pointer; transition:all 0.15s; }
-    .btn-assign:hover { border-color:var(--accent3); color:var(--accent3); }
-    .btn-action { width:100%; padding:7px; border:none; border-radius:5px; font-size:11px; font-weight:600; cursor:pointer; margin-top:6px; transition:all 0.15s; }
-    .btn-request  { background:var(--surface2); border:1px solid var(--accent);  color:var(--accent);  }
-    .btn-request:hover  { background:var(--accent);  color:#fff; }
-    .btn-reclaim  { background:var(--surface2); border:1px solid var(--accent2); color:var(--accent2); }
-    .btn-reclaim:hover  { background:var(--accent2); color:#fff; }
-    .btn-handback { background:var(--surface2); border:1px solid var(--accent3); color:var(--accent3); }
-    .btn-handback:hover { background:var(--accent3); color:#000; }
-    #notifBanner { display:none; background:var(--surface2); border:1px solid var(--accent); border-radius:6px; padding:8px; margin-top:6px; font-size:11px; }
-    #notifBanner .banner-btns { display:flex; gap:4px; margin-top:6px; }
-    .bbtn { flex:1; padding:4px; border:none; border-radius:4px; font-size:11px; font-weight:700; cursor:pointer; }
-    .bbtn.yes { background:var(--success); color:#000; }
-    .bbtn.no  { background:var(--error);   color:#fff; }
+    #left-panel {
+      width: 240px;
+      flex-shrink: 0;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    #left-panel.visible {
+      display: flex;
+    }
+
+    .panel-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .panel-tab {
+      flex: 1;
+      padding: 8px 4px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.15s;
+    }
+
+    .panel-tab.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+
+    .panel-tab-content {
+      display: none;
+      flex-direction: column;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .panel-tab-content.active {
+      display: flex;
+    }
+
+    .panel-section {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .panel-title {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .member-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 0;
+      font-size: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .member-item:last-child {
+      border-bottom: none;
+    }
+
+    .member-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--success);
+      flex-shrink: 0;
+    }
+
+    .member-name {
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .member-you {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .member-editing {
+      font-size: 10px;
+      color: var(--accent3);
+    }
+
+    .btn-assign {
+      font-size: 10px;
+      padding: 2px 6px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      border-radius: 3px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .btn-assign:hover {
+      border-color: var(--accent3);
+      color: var(--accent3);
+    }
+
+    .btn-action {
+      width: 100%;
+      padding: 7px;
+      border: none;
+      border-radius: 5px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 6px;
+      transition: all 0.15s;
+    }
+
+    .btn-request {
+      background: var(--surface2);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+    }
+
+    .btn-request:hover {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .btn-reclaim {
+      background: var(--surface2);
+      border: 1px solid var(--accent2);
+      color: var(--accent2);
+    }
+
+    .btn-reclaim:hover {
+      background: var(--accent2);
+      color: #fff;
+    }
+
+    .btn-handback {
+      background: var(--surface2);
+      border: 1px solid var(--accent3);
+      color: var(--accent3);
+    }
+
+    .btn-handback:hover {
+      background: var(--accent3);
+      color: #000;
+    }
+
+    #notifBanner {
+      display: none;
+      background: var(--surface2);
+      border: 1px solid var(--accent);
+      border-radius: 6px;
+      padding: 8px;
+      margin-top: 6px;
+      font-size: 11px;
+    }
+
+    #notifBanner .banner-btns {
+      display: flex;
+      gap: 4px;
+      margin-top: 6px;
+    }
+
+    .bbtn {
+      flex: 1;
+      padding: 4px;
+      border: none;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .bbtn.yes {
+      background: var(--success);
+      color: #000;
+    }
+
+    .bbtn.no {
+      background: var(--error);
+      color: #fff;
+    }
 
     /* FILE PANEL */
-    #files-panel { display:flex; flex-direction:column; flex:1; overflow:hidden; }
-    .files-toolbar { display:flex; gap:4px; padding:8px 10px; border-bottom:1px solid var(--border); flex-shrink:0; }
-    .files-toolbar button { flex:1; padding:5px 4px; border:1px solid var(--border); background:var(--surface2); color:var(--text-muted); border-radius:4px; cursor:pointer; font-size:10px; font-weight:600; transition:all 0.15s; }
-    .files-toolbar button:hover { border-color:var(--accent3); color:var(--accent3); }
-    .files-toolbar .btn-newfile:hover { border-color:var(--accent); color:var(--accent); }
-    .files-toolbar .btn-export:hover  { border-color:var(--gold);   color:var(--gold);   }
-    .files-tree { flex:1; overflow-y:auto; padding:4px 0; }
-    .files-notice { padding:18px 14px; text-align:center; font-size:12px; color:var(--text-muted); line-height:1.8; }
-    .google-signin-btn { display:flex; align-items:center; justify-content:center; gap:8px; width:100%; padding:9px 12px; margin-bottom:10px; background:#fff; color:#3c4043; border:1px solid #dadce0; border-radius:6px; cursor:pointer; font-size:12px; font-weight:600; transition:all 0.15s; }
-    .google-signin-btn:hover { background:#f8f9fa; box-shadow:0 2px 8px rgba(0,0,0,0.2); }
-    .folder-row { display:flex; align-items:center; gap:5px; padding:5px 10px; cursor:pointer; transition:background 0.12s; user-select:none; }
-    .folder-row:hover { background:var(--surface2); }
-    .folder-chevron { font-size:9px; color:var(--text-muted); transition:transform 0.15s; flex-shrink:0; width:10px; }
-    .folder-chevron.open { transform:rotate(90deg); }
-    .folder-icon { font-size:13px; flex-shrink:0; }
-    .folder-name { flex:1; font-size:12px; color:var(--text); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-    .folder-children { padding-left:12px; }
-    .file-row { display:flex; align-items:center; gap:5px; padding:4px 10px 4px 20px; cursor:pointer; transition:background 0.12s; }
-    .file-row:hover { background:var(--surface2); }
-    .file-row.active { background:rgba(91,142,255,0.12); border-left:2px solid var(--accent); padding-left:18px; }
-    .file-icon { font-size:12px; flex-shrink:0; }
-    .file-name { flex:1; font-size:11px; font-family:var(--font-mono); color:var(--text); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-    .file-lang-tag { font-size:9px; color:var(--text-muted); flex-shrink:0; text-transform:uppercase; letter-spacing:0.3px; }
-    .row-acts { display:none; gap:2px; flex-shrink:0; }
-    .folder-row:hover .row-acts,.file-row:hover .row-acts { display:flex; }
-    .row-act { padding:1px 4px; background:transparent; border:1px solid var(--border); color:var(--text-muted); border-radius:3px; cursor:pointer; font-size:9px; line-height:1.4; transition:all 0.12s; }
-    .row-act:hover { border-color:var(--accent2); color:var(--accent2); }
-    .row-act.act-open:hover { border-color:var(--accent); color:var(--accent); }
-    .row-act.act-dl:hover   { border-color:var(--gold);   color:var(--gold);   }
+    #files-panel {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .files-toolbar {
+      display: flex;
+      gap: 4px;
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .files-toolbar button {
+      flex: 1;
+      padding: 5px 4px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--text-muted);
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 10px;
+      font-weight: 600;
+      transition: all 0.15s;
+    }
+
+    .files-toolbar button:hover {
+      border-color: var(--accent3);
+      color: var(--accent3);
+    }
+
+    .files-toolbar .btn-newfile:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .files-toolbar .btn-export:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .files-tree {
+      flex: 1;
+      overflow-y: auto;
+      padding: 4px 0;
+    }
+
+    .files-notice {
+      padding: 18px 14px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.8;
+    }
+
+    .google-signin-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 9px 12px;
+      margin-bottom: 10px;
+      background: #fff;
+      color: #3c4043;
+      border: 1px solid #dadce0;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      transition: all 0.15s;
+    }
+
+    .google-signin-btn:hover {
+      background: #f8f9fa;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .folder-row {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 10px;
+      cursor: pointer;
+      transition: background 0.12s;
+      user-select: none;
+    }
+
+    .folder-row:hover {
+      background: var(--surface2);
+    }
+
+    .folder-chevron {
+      font-size: 9px;
+      color: var(--text-muted);
+      transition: transform 0.15s;
+      flex-shrink: 0;
+      width: 10px;
+    }
+
+    .folder-chevron.open {
+      transform: rotate(90deg);
+    }
+
+    .folder-icon {
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+
+    .folder-name {
+      flex: 1;
+      font-size: 12px;
+      color: var(--text);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .folder-children {
+      padding-left: 12px;
+    }
+
+    .file-row {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px 4px 20px;
+      cursor: pointer;
+      transition: background 0.12s;
+    }
+
+    .file-row:hover {
+      background: var(--surface2);
+    }
+
+    .file-row.active {
+      background: rgba(91, 142, 255, 0.12);
+      border-left: 2px solid var(--accent);
+      padding-left: 18px;
+    }
+
+    .file-icon {
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+
+    .file-name {
+      flex: 1;
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--text);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .file-lang-tag {
+      font-size: 9px;
+      color: var(--text-muted);
+      flex-shrink: 0;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .row-acts {
+      display: none;
+      gap: 2px;
+      flex-shrink: 0;
+    }
+
+    .folder-row:hover .row-acts,
+    .file-row:hover .row-acts {
+      display: flex;
+    }
+
+    .row-act {
+      padding: 1px 4px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 9px;
+      line-height: 1.4;
+      transition: all 0.12s;
+    }
+
+    .row-act:hover {
+      border-color: var(--accent2);
+      color: var(--accent2);
+    }
+
+    .row-act.act-open:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .row-act.act-dl:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
 
     /* EDITOR */
-    #editor-panel { display:flex; flex-direction:column; flex:1; overflow:hidden; min-width:0; }
-    #stdin-bar { display:flex; align-items:flex-start; gap:8px; padding:6px 12px; background:var(--surface); border-bottom:1px solid var(--border); flex-shrink:0; }
-    #stdin-bar label { font-size:11px; color:var(--text-muted); white-space:nowrap; font-family:var(--font-mono); padding-top:5px; flex-shrink:0; }
-    #stdin-wrap { flex:1; display:flex; flex-direction:column; gap:2px; }
-    #stdinInput { width:100%; background:var(--bg); border:1px solid var(--border); border-radius:4px; color:var(--text); font-family:var(--font-mono); font-size:11px; padding:4px 8px; outline:none; transition:border-color 0.15s; resize:vertical; min-height:30px; max-height:100px; line-height:1.5; }
-    #stdinInput:focus { border-color:var(--accent); }
-    #stdin-hint { font-size:10px; color:var(--text-muted); }
-    #lockOverlay { display:none; position:absolute; inset:0; background:rgba(15,17,23,0.7); z-index:5; align-items:center; justify-content:center; font-size:13px; color:var(--text-muted); pointer-events:none; }
-    #lockOverlay.visible { display:flex; }
-    .cm-wrapper { position:relative; flex:1; overflow:hidden; }
-    .CodeMirror { height:100% !important; font-family:var(--font-mono) !important; font-size:13px !important; background:var(--bg) !important; }
-    .CodeMirror-scroll { padding-bottom:0 !important; }
-    #output-panel { height:180px; flex-shrink:0; background:var(--surface); border-top:1px solid var(--border); display:flex; flex-direction:column; overflow:hidden; }
-    .output-header { display:flex; align-items:center; justify-content:space-between; padding:6px 12px; border-bottom:1px solid var(--border); flex-shrink:0; }
-    .output-label { font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--text-muted); font-family:var(--font-mono); }
-    #clearOutputBtn { background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:11px; padding:2px 6px; border-radius:3px; transition:color 0.15s; }
-    #clearOutputBtn:hover { color:var(--text); }
-    #output { flex:1; overflow-y:auto; padding:10px 14px; font-family:var(--font-mono); font-size:12px; white-space:pre-wrap; word-break:break-all; color:var(--text); line-height:1.6; }
-    #output.has-error { color:var(--error); }
+    #editor-panel {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      overflow: hidden;
+      min-width: 0;
+    }
+
+    #stdin-bar {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 6px 12px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    #stdin-bar label {
+      font-size: 11px;
+      color: var(--text-muted);
+      white-space: nowrap;
+      font-family: var(--font-mono);
+      padding-top: 5px;
+      flex-shrink: 0;
+    }
+
+    #stdin-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    #stdinInput {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 4px 8px;
+      outline: none;
+      transition: border-color 0.15s;
+      resize: vertical;
+      min-height: 30px;
+      max-height: 100px;
+      line-height: 1.5;
+    }
+
+    #stdinInput:focus {
+      border-color: var(--accent);
+    }
+
+    #stdin-hint {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    #lockOverlay {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 17, 23, 0.7);
+      z-index: 5;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    #lockOverlay.visible {
+      display: flex;
+    }
+
+    .cm-wrapper {
+      position: relative;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .CodeMirror {
+      height: 100% !important;
+      font-family: var(--font-mono) !important;
+      font-size: 13px !important;
+      background: var(--bg) !important;
+    }
+
+    .CodeMirror-scroll {
+      padding-bottom: 0 !important;
+    }
+
+    #output-panel {
+      height: 180px;
+      flex-shrink: 0;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .output-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 12px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .output-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+
+    #clearOutputBtn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: 3px;
+      transition: color 0.15s;
+    }
+
+    #clearOutputBtn:hover {
+      color: var(--text);
+    }
+
+    #output {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px 14px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      white-space: pre-wrap;
+      word-break: break-all;
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    #output.has-error {
+      color: var(--error);
+    }
 
     /* RIGHT PANEL — VIDEO */
-    #right-panel { width:210px; flex-shrink:0; background:var(--surface); border-left:1px solid var(--border); display:none; flex-direction:column; overflow:hidden; }
-    #right-panel.visible { display:flex; }
-    .rp-header { padding:8px 12px; border-bottom:1px solid var(--border); flex-shrink:0; }
-    .rp-title { font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--text-muted); }
-    .video-grid { flex:1; overflow-y:auto; padding:8px; display:flex; flex-direction:column; gap:6px; }
-    .video-tile { position:relative; background:var(--surface2); border:1px solid var(--border); border-radius:8px; overflow:hidden; aspect-ratio:4/3; flex-shrink:0; }
-    .video-tile video { width:100%; height:100%; object-fit:cover; display:block; background:#000; }
-    .cam-off { width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; color:var(--text-muted); font-size:11px; gap:6px; background:var(--surface2); }
-    .cam-off-icon { font-size:24px; }
-    .tile-label { position:absolute; bottom:0; left:0; right:0; background:linear-gradient(transparent,rgba(0,0,0,0.75)); color:#fff; font-size:10px; padding:8px 6px 4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-family:var(--font-mono); }
-    #media-bar { display:none; align-items:center; gap:6px; padding:8px 12px; background:var(--surface); border-top:1px solid var(--border); flex-shrink:0; }
-    #media-bar.visible { display:flex; }
-    .tool-btn { flex:1; padding:7px 4px; background:var(--surface2); border:1px solid var(--border); color:var(--text); border-radius:5px; cursor:pointer; font-size:11px; font-weight:600; transition:all 0.15s; text-align:center; }
-    .tool-btn.on  { background:rgba(74,222,128,0.08);  border-color:var(--success); color:var(--success); }
-    .tool-btn.off { background:rgba(248,113,113,0.08); border-color:var(--error);   color:var(--error);   }
+    #right-panel {
+      width: 210px;
+      flex-shrink: 0;
+      background: var(--surface);
+      border-left: 1px solid var(--border);
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    #right-panel.visible {
+      display: flex;
+    }
+
+    .rp-header {
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .rp-title {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .video-grid {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .video-tile {
+      position: relative;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      aspect-ratio: 4/3;
+      flex-shrink: 0;
+    }
+
+    .video-tile video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      background: #000;
+    }
+
+    .cam-off {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      font-size: 11px;
+      gap: 6px;
+      background: var(--surface2);
+    }
+
+    .cam-off-icon {
+      font-size: 24px;
+    }
+
+    .tile-label {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(transparent, rgba(0, 0, 0, 0.75));
+      color: #fff;
+      font-size: 10px;
+      padding: 8px 6px 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-family: var(--font-mono);
+    }
+
+    #media-bar {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    #media-bar.visible {
+      display: flex;
+    }
+
+    .tool-btn {
+      flex: 1;
+      padding: 7px 4px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 600;
+      transition: all 0.15s;
+      text-align: center;
+    }
+
+    .tool-btn.on {
+      background: rgba(74, 222, 128, 0.08);
+      border-color: var(--success);
+      color: var(--success);
+    }
+
+    .tool-btn.off {
+      background: rgba(248, 113, 113, 0.08);
+      border-color: var(--error);
+      color: var(--error);
+    }
 
     /* LOBBY */
-    #lobby { position:fixed; inset:0; background:rgba(10,12,18,0.92); backdrop-filter:blur(8px); display:none; align-items:center; justify-content:center; z-index:100; }
-    #lobby.visible { display:flex; }
-    .lobby-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:28px 32px; width:380px; box-shadow:var(--shadow); }
-    .lobby-card h2 { font-family:var(--font-mono); font-size:18px; color:var(--accent); margin-bottom:4px; }
-    .lobby-card p  { color:var(--text-muted); font-size:13px; margin-bottom:20px; }
-    .tabs { display:flex; gap:4px; margin-bottom:18px; background:var(--bg); border-radius:6px; padding:3px; }
-    .tab-btn { flex:1; padding:7px; border:none; background:transparent; color:var(--text-muted); border-radius:4px; cursor:pointer; font-size:13px; font-weight:600; transition:all 0.15s; }
-    .tab-btn.active { background:var(--accent); color:#fff; }
-    .tab-panel { display:none; }
-    .tab-panel.active { display:block; }
-    .field { margin-bottom:12px; }
-    .field label { display:block; font-size:11px; font-weight:600; color:var(--text-muted); margin-bottom:5px; text-transform:uppercase; letter-spacing:0.5px; }
-    .field input { width:100%; padding:8px 10px; background:var(--bg); border:1px solid var(--border); border-radius:5px; color:var(--text); font-size:13px; outline:none; transition:border-color 0.15s; }
-    .field input:focus { border-color:var(--accent); }
-    .hint { font-size:11px; color:var(--text-muted); margin-top:4px; }
-    .btn-main { width:100%; padding:10px; background:var(--accent); color:#fff; border:none; border-radius:6px; font-size:14px; font-weight:700; cursor:pointer; transition:all 0.15s; margin-top:4px; }
-    .btn-main:hover:not(:disabled) { background:#4070ee; }
-    .btn-main:disabled { opacity:0.5; cursor:not-allowed; }
-    .share-box { display:none; margin-top:14px; background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:12px; font-size:12px; }
-    .share-url { font-family:var(--font-mono); font-size:11px; color:var(--accent3); word-break:break-all; cursor:pointer; margin-top:6px; padding:6px; background:var(--surface); border-radius:4px; }
-    .share-url:hover { text-decoration:underline; }
-    .lobby-error { color:var(--error); font-size:12px; margin-top:8px; min-height:16px; }
+    #lobby {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 12, 18, 0.92);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+    }
+
+    #lobby.visible {
+      display: flex;
+    }
+
+    .lobby-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px 32px;
+      width: 380px;
+      box-shadow: var(--shadow);
+    }
+
+    .lobby-card h2 {
+      font-family: var(--font-mono);
+      font-size: 18px;
+      color: var(--accent);
+      margin-bottom: 4px;
+    }
+
+    .lobby-card p {
+      color: var(--text-muted);
+      font-size: 13px;
+      margin-bottom: 20px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 18px;
+      background: var(--bg);
+      border-radius: 6px;
+      padding: 3px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 7px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all 0.15s;
+    }
+
+    .tab-btn.active {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    .field {
+      margin-bottom: 12px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 5px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .field input {
+      width: 100%;
+      padding: 8px 10px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      color: var(--text);
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .field input:focus {
+      border-color: var(--accent);
+    }
+
+    .hint {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .btn-main {
+      width: 100%;
+      padding: 10px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+      margin-top: 4px;
+    }
+
+    .btn-main:hover:not(:disabled) {
+      background: #4070ee;
+    }
+
+    .btn-main:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .share-box {
+      display: none;
+      margin-top: 14px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 12px;
+      font-size: 12px;
+    }
+
+    .share-url {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--accent3);
+      word-break: break-all;
+      cursor: pointer;
+      margin-top: 6px;
+      padding: 6px;
+      background: var(--surface);
+      border-radius: 4px;
+    }
+
+    .share-url:hover {
+      text-decoration: underline;
+    }
+
+    .lobby-error {
+      color: var(--error);
+      font-size: 12px;
+      margin-top: 8px;
+      min-height: 16px;
+    }
 
     /* MODALS */
-    .modal-overlay { position:fixed; inset:0; background:rgba(10,12,18,0.85); backdrop-filter:blur(4px); display:none; align-items:center; justify-content:center; z-index:300; }
-    .modal-overlay.visible { display:flex; }
-    .modal-box { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:24px 28px; width:340px; box-shadow:var(--shadow); }
-    .modal-box h3 { font-family:var(--font-mono); font-size:15px; color:var(--accent); margin-bottom:16px; }
-    .modal-label { font-size:11px; color:var(--text-muted); margin-bottom:5px; display:block; text-transform:uppercase; letter-spacing:0.5px; font-weight:600; }
-    .modal-box input,.modal-box select { width:100%; padding:8px 10px; background:var(--bg); border:1px solid var(--border); border-radius:5px; color:var(--text); font-size:13px; font-family:var(--font-mono); outline:none; margin-bottom:10px; transition:border-color 0.15s; }
-    .modal-box input:focus,.modal-box select:focus { border-color:var(--accent); }
-    .modal-box select option { background:var(--surface); }
-    .modal-btns { display:flex; gap:8px; margin-top:4px; }
-    .modal-btns button { flex:1; padding:9px; border:none; border-radius:6px; font-size:13px; font-weight:700; cursor:pointer; transition:all 0.15s; }
-    .modal-confirm { background:var(--accent); color:#fff; }
-    .modal-confirm:hover { background:#4070ee; }
-    .modal-cancel { background:var(--surface2); color:var(--text-muted); border:1px solid var(--border); }
-    .modal-cancel:hover { color:var(--text); }
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 12, 18, 0.85);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 300;
+    }
+
+    .modal-overlay.visible {
+      display: flex;
+    }
+
+    .modal-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 24px 28px;
+      width: 340px;
+      box-shadow: var(--shadow);
+    }
+
+    .modal-box h3 {
+      font-family: var(--font-mono);
+      font-size: 15px;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+
+    .modal-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 5px;
+      display: block;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+    }
+
+    .modal-box input,
+    .modal-box select {
+      width: 100%;
+      padding: 8px 10px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      color: var(--text);
+      font-size: 13px;
+      font-family: var(--font-mono);
+      outline: none;
+      margin-bottom: 10px;
+      transition: border-color 0.15s;
+    }
+
+    .modal-box input:focus,
+    .modal-box select:focus {
+      border-color: var(--accent);
+    }
+
+    .modal-box select option {
+      background: var(--surface);
+    }
+
+    .modal-btns {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .modal-btns button {
+      flex: 1;
+      padding: 9px;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .modal-confirm {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .modal-confirm:hover {
+      background: #4070ee;
+    }
+
+    .modal-cancel {
+      background: var(--surface2);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+
+    .modal-cancel:hover {
+      color: var(--text);
+    }
 
     /* TOAST */
-    #toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--surface2); border:1px solid var(--border); color:var(--text); padding:8px 18px; border-radius:20px; font-size:12px; opacity:0; transition:all 0.25s; z-index:500; pointer-events:none; white-space:nowrap; }
-    #toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 18px;
+      border-radius: 20px;
+      font-size: 12px;
+      opacity: 0;
+      transition: all 0.25s;
+      z-index: 500;
+      pointer-events: none;
+      white-space: nowrap;
+    }
 
-    ::-webkit-scrollbar { width:5px; }
-    ::-webkit-scrollbar-track { background:transparent; }
-    ::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+    #toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    ::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 3px;
+    }
   </style>
 </head>
+
 <body>
-<div id="app-shell">
+  <div id="app-shell">
 
-  <div id="topbar">
-    <span class="logo-text">Code<span>Forge</span></span>
-    <div class="mode-toggle">
-      <button class="mode-btn active" id="modeSolo">Solo</button>
-      <button class="mode-btn" id="modeTeam">Team</button>
-    </div>
-    <div class="lang-pills">
-      <button class="lang-pill active" data-lang="python">Python</button>
-      <button class="lang-pill" data-lang="cpp">C++</button>
-      <button class="lang-pill" data-lang="c">C</button>
-      <button class="lang-pill" data-lang="java">Java</button>
-    </div>
-    <div class="topbar-sep"></div>
-    <button class="topbar-btn save" id="topbarSaveBtn">💾 Save</button>
-    <button class="topbar-btn" id="topbarExportBtn">⬇ Export</button>
-    <button class="topbar-btn" id="topbarFilesBtn">📁 Files</button>
-    <div class="topbar-sep"></div>
-    <a href="landing.html" class="topbar-btn">Home</a>
-    <a href="documentation.html" class="topbar-btn">Docs</a>
-    <div class="topbar-sep"></div>
-    <div id="authArea">
-      <button id="signInBtn">🔑 Sign In</button>
-      <div id="userInfo">
-        <img class="user-avatar" id="userAvatar" src="" alt="avatar" style="display:none">
-        <span class="user-name" id="userName"></span>
-        <button id="signOutBtn">Sign out</button>
+    <div id="topbar">
+      <span class="logo-text">Code<span>Forge</span></span>
+      <div class="mode-toggle">
+        <button class="mode-btn active" id="modeSolo">Solo</button>
+        <button class="mode-btn" id="modeTeam">Team</button>
       </div>
-    </div>
-    <div id="room-bar">
-      <span id="editor-status"></span>
-      <span class="room-badge" id="roomIdBadge">Room: —</span>
-      <button id="leaveBtn">Leave</button>
-    </div>
-    <button id="runBtn">▶ Run</button>
-  </div>
-
-  <div id="current-file-bar">
-    <span>📄</span>
-    <span id="current-file-name">Untitled</span>
-    <span id="save-indicator">● Unsaved</span>
-    <button class="topbar-btn" id="inlineCloseFileBtn" style="margin-left:auto;font-size:10px;padding:2px 7px;">✕ Close</button>
-  </div>
-
-  <div id="main-area">
-    <div id="left-panel">
-      <div class="panel-tabs" id="panelTabs" style="display:none;">
-        <button class="panel-tab active" id="tabMembers">Members</button>
-        <button class="panel-tab" id="tabFiles">Files</button>
+      <div class="lang-pills">
+        <button class="lang-pill active" data-lang="python">Python</button>
+        <button class="lang-pill" data-lang="cpp">C++</button>
+        <button class="lang-pill" data-lang="c">C</button>
+        <button class="lang-pill" data-lang="java">Java</button>
       </div>
-      <div class="panel-tab-content active" id="membersTabContent">
-        <div class="panel-section">
-          <div class="panel-title">Members</div>
-          <div id="membersList"></div>
+      <div class="topbar-sep"></div>
+      <button class="topbar-btn save" id="topbarSaveBtn">💾 Save</button>
+      <button class="topbar-btn" id="topbarExportBtn">⬇ Export</button>
+      <button class="topbar-btn" id="topbarFilesBtn">📁 Files</button>
+      <div class="topbar-sep"></div>
+      <a href="index.html" class="topbar-btn">Home</a>
+      <a href="documentation.html" class="topbar-btn">Docs</a>
+      <div class="topbar-sep"></div>
+      <div id="authArea">
+        <button id="signInBtn">🔑 Sign In</button>
+        <div id="userInfo">
+          <img class="user-avatar" id="userAvatar" src="" alt="avatar" style="display:none">
+          <span class="user-name" id="userName"></span>
+          <button id="signOutBtn">Sign out</button>
         </div>
-        <div class="panel-section">
-          <div id="requestSection"></div>
-          <div id="notifBanner">
-            <div id="notifText" style="font-size:11px;line-height:1.4"></div>
-            <div class="banner-btns">
-              <button class="bbtn yes" id="grantBtn">Grant</button>
-              <button class="bbtn no"  id="denyBtn">Deny</button>
+      </div>
+      <div id="room-bar">
+        <span id="editor-status"></span>
+        <span class="room-badge" id="roomIdBadge">Room: —</span>
+        <button id="leaveBtn">Leave</button>
+      </div>
+      <button id="runBtn">▶ Run</button>
+    </div>
+
+    <div id="current-file-bar">
+      <span>📄</span>
+      <span id="current-file-name">Untitled</span>
+      <span id="save-indicator">● Unsaved</span>
+      <button class="topbar-btn" id="inlineCloseFileBtn" style="margin-left:auto;font-size:10px;padding:2px 7px;">✕
+        Close</button>
+    </div>
+
+    <div id="main-area">
+      <div id="left-panel">
+        <div class="panel-tabs" id="panelTabs" style="display:none;">
+          <button class="panel-tab active" id="tabMembers">Members</button>
+          <button class="panel-tab" id="tabFiles">Files</button>
+        </div>
+        <div class="panel-tab-content active" id="membersTabContent">
+          <div class="panel-section">
+            <div class="panel-title">Members</div>
+            <div id="membersList"></div>
+          </div>
+          <div class="panel-section">
+            <div id="requestSection"></div>
+            <div id="notifBanner">
+              <div id="notifText" style="font-size:11px;line-height:1.4"></div>
+              <div class="banner-btns">
+                <button class="bbtn yes" id="grantBtn">Grant</button>
+                <button class="bbtn no" id="denyBtn">Deny</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="panel-tab-content" id="filesTabContent">
+          <div id="files-panel">
+            <div class="files-toolbar">
+              <button class="btn-newfile" id="newFileBtn">+ File</button>
+              <button id="newFolderBtn">+ Folder</button>
+              <button class="btn-export" id="exportAllBtn">↓ All</button>
+              <button id="refreshFilesBtn">↺</button>
+            </div>
+            <div class="files-tree" id="filesTree">
+              <div class="files-notice">Loading…</div>
             </div>
           </div>
         </div>
       </div>
-      <div class="panel-tab-content" id="filesTabContent">
-        <div id="files-panel">
-          <div class="files-toolbar">
-            <button class="btn-newfile" id="newFileBtn">+ File</button>
-            <button id="newFolderBtn">+ Folder</button>
-            <button class="btn-export" id="exportAllBtn">↓ All</button>
-            <button id="refreshFilesBtn">↺</button>
+
+      <div id="editor-panel">
+        <div id="stdin-bar">
+          <label>stdin:</label>
+          <div id="stdin-wrap">
+            <textarea id="stdinInput" rows="2"
+              placeholder="Pre-run input — use Enter for multiple lines (e.g. 2↵Alice↵101↵85)"
+              autocomplete="off"></textarea>
+            <span id="stdin-hint">Each line = one input value · press Enter to separate</span>
           </div>
-          <div class="files-tree" id="filesTree"><div class="files-notice">Loading…</div></div>
+        </div>
+        <div class="cm-wrapper">
+          <div id="lockOverlay"><span id="lockMsg">🔒 Another member is editing</span></div>
+          <textarea id="editor"></textarea>
+        </div>
+        <div id="output-panel">
+          <div class="output-header">
+            <span class="output-label">Output</span>
+            <button id="clearOutputBtn">Clear</button>
+          </div>
+          <pre id="output">// Run your code to see output here</pre>
         </div>
       </div>
-    </div>
 
-    <div id="editor-panel">
-      <div id="stdin-bar">
-        <label>stdin:</label>
-        <div id="stdin-wrap">
-          <textarea id="stdinInput" rows="2"
-            placeholder="Pre-run input — use Enter for multiple lines (e.g. 2↵Alice↵101↵85)"
-            autocomplete="off"></textarea>
-          <span id="stdin-hint">Each line = one input value · press Enter to separate</span>
+      <div id="right-panel">
+        <div class="rp-header">
+          <div class="rp-title">Live Video</div>
         </div>
+        <div class="video-grid" id="videoGrid"></div>
       </div>
-      <div class="cm-wrapper">
-        <div id="lockOverlay"><span id="lockMsg">🔒 Another member is editing</span></div>
-        <textarea id="editor"></textarea>
+    </div>
+
+    <div id="media-bar">
+      <button class="tool-btn on" id="micBtn">🎙 Mic On</button>
+      <button class="tool-btn on" id="camBtn">📹 Cam On</button>
+    </div>
+  </div>
+
+  <!-- LOBBY -->
+  <div id="lobby">
+    <div class="lobby-card">
+      <h2>CodeForge — Team Room</h2>
+      <p>Create a room or join an existing one.</p>
+      <div class="tabs">
+        <button class="tab-btn active" id="tabBtnCreate">Create Room</button>
+        <button class="tab-btn" id="tabBtnJoin">Join Room</button>
       </div>
-      <div id="output-panel">
-        <div class="output-header">
-          <span class="output-label">Output</span>
-          <button id="clearOutputBtn">Clear</button>
+      <div class="tab-panel active" id="tab-create">
+        <div class="field"><label>Your Name</label><input id="createName" type="text" placeholder="e.g. Alex"
+            autocomplete="off" maxlength="32" /></div>
+        <div class="field">
+          <label>Room Password <span style="color:#6b7a99;font-weight:normal">(optional)</span></label>
+          <input id="createPassword" type="password" placeholder="Leave blank for open room" maxlength="128" />
+          <div class="hint">Teammates must enter this to join.</div>
         </div>
-        <pre id="output">// Run your code to see output here</pre>
+        <button class="btn-main" id="createRoomBtn">Create Room</button>
+        <div class="share-box" id="shareBox">
+          <strong>Room created! Share this link:</strong>
+          <div class="share-url" id="shareUrl"></div>
+          <div style="font-size:11px;color:#6b7a99;margin-top:6px">Click URL to copy · Then click Enter below</div>
+          <button class="btn-main" style="margin-top:10px" id="enterRoomBtn">Enter Room →</button>
+        </div>
+        <div class="lobby-error" id="createError"></div>
+      </div>
+      <div class="tab-panel" id="tab-join">
+        <div class="field"><label>Your Name</label><input id="joinName" type="text" placeholder="e.g. Jordan"
+            autocomplete="off" maxlength="32" /></div>
+        <div class="field"><label>Room ID</label><input id="joinRoomId" type="text" placeholder="Paste room ID here"
+            autocomplete="off" /></div>
+        <div class="field">
+          <label>Password <span style="color:#6b7a99;font-weight:normal">(if required)</span></label>
+          <input id="joinPassword" type="password" placeholder="Leave blank if none" maxlength="128" />
+        </div>
+        <button class="btn-main" id="joinRoomBtn">Join Room</button>
+        <div class="lobby-error" id="joinError"></div>
       </div>
     </div>
-
-    <div id="right-panel">
-      <div class="rp-header"><div class="rp-title">Live Video</div></div>
-      <div class="video-grid" id="videoGrid"></div>
-    </div>
   </div>
 
-  <div id="media-bar">
-    <button class="tool-btn on" id="micBtn">🎙 Mic On</button>
-    <button class="tool-btn on" id="camBtn">📹 Cam On</button>
-  </div>
-</div>
-
-<!-- LOBBY -->
-<div id="lobby">
-  <div class="lobby-card">
-    <h2>CodeForge — Team Room</h2>
-    <p>Create a room or join an existing one.</p>
-    <div class="tabs">
-      <button class="tab-btn active" id="tabBtnCreate">Create Room</button>
-      <button class="tab-btn" id="tabBtnJoin">Join Room</button>
-    </div>
-    <div class="tab-panel active" id="tab-create">
-      <div class="field"><label>Your Name</label><input id="createName" type="text" placeholder="e.g. Alex" autocomplete="off" maxlength="32"/></div>
-      <div class="field">
-        <label>Room Password <span style="color:#6b7a99;font-weight:normal">(optional)</span></label>
-        <input id="createPassword" type="password" placeholder="Leave blank for open room" maxlength="128"/>
-        <div class="hint">Teammates must enter this to join.</div>
+  <!-- NEW FILE MODAL -->
+  <div class="modal-overlay" id="newFileModal">
+    <div class="modal-box">
+      <h3>📄 New File</h3>
+      <label class="modal-label">File name</label>
+      <input id="newFileName" type="text" placeholder="e.g. solution.py" autocomplete="off" />
+      <label class="modal-label">Language</label>
+      <select id="newFileLang">
+        <option value="python">Python</option>
+        <option value="cpp">C++</option>
+        <option value="c">C</option>
+        <option value="java">Java</option>
+      </select>
+      <label class="modal-label">Folder <span
+          style="font-weight:normal;color:var(--text-muted)">(optional)</span></label>
+      <select id="newFileFolder">
+        <option value="">— Root —</option>
+      </select>
+      <div class="modal-btns">
+        <button class="modal-cancel" id="newFileCancel">Cancel</button>
+        <button class="modal-confirm" id="newFileConfirm">Create</button>
       </div>
-      <button class="btn-main" id="createRoomBtn">Create Room</button>
-      <div class="share-box" id="shareBox">
-        <strong>Room created! Share this link:</strong>
-        <div class="share-url" id="shareUrl"></div>
-        <div style="font-size:11px;color:#6b7a99;margin-top:6px">Click URL to copy · Then click Enter below</div>
-        <button class="btn-main" style="margin-top:10px" id="enterRoomBtn">Enter Room →</button>
+    </div>
+  </div>
+
+  <!-- NEW FOLDER MODAL -->
+  <div class="modal-overlay" id="newFolderModal">
+    <div class="modal-box">
+      <h3>📁 New Folder</h3>
+      <label class="modal-label">Folder name</label>
+      <input id="newFolderName" type="text" placeholder="e.g. Projects" autocomplete="off" />
+      <div class="modal-btns">
+        <button class="modal-cancel" id="newFolderCancel">Cancel</button>
+        <button class="modal-confirm" id="newFolderConfirm">Create</button>
       </div>
-      <div class="lobby-error" id="createError"></div>
     </div>
-    <div class="tab-panel" id="tab-join">
-      <div class="field"><label>Your Name</label><input id="joinName" type="text" placeholder="e.g. Jordan" autocomplete="off" maxlength="32"/></div>
-      <div class="field"><label>Room ID</label><input id="joinRoomId" type="text" placeholder="Paste room ID here" autocomplete="off"/></div>
-      <div class="field">
-        <label>Password <span style="color:#6b7a99;font-weight:normal">(if required)</span></label>
-        <input id="joinPassword" type="password" placeholder="Leave blank if none" maxlength="128"/>
+  </div>
+
+  <!-- RENAME MODAL -->
+  <div class="modal-overlay" id="renameModal">
+    <div class="modal-box">
+      <h3 id="renameTitle">Rename</h3>
+      <label class="modal-label">New name</label>
+      <input id="renameInput" type="text" autocomplete="off" />
+      <div class="modal-btns">
+        <button class="modal-cancel" id="renameCancel">Cancel</button>
+        <button class="modal-confirm" id="renameConfirm">Rename</button>
       </div>
-      <button class="btn-main" id="joinRoomBtn">Join Room</button>
-      <div class="lobby-error" id="joinError"></div>
     </div>
   </div>
-</div>
 
-<!-- NEW FILE MODAL -->
-<div class="modal-overlay" id="newFileModal">
-  <div class="modal-box">
-    <h3>📄 New File</h3>
-    <label class="modal-label">File name</label>
-    <input id="newFileName" type="text" placeholder="e.g. solution.py" autocomplete="off"/>
-    <label class="modal-label">Language</label>
-    <select id="newFileLang">
-      <option value="python">Python</option>
-      <option value="cpp">C++</option>
-      <option value="c">C</option>
-      <option value="java">Java</option>
-    </select>
-    <label class="modal-label">Folder <span style="font-weight:normal;color:var(--text-muted)">(optional)</span></label>
-    <select id="newFileFolder"><option value="">— Root —</option></select>
-    <div class="modal-btns">
-      <button class="modal-cancel" id="newFileCancel">Cancel</button>
-      <button class="modal-confirm" id="newFileConfirm">Create</button>
-    </div>
-  </div>
-</div>
+  <div id="toast"></div>
 
-<!-- NEW FOLDER MODAL -->
-<div class="modal-overlay" id="newFolderModal">
-  <div class="modal-box">
-    <h3>📁 New Folder</h3>
-    <label class="modal-label">Folder name</label>
-    <input id="newFolderName" type="text" placeholder="e.g. Projects" autocomplete="off"/>
-    <div class="modal-btns">
-      <button class="modal-cancel" id="newFolderCancel">Cancel</button>
-      <button class="modal-confirm" id="newFolderConfirm">Create</button>
-    </div>
-  </div>
-</div>
+  <script>
+    // ════════════════════════════════════════════════════════
+    //  CONSTANTS
+    // ════════════════════════════════════════════════════════
+    const LANG_MODE = { python: 'python', cpp: 'text/x-c++src', c: 'text/x-csrc', java: 'text/x-java' };
+    const LANG_EXT = { python: '.py', cpp: '.cpp', c: '.c', java: '.java' };
+    const LANG_ICON = { python: '🐍', cpp: '⚙️', c: '🔧', java: '☕' };
+    const STARTER = {
+      python: '# Python\nprint("Hello, World!")\n',
+      cpp: '#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "Hello, World!" << endl;\n    return 0;\n}\n',
+      c: '#include <stdio.h>\n\nint main() {\n    printf("Hello, World!\\n");\n    return 0;\n}\n',
+      java: 'public class Main {\n    public static void main(String[] args) {\n        System.out.println("Hello, World!");\n    }\n}\n',
+    };
 
-<!-- RENAME MODAL -->
-<div class="modal-overlay" id="renameModal">
-  <div class="modal-box">
-    <h3 id="renameTitle">Rename</h3>
-    <label class="modal-label">New name</label>
-    <input id="renameInput" type="text" autocomplete="off"/>
-    <div class="modal-btns">
-      <button class="modal-cancel" id="renameCancel">Cancel</button>
-      <button class="modal-confirm" id="renameConfirm">Rename</button>
-    </div>
-  </div>
-</div>
+    const ICE_CFG = {
+      iceServers: [
+        { urls: 'stun:stun.l.google.com:19302' },
+        { urls: 'stun:stun1.l.google.com:19302' },
+        { urls: 'stun:stun2.l.google.com:19302' },
+        { urls: 'stun:stun3.l.google.com:19302' },
+      ]
+    };
 
-<div id="toast"></div>
+    // ════════════════════════════════════════════════════════
+    //  FIREBASE
+    // ════════════════════════════════════════════════════════
+    let db = null, fbAuth = null, currentUser = null;
 
-<script>
-// ════════════════════════════════════════════════════════
-//  CONSTANTS
-// ════════════════════════════════════════════════════════
-const LANG_MODE = { python:'python', cpp:'text/x-c++src', c:'text/x-csrc', java:'text/x-java' };
-const LANG_EXT  = { python:'.py', cpp:'.cpp', c:'.c', java:'.java' };
-const LANG_ICON = { python:'🐍', cpp:'⚙️', c:'🔧', java:'☕' };
-const STARTER   = {
-  python: '# Python\nprint("Hello, World!")\n',
-  cpp:    '#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "Hello, World!" << endl;\n    return 0;\n}\n',
-  c:      '#include <stdio.h>\n\nint main() {\n    printf("Hello, World!\\n");\n    return 0;\n}\n',
-  java:   'public class Main {\n    public static void main(String[] args) {\n        System.out.println("Hello, World!");\n    }\n}\n',
-};
-
-const ICE_CFG = {
-  iceServers: [
-    { urls: 'stun:stun.l.google.com:19302'  },
-    { urls: 'stun:stun1.l.google.com:19302' },
-    { urls: 'stun:stun2.l.google.com:19302' },
-    { urls: 'stun:stun3.l.google.com:19302' },
-  ]
-};
-
-// ════════════════════════════════════════════════════════
-//  FIREBASE
-// ════════════════════════════════════════════════════════
-let db = null, fbAuth = null, currentUser = null;
-
-async function initFirebase() {
-  try {
-    const cfg = await fetch('/api/firebase-config').then(r => r.json());
-    if (!firebase.apps.length) firebase.initializeApp(cfg);
-    fbAuth = firebase.auth();
-    db     = firebase.firestore();
-    fbAuth.onAuthStateChanged(user => { currentUser = user; updateAuthUI(user); loadFileTree(); });
-  } catch(e) { console.warn('Firebase init failed:', e.message); }
-}
-
-function updateAuthUI(user) {
-  if (user) {
-    document.getElementById('signInBtn').style.display = 'none';
-    document.getElementById('userInfo').classList.add('visible');
-    const av = document.getElementById('userAvatar');
-    if (user.photoURL) { av.src = user.photoURL; av.style.display = 'block'; }
-    document.getElementById('userName').textContent = user.displayName || user.email || 'User';
-  } else {
-    document.getElementById('signInBtn').style.display = '';
-    document.getElementById('userInfo').classList.remove('visible');
-  }
-}
-
-async function signInWithGoogle() {
-  if (!fbAuth) { toast('Firebase not ready', 'var(--error)'); return; }
-  try {
-    await fbAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
-    toast('✓ Signed in!', 'var(--success)');
-  } catch(e) { toast('Sign-in failed: ' + e.message, 'var(--error)'); }
-}
-
-async function signOutUser() {
-  if (!fbAuth) return;
-  await fbAuth.signOut();
-  fsFolders = []; fsFiles = [];
-  openFileId = null; openFileName = null; filesDirty = false;
-  hideCurrentFileBar();
-  toast('Signed out');
-}
-
-// ════════════════════════════════════════════════════════
-//  APP STATE
-// ════════════════════════════════════════════════════════
-let appMode = 'solo', currentLang = 'python', cmEditor = null, suppressSync = false;
-let socket = null, mySocketId = null, myName = '', myIsHost = false;
-let roomId = '', editorOwner = null;
-let micOn = true, camOn = true;
-let myStream = null;
-let peers = {};
-let roomUsers = [];
-let pendingRequest = null, pendingHostToken = null, pendingRoomId = null;
-let fsFolders = [], fsFiles = [], openFileId = null, openFileName = null, filesDirty = false;
-let expandedFolderIds = new Set(), filesPanelOpen = false;
-
-// ════════════════════════════════════════════════════════
-//  UTILS
-// ════════════════════════════════════════════════════════
-let _toastTimer;
-function toast(msg, color) {
-  const el = document.getElementById('toast');
-  el.textContent = msg; el.style.borderColor = color || 'var(--border)';
-  el.classList.add('show'); clearTimeout(_toastTimer);
-  _toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
-}
-function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function escAttr(s) { return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
-
-// ════════════════════════════════════════════════════════
-//  CODEMIRROR
-// ════════════════════════════════════════════════════════
-function destroyEditor() {
-  if (!cmEditor) return;
-  const wrap  = cmEditor.getWrapperElement();
-  const fresh = document.createElement('textarea');
-  fresh.id = 'editor';
-  wrap.parentNode.replaceChild(fresh, wrap);
-  cmEditor = null;
-}
-
-function initEditor(initialCode) {
-  destroyEditor();
-  cmEditor = CodeMirror.fromTextArea(document.getElementById('editor'), {
-    lineNumbers: true, mode: LANG_MODE[currentLang] || 'python',
-    theme: 'dracula', indentUnit: 4, tabSize: 4, indentWithTabs: false, lineWrapping: true,
-  });
-  suppressSync = true;
-  cmEditor.setValue(initialCode !== undefined ? initialCode : STARTER[currentLang]);
-  suppressSync = false;
-  cmEditor.setSize('100%', '100%');
-  cmEditor.on('change', () => {
-    if (suppressSync) return;
-    if (appMode === 'team' && editorOwner !== mySocketId) return;
-    if (appMode === 'team' && socket) socket.emit('code-change', { code: cmEditor.getValue() });
-    if (openFileId) markDirty(true);
-  });
-}
-
-function setLanguage(lang) {
-  const prev = currentLang; currentLang = lang;
-  if (cmEditor) {
-    cmEditor.setOption('mode', LANG_MODE[lang] || 'python');
-    const cur = cmEditor.getValue();
-    if (!cur.trim() || cur === STARTER[prev]) {
-      suppressSync = true; cmEditor.setValue(STARTER[lang]); suppressSync = false;
+    async function initFirebase() {
+      try {
+        const cfg = await fetch('/api/firebase-config').then(r => r.json());
+        if (!firebase.apps.length) firebase.initializeApp(cfg);
+        fbAuth = firebase.auth();
+        db = firebase.firestore();
+        fbAuth.onAuthStateChanged(user => { currentUser = user; updateAuthUI(user); loadFileTree(); });
+      } catch (e) { console.warn('Firebase init failed:', e.message); }
     }
-  }
-  document.querySelectorAll('.lang-pill').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
-  const s = document.getElementById('newFileLang'); if (s) s.value = lang;
-}
 
-function applyRemoteCode(code) {
-  if (!cmEditor) return;
-  suppressSync = true;
-  const cur = cmEditor.getCursor(), sc = cmEditor.getScrollInfo();
-  cmEditor.setValue(code); cmEditor.setCursor(cur); cmEditor.scrollTo(sc.left, sc.top);
-  suppressSync = false;
-}
+    function updateAuthUI(user) {
+      if (user) {
+        document.getElementById('signInBtn').style.display = 'none';
+        document.getElementById('userInfo').classList.add('visible');
+        const av = document.getElementById('userAvatar');
+        if (user.photoURL) { av.src = user.photoURL; av.style.display = 'block'; }
+        document.getElementById('userName').textContent = user.displayName || user.email || 'User';
+      } else {
+        document.getElementById('signInBtn').style.display = '';
+        document.getElementById('userInfo').classList.remove('visible');
+      }
+    }
 
-// ════════════════════════════════════════════════════════
-//  DIRTY / FILE BAR
-// ════════════════════════════════════════════════════════
-function markDirty(d) {
-  filesDirty = d;
-  const el = document.getElementById('save-indicator');
-  if (el) { el.textContent = d ? '● Unsaved' : '✓ Saved'; el.className = d ? 'unsaved' : ''; }
-}
-function showCurrentFileBar(name) { document.getElementById('current-file-name').textContent = name; document.getElementById('current-file-bar').classList.add('visible'); }
-function hideCurrentFileBar()      { document.getElementById('current-file-bar').classList.remove('visible'); }
+    async function signInWithGoogle() {
+      if (!fbAuth) { toast('Firebase not ready', 'var(--error)'); return; }
+      try {
+        await fbAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+        toast('✓ Signed in!', 'var(--success)');
+      } catch (e) { toast('Sign-in failed: ' + e.message, 'var(--error)'); }
+    }
 
-// ════════════════════════════════════════════════════════
-//  FIRESTORE HELPERS
-// ════════════════════════════════════════════════════════
-function filesRef()   { return db.collection(`users/${currentUser.uid}/files`); }
-function foldersRef() { return db.collection(`users/${currentUser.uid}/folders`); }
-function tsNow()      { return firebase.firestore.FieldValue.serverTimestamp(); }
+    async function signOutUser() {
+      if (!fbAuth) return;
+      await fbAuth.signOut();
+      fsFolders = []; fsFiles = [];
+      openFileId = null; openFileName = null; filesDirty = false;
+      hideCurrentFileBar();
+      toast('Signed out');
+    }
 
-// ════════════════════════════════════════════════════════
-//  FILE TREE
-// ════════════════════════════════════════════════════════
-async function loadFileTree() {
-  const tree = document.getElementById('filesTree');
-  if (!currentUser) {
-    tree.innerHTML = `<div class="files-notice">
+    // ════════════════════════════════════════════════════════
+    //  APP STATE
+    // ════════════════════════════════════════════════════════
+    let appMode = 'solo', currentLang = 'python', cmEditor = null, suppressSync = false;
+    let socket = null, mySocketId = null, myName = '', myIsHost = false;
+    let roomId = '', editorOwner = null;
+    let micOn = true, camOn = true;
+    let myStream = null;
+    let peers = {};
+    let roomUsers = [];
+    let pendingRequest = null, pendingHostToken = null, pendingRoomId = null;
+    let fsFolders = [], fsFiles = [], openFileId = null, openFileName = null, filesDirty = false;
+    let expandedFolderIds = new Set(), filesPanelOpen = false;
+
+    // ════════════════════════════════════════════════════════
+    //  UTILS
+    // ════════════════════════════════════════════════════════
+    let _toastTimer;
+    function toast(msg, color) {
+      const el = document.getElementById('toast');
+      el.textContent = msg; el.style.borderColor = color || 'var(--border)';
+      el.classList.add('show'); clearTimeout(_toastTimer);
+      _toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
+    }
+    function escHtml(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+    function escAttr(s) { return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;'); }
+
+    // ════════════════════════════════════════════════════════
+    //  CODEMIRROR
+    // ════════════════════════════════════════════════════════
+    function destroyEditor() {
+      if (!cmEditor) return;
+      const wrap = cmEditor.getWrapperElement();
+      const fresh = document.createElement('textarea');
+      fresh.id = 'editor';
+      wrap.parentNode.replaceChild(fresh, wrap);
+      cmEditor = null;
+    }
+
+    function initEditor(initialCode) {
+      destroyEditor();
+      cmEditor = CodeMirror.fromTextArea(document.getElementById('editor'), {
+        lineNumbers: true, mode: LANG_MODE[currentLang] || 'python',
+        theme: 'dracula', indentUnit: 4, tabSize: 4, indentWithTabs: false, lineWrapping: true,
+      });
+      suppressSync = true;
+      cmEditor.setValue(initialCode !== undefined ? initialCode : STARTER[currentLang]);
+      suppressSync = false;
+      cmEditor.setSize('100%', '100%');
+      cmEditor.on('change', () => {
+        if (suppressSync) return;
+        if (appMode === 'team' && editorOwner !== mySocketId) return;
+        if (appMode === 'team' && socket) socket.emit('code-change', { code: cmEditor.getValue() });
+        if (openFileId) markDirty(true);
+      });
+    }
+
+    function setLanguage(lang) {
+      const prev = currentLang; currentLang = lang;
+      if (cmEditor) {
+        cmEditor.setOption('mode', LANG_MODE[lang] || 'python');
+        const cur = cmEditor.getValue();
+        if (!cur.trim() || cur === STARTER[prev]) {
+          suppressSync = true; cmEditor.setValue(STARTER[lang]); suppressSync = false;
+        }
+      }
+      document.querySelectorAll('.lang-pill').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
+      const s = document.getElementById('newFileLang'); if (s) s.value = lang;
+    }
+
+    function applyRemoteCode(code) {
+      if (!cmEditor) return;
+      suppressSync = true;
+      const cur = cmEditor.getCursor(), sc = cmEditor.getScrollInfo();
+      cmEditor.setValue(code); cmEditor.setCursor(cur); cmEditor.scrollTo(sc.left, sc.top);
+      suppressSync = false;
+    }
+
+    // ════════════════════════════════════════════════════════
+    //  DIRTY / FILE BAR
+    // ════════════════════════════════════════════════════════
+    function markDirty(d) {
+      filesDirty = d;
+      const el = document.getElementById('save-indicator');
+      if (el) { el.textContent = d ? '● Unsaved' : '✓ Saved'; el.className = d ? 'unsaved' : ''; }
+    }
+    function showCurrentFileBar(name) { document.getElementById('current-file-name').textContent = name; document.getElementById('current-file-bar').classList.add('visible'); }
+    function hideCurrentFileBar() { document.getElementById('current-file-bar').classList.remove('visible'); }
+
+    // ════════════════════════════════════════════════════════
+    //  FIRESTORE HELPERS
+    // ════════════════════════════════════════════════════════
+    function filesRef() { return db.collection(`users/${currentUser.uid}/files`); }
+    function foldersRef() { return db.collection(`users/${currentUser.uid}/folders`); }
+    function tsNow() { return firebase.firestore.FieldValue.serverTimestamp(); }
+
+    // ════════════════════════════════════════════════════════
+    //  FILE TREE
+    // ════════════════════════════════════════════════════════
+    async function loadFileTree() {
+      const tree = document.getElementById('filesTree');
+      if (!currentUser) {
+        tree.innerHTML = `<div class="files-notice">
       <button class="google-signin-btn" onclick="signInWithGoogle()">
         <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#4285F4" d="M43.6 20H24v8h11.3C33.6 33.1 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3 0 5.7 1.1 7.8 2.9l5.7-5.7C33.9 6.5 29.2 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20c11 0 19.6-7.9 19.6-20 0-1.3-.1-2.7-.3-4h.3z"/></svg>
         Sign in with Google
       </button>
       <div style="font-size:11px">Files stored privately in the cloud.</div>
     </div>`; return;
-  }
-  tree.innerHTML = '<div class="files-notice">Loading…</div>';
-  try {
-    const [fSnap, dSnap] = await Promise.all([
-      foldersRef().orderBy('createdAt').get(),
-      filesRef().orderBy('createdAt').get()
-    ]);
-    fsFolders = fSnap.docs.map(d => ({ _id: d.id, ...d.data() }));
-    fsFiles   = dSnap.docs.map(d => ({ _id: d.id, ...d.data() }));
-    renderFileTree(); populateFolderDropdowns();
-  } catch(e) { tree.innerHTML = `<div class="files-notice" style="color:var(--error)">Load failed.<br><small>${escHtml(e.message)}</small></div>`; }
-}
+      }
+      tree.innerHTML = '<div class="files-notice">Loading…</div>';
+      try {
+        const [fSnap, dSnap] = await Promise.all([
+          foldersRef().orderBy('createdAt').get(),
+          filesRef().orderBy('createdAt').get()
+        ]);
+        fsFolders = fSnap.docs.map(d => ({ _id: d.id, ...d.data() }));
+        fsFiles = dSnap.docs.map(d => ({ _id: d.id, ...d.data() }));
+        renderFileTree(); populateFolderDropdowns();
+      } catch (e) { tree.innerHTML = `<div class="files-notice" style="color:var(--error)">Load failed.<br><small>${escHtml(e.message)}</small></div>`; }
+    }
 
-function renderFileTree() {
-  const tree = document.getElementById('filesTree'); tree.innerHTML = '';
-  const rf  = fsFolders.filter(f => !f.parentId);
-  const rfl = fsFiles.filter(f => !f.folderId);
-  if (!rf.length && !rfl.length) { tree.innerHTML = '<div class="files-notice">No files yet.<br>Click <strong>+ File</strong> to start.</div>'; return; }
-  rf.forEach(f  => tree.appendChild(buildFolderRow(f)));
-  rfl.forEach(f => tree.appendChild(buildFileRow(f)));
-}
+    function renderFileTree() {
+      const tree = document.getElementById('filesTree'); tree.innerHTML = '';
+      const rf = fsFolders.filter(f => !f.parentId);
+      const rfl = fsFiles.filter(f => !f.folderId);
+      if (!rf.length && !rfl.length) { tree.innerHTML = '<div class="files-notice">No files yet.<br>Click <strong>+ File</strong> to start.</div>'; return; }
+      rf.forEach(f => tree.appendChild(buildFolderRow(f)));
+      rfl.forEach(f => tree.appendChild(buildFileRow(f)));
+    }
 
-function buildFolderRow(folder) {
-  const isOpen = expandedFolderIds.has(folder._id);
-  const wrap = document.createElement('div');
-  const row  = document.createElement('div'); row.className = 'folder-row';
-  row.innerHTML = `
+    function buildFolderRow(folder) {
+      const isOpen = expandedFolderIds.has(folder._id);
+      const wrap = document.createElement('div');
+      const row = document.createElement('div'); row.className = 'folder-row';
+      row.innerHTML = `
     <span class="folder-chevron ${isOpen ? 'open' : ''}">▶</span>
     <span class="folder-icon">📁</span>
     <span class="folder-name">${escHtml(folder.name)}</span>
@@ -655,30 +1820,30 @@ function buildFolderRow(folder) {
       <button class="row-act"          data-act="ren-folder" data-id="${folder._id}" data-name="${escAttr(folder.name)}">✎</button>
       <button class="row-act"          data-act="del-folder" data-id="${folder._id}">✕</button>
     </div>`;
-  const children = document.createElement('div'); children.className = 'folder-children'; children.style.display = isOpen ? 'block' : 'none';
-  if (isOpen) {
-    fsFolders.filter(f => f.parentId === folder._id).forEach(sf => children.appendChild(buildFolderRow(sf)));
-    fsFiles.filter(f => f.folderId === folder._id).forEach(f => children.appendChild(buildFileRow(f)));
-  }
-  row.addEventListener('click', async e => {
-    const btn = e.target.closest('[data-act]');
-    if (btn) {
-      e.stopPropagation();
-      const { act, id, name } = btn.dataset;
-      if (act === 'add')        openNewFileModal(id);
-      if (act === 'ren-folder') openRenameModal('folder', id, name);
-      if (act === 'del-folder') await fsDeleteFolder(id, folder.name);
-      return;
+      const children = document.createElement('div'); children.className = 'folder-children'; children.style.display = isOpen ? 'block' : 'none';
+      if (isOpen) {
+        fsFolders.filter(f => f.parentId === folder._id).forEach(sf => children.appendChild(buildFolderRow(sf)));
+        fsFiles.filter(f => f.folderId === folder._id).forEach(f => children.appendChild(buildFileRow(f)));
+      }
+      row.addEventListener('click', async e => {
+        const btn = e.target.closest('[data-act]');
+        if (btn) {
+          e.stopPropagation();
+          const { act, id, name } = btn.dataset;
+          if (act === 'add') openNewFileModal(id);
+          if (act === 'ren-folder') openRenameModal('folder', id, name);
+          if (act === 'del-folder') await fsDeleteFolder(id, folder.name);
+          return;
+        }
+        expandedFolderIds.has(folder._id) ? expandedFolderIds.delete(folder._id) : expandedFolderIds.add(folder._id);
+        renderFileTree();
+      });
+      wrap.appendChild(row); wrap.appendChild(children); return wrap;
     }
-    expandedFolderIds.has(folder._id) ? expandedFolderIds.delete(folder._id) : expandedFolderIds.add(folder._id);
-    renderFileTree();
-  });
-  wrap.appendChild(row); wrap.appendChild(children); return wrap;
-}
 
-function buildFileRow(file) {
-  const row = document.createElement('div'); row.className = 'file-row' + (file._id === openFileId ? ' active' : '');
-  row.innerHTML = `
+    function buildFileRow(file) {
+      const row = document.createElement('div'); row.className = 'file-row' + (file._id === openFileId ? ' active' : '');
+      row.innerHTML = `
     <span class="file-icon">${LANG_ICON[file.language] || '📄'}</span>
     <span class="file-name">${escHtml(file.name)}</span>
     <span class="file-lang-tag">${file.language}</span>
@@ -688,680 +1853,682 @@ function buildFileRow(file) {
       <button class="row-act"          data-act="ren-file" data-id="${file._id}" data-name="${escAttr(file.name)}">✎</button>
       <button class="row-act"          data-act="del-file" data-id="${file._id}">✕</button>
     </div>`;
-  row.addEventListener('click', async e => {
-    const btn = e.target.closest('[data-act]');
-    if (btn) {
-      e.stopPropagation();
-      const { act, id, name } = btn.dataset;
-      if (act === 'open')     await fsOpenFile(id);
-      if (act === 'dl')       await fsDownloadFile(id);
-      if (act === 'ren-file') openRenameModal('file', id, name);
-      if (act === 'del-file') await fsDeleteFile(id, file.name);
-    } else { await fsOpenFile(file._id); }
-  });
-  return row;
-}
-
-// ════════════════════════════════════════════════════════
-//  FILE OPERATIONS
-// ════════════════════════════════════════════════════════
-async function fsOpenFile(fileId) {
-  if (filesDirty && openFileId && !confirm('Unsaved changes. Discard and open?')) return;
-  try {
-    const doc = await filesRef().doc(fileId).get();
-    if (!doc.exists) { toast('File not found', 'var(--error)'); return; }
-    const file = { _id: doc.id, ...doc.data() };
-    openFileId = file._id; openFileName = file.name; currentLang = file.language;
-    document.querySelectorAll('.lang-pill').forEach(b => b.classList.toggle('active', b.dataset.lang === currentLang));
-    if (cmEditor) cmEditor.setOption('mode', LANG_MODE[currentLang]);
-    suppressSync = true; if (cmEditor) cmEditor.setValue(file.content || STARTER[currentLang]); suppressSync = false;
-    markDirty(false); showCurrentFileBar(file.name); renderFileTree();
-    toast(`📄 Opened: ${file.name}`, 'var(--accent3)');
-  } catch(e) { toast('Open failed: ' + e.message, 'var(--error)'); }
-}
-
-async function fsSaveCurrentFile() {
-  if (!currentUser) { toast('Sign in to save', 'var(--accent2)'); return; }
-  if (!openFileId)  { openNewFileModal(null, true); return; }
-  try {
-    await filesRef().doc(openFileId).update({ content: cmEditor ? cmEditor.getValue() : '', language: currentLang, updatedAt: tsNow() });
-    markDirty(false); toast('✓ Saved', 'var(--success)');
-  } catch(e) { toast('Save failed: ' + e.message, 'var(--error)'); }
-}
-
-function exportCurrentToPC() {
-  const code = cmEditor ? cmEditor.getValue() : '', name = openFileName || ('code' + LANG_EXT[currentLang]);
-  const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([code], { type: 'text/plain' })), download: name });
-  a.click(); URL.revokeObjectURL(a.href); toast(`⬇ Downloaded: ${name}`, 'var(--gold)');
-}
-
-async function fsDownloadFile(fileId) {
-  try {
-    const doc = await filesRef().doc(fileId).get(); if (!doc.exists) return; const f = doc.data();
-    const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([f.content || ''], { type: 'text/plain' })), download: f.name });
-    a.click(); URL.revokeObjectURL(a.href); toast(`⬇ ${f.name}`, 'var(--gold)');
-  } catch(e) { toast('Download failed', 'var(--error)'); }
-}
-
-async function exportAllFiles() {
-  if (!currentUser || !fsFiles.length) { toast('No files to export', 'var(--accent2)'); return; }
-  for (const file of fsFiles) {
-    try {
-      const doc = await filesRef().doc(file._id).get(); if (!doc.exists) continue; const f = doc.data();
-      const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([f.content || ''], { type: 'text/plain' })), download: f.name });
-      a.click(); URL.revokeObjectURL(a.href); await new Promise(r => setTimeout(r, 200));
-    } catch {}
-  }
-}
-
-function closeCurrentFile() {
-  if (filesDirty && !confirm('Unsaved changes. Close anyway?')) return;
-  openFileId = null; openFileName = null; filesDirty = false; hideCurrentFileBar(); renderFileTree();
-  suppressSync = true; if (cmEditor) cmEditor.setValue(STARTER[currentLang]); suppressSync = false;
-}
-
-function populateFolderDropdowns() {
-  const sel = document.getElementById('newFileFolder'); if (!sel) return;
-  sel.innerHTML = '<option value="">— Root —</option>';
-  fsFolders.filter(f => !f.parentId).forEach(f => { const o = document.createElement('option'); o.value = f._id; o.textContent = f.name; sel.appendChild(o); });
-}
-
-function openNewFileModal(folderId = null, fromSave = false) {
-  document.getElementById('newFileName').value = '';
-  document.getElementById('newFileLang').value = currentLang;
-  document.getElementById('newFileFolder').value = folderId || '';
-  document.getElementById('newFileModal')._fromSave = fromSave;
-  document.getElementById('newFileModal').classList.add('visible');
-  document.getElementById('newFileName').focus();
-}
-
-async function fsCreateFile() {
-  if (!currentUser) { toast('Sign in first', 'var(--accent2)'); return; }
-  const name     = document.getElementById('newFileName').value.trim();
-  const language = document.getElementById('newFileLang').value;
-  const folderId = document.getElementById('newFileFolder').value || null;
-  const fromSave = document.getElementById('newFileModal')._fromSave;
-  if (!name) { toast('Enter a file name', 'var(--accent2)'); return; }
-  const content = fromSave && cmEditor ? cmEditor.getValue() : STARTER[language];
-  try {
-    const ref = await filesRef().add({ name, language, content, folderId: folderId || null, createdAt: tsNow(), updatedAt: tsNow() });
-    document.getElementById('newFileModal').classList.remove('visible');
-    toast(`📄 Created: ${name}`, 'var(--success)'); await loadFileTree();
-    if (fromSave || !openFileId) await fsOpenFile(ref.id);
-  } catch(e) { toast('Create failed: ' + e.message, 'var(--error)'); }
-}
-
-async function fsCreateFolder() {
-  if (!currentUser) { toast('Sign in first', 'var(--accent2)'); return; }
-  const name = document.getElementById('newFolderName').value.trim();
-  if (!name) { toast('Enter a folder name', 'var(--accent2)'); return; }
-  try {
-    await foldersRef().add({ name, parentId: null, createdAt: tsNow() });
-    document.getElementById('newFolderModal').classList.remove('visible');
-    document.getElementById('newFolderName').value = '';
-    toast(`📁 Created: ${name}`, 'var(--success)'); await loadFileTree();
-  } catch(e) { toast('Create failed: ' + e.message, 'var(--error)'); }
-}
-
-function openRenameModal(type, id, currentName) {
-  const m = document.getElementById('renameModal');
-  document.getElementById('renameTitle').textContent = type === 'folder' ? '📁 Rename Folder' : '📄 Rename File';
-  document.getElementById('renameInput').value = currentName;
-  m._type = type; m._id = id; m.classList.add('visible'); document.getElementById('renameInput').focus();
-}
-
-async function fsDoRename() {
-  const m    = document.getElementById('renameModal');
-  const name = document.getElementById('renameInput').value.trim();
-  if (!name) { toast('Enter a name', 'var(--accent2)'); return; }
-  try {
-    if (m._type === 'folder') await foldersRef().doc(m._id).update({ name });
-    else                      await filesRef().doc(m._id).update({ name, updatedAt: tsNow() });
-    if (m._type === 'file' && m._id === openFileId) { openFileName = name; document.getElementById('current-file-name').textContent = name; }
-    m.classList.remove('visible'); toast(`Renamed to: ${name}`, 'var(--success)'); await loadFileTree();
-  } catch(e) { toast('Rename failed: ' + e.message, 'var(--error)'); }
-}
-
-async function fsDeleteFile(fileId, fileName) {
-  if (!confirm(`Delete "${fileName}"?`)) return;
-  try {
-    await filesRef().doc(fileId).delete();
-    if (fileId === openFileId) closeCurrentFile();
-    toast(`🗑 ${fileName}`, 'var(--accent2)'); await loadFileTree();
-  } catch(e) { toast('Delete failed: ' + e.message, 'var(--error)'); }
-}
-
-async function fsDeleteFolder(folderId, folderName) {
-  if (!confirm(`Delete folder "${folderName}" and ALL its files?`)) return;
-  try {
-    const snap  = await filesRef().where('folderId', '==', folderId).get();
-    const batch = db.batch(); snap.docs.forEach(d => batch.delete(d.ref)); batch.delete(foldersRef().doc(folderId));
-    await batch.commit(); toast(`🗑 ${folderName}`, 'var(--accent2)'); await loadFileTree();
-  } catch(e) { toast('Delete failed: ' + e.message, 'var(--error)'); }
-}
-
-// ════════════════════════════════════════════════════════
-//  PANEL / MODE
-// ════════════════════════════════════════════════════════
-function toggleFilesPanel() {
-  filesPanelOpen = !filesPanelOpen;
-  const panel = document.getElementById('left-panel');
-  if (filesPanelOpen) {
-    panel.classList.add('visible');
-    if (appMode !== 'team') {
-      document.getElementById('panelTabs').style.display = 'none';
-      document.getElementById('membersTabContent').classList.remove('active');
-      document.getElementById('filesTabContent').classList.add('active');
+      row.addEventListener('click', async e => {
+        const btn = e.target.closest('[data-act]');
+        if (btn) {
+          e.stopPropagation();
+          const { act, id, name } = btn.dataset;
+          if (act === 'open') await fsOpenFile(id);
+          if (act === 'dl') await fsDownloadFile(id);
+          if (act === 'ren-file') openRenameModal('file', id, name);
+          if (act === 'del-file') await fsDeleteFile(id, file.name);
+        } else { await fsOpenFile(file._id); }
+      });
+      return row;
     }
-    loadFileTree();
-  } else {
-    if (appMode !== 'team') panel.classList.remove('visible');
-  }
-}
 
-function setMode(mode) {
-  appMode = mode; const isTeam = mode === 'team';
-  document.getElementById('modeTeam').classList.toggle('active', isTeam);
-  document.getElementById('modeSolo').classList.toggle('active', !isTeam);
-  document.getElementById('left-panel').classList.toggle('visible', isTeam || filesPanelOpen);
-  document.getElementById('right-panel').classList.toggle('visible', isTeam);
-  document.getElementById('media-bar').classList.toggle('visible', isTeam);
-  document.getElementById('room-bar').classList.toggle('visible', isTeam);
-  const tabs = document.getElementById('panelTabs');
-  if (isTeam) { tabs.style.display = 'flex'; switchPanelTab('members'); document.getElementById('lobby').classList.add('visible'); }
-  else { tabs.style.display = 'none'; if (socket) performLeave(); document.getElementById('lobby').classList.remove('visible'); document.getElementById('room-bar').classList.remove('visible'); if (!filesPanelOpen) document.getElementById('left-panel').classList.remove('visible'); }
-}
+    // ════════════════════════════════════════════════════════
+    //  FILE OPERATIONS
+    // ════════════════════════════════════════════════════════
+    async function fsOpenFile(fileId) {
+      if (filesDirty && openFileId && !confirm('Unsaved changes. Discard and open?')) return;
+      try {
+        const doc = await filesRef().doc(fileId).get();
+        if (!doc.exists) { toast('File not found', 'var(--error)'); return; }
+        const file = { _id: doc.id, ...doc.data() };
+        openFileId = file._id; openFileName = file.name; currentLang = file.language;
+        document.querySelectorAll('.lang-pill').forEach(b => b.classList.toggle('active', b.dataset.lang === currentLang));
+        if (cmEditor) cmEditor.setOption('mode', LANG_MODE[currentLang]);
+        suppressSync = true; if (cmEditor) cmEditor.setValue(file.content || STARTER[currentLang]); suppressSync = false;
+        markDirty(false); showCurrentFileBar(file.name); renderFileTree();
+        toast(`📄 Opened: ${file.name}`, 'var(--accent3)');
+      } catch (e) { toast('Open failed: ' + e.message, 'var(--error)'); }
+    }
 
-function switchPanelTab(tab) {
-  document.getElementById('tabMembers').classList.toggle('active', tab === 'members');
-  document.getElementById('tabFiles').classList.toggle('active', tab === 'files');
-  document.getElementById('membersTabContent').classList.toggle('active', tab === 'members');
-  document.getElementById('filesTabContent').classList.toggle('active', tab === 'files');
-  if (tab === 'files') loadFileTree();
-}
+    async function fsSaveCurrentFile() {
+      if (!currentUser) { toast('Sign in to save', 'var(--accent2)'); return; }
+      if (!openFileId) { openNewFileModal(null, true); return; }
+      try {
+        await filesRef().doc(openFileId).update({ content: cmEditor ? cmEditor.getValue() : '', language: currentLang, updatedAt: tsNow() });
+        markDirty(false); toast('✓ Saved', 'var(--success)');
+      } catch (e) { toast('Save failed: ' + e.message, 'var(--error)'); }
+    }
 
-// ════════════════════════════════════════════════════════
-//  RUN CODE
-// ════════════════════════════════════════════════════════
-async function runCode() {
-  const code = cmEditor ? cmEditor.getValue().trim() : '';
-  const out  = document.getElementById('output'), btn = document.getElementById('runBtn');
-  if (!code) { toast('No code to run'); return; }
+    function exportCurrentToPC() {
+      const code = cmEditor ? cmEditor.getValue() : '', name = openFileName || ('code' + LANG_EXT[currentLang]);
+      const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([code], { type: 'text/plain' })), download: name });
+      a.click(); URL.revokeObjectURL(a.href); toast(`⬇ Downloaded: ${name}`, 'var(--gold)');
+    }
 
-  // Ensure trailing newline so scanf/input() doesn't hang
-  const stdinRaw = document.getElementById('stdinInput').value;
-  const stdin    = stdinRaw ? (stdinRaw.endsWith('\n') ? stdinRaw : stdinRaw + '\n') : '';
+    async function fsDownloadFile(fileId) {
+      try {
+        const doc = await filesRef().doc(fileId).get(); if (!doc.exists) return; const f = doc.data();
+        const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([f.content || ''], { type: 'text/plain' })), download: f.name });
+        a.click(); URL.revokeObjectURL(a.href); toast(`⬇ ${f.name}`, 'var(--gold)');
+      } catch (e) { toast('Download failed', 'var(--error)'); }
+    }
 
-  btn.disabled = true; btn.textContent = '⏳';
-  out.textContent = 'Running…'; out.className = ''; out.style.borderTop = '';
-  try {
-    const res  = await fetch('/api/run', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code, language: currentLang, stdin }) });
-    const text = await res.text();
-    out.innerHTML = escHtml(text || '(No output)');
-    out.className = res.ok ? '' : 'has-error';
-    out.style.borderTop = `2px solid var(--${res.ok ? 'success' : 'error'})`;
-  } catch(e) { out.innerHTML = escHtml('❌ Could not reach the server.'); out.className = 'has-error'; out.style.borderTop = '2px solid var(--error)'; }
-  finally { btn.disabled = false; btn.textContent = '▶ Run'; }
-}
+    async function exportAllFiles() {
+      if (!currentUser || !fsFiles.length) { toast('No files to export', 'var(--accent2)'); return; }
+      for (const file of fsFiles) {
+        try {
+          const doc = await filesRef().doc(file._id).get(); if (!doc.exists) continue; const f = doc.data();
+          const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([f.content || ''], { type: 'text/plain' })), download: f.name });
+          a.click(); URL.revokeObjectURL(a.href); await new Promise(r => setTimeout(r, 200));
+        } catch { }
+      }
+    }
 
-// ════════════════════════════════════════════════════════
-//  LOBBY
-// ════════════════════════════════════════════════════════
-function switchLobbyTab(tab) {
-  const c = tab === 'create';
-  document.getElementById('tabBtnCreate').classList.toggle('active', c);
-  document.getElementById('tabBtnJoin').classList.toggle('active', !c);
-  document.getElementById('tab-create').classList.toggle('active', c);
-  document.getElementById('tab-join').classList.toggle('active', !c);
-}
+    function closeCurrentFile() {
+      if (filesDirty && !confirm('Unsaved changes. Close anyway?')) return;
+      openFileId = null; openFileName = null; filesDirty = false; hideCurrentFileBar(); renderFileTree();
+      suppressSync = true; if (cmEditor) cmEditor.setValue(STARTER[currentLang]); suppressSync = false;
+    }
 
-async function createRoom() {
-  const name  = document.getElementById('createName').value.trim();
-  const pw    = document.getElementById('createPassword').value;
-  const errEl = document.getElementById('createError'); errEl.textContent = '';
-  if (!name) { errEl.textContent = 'Enter your name.'; return; }
-  const btn = document.getElementById('createRoomBtn'); btn.disabled = true; btn.textContent = 'Creating…';
-  try {
-    const res  = await fetch('/api/create-room', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, password: pw || undefined }) });
-    const data = await res.json();
-    if (!res.ok) { errEl.textContent = data.error || 'Server error.'; return; }
-    pendingHostToken = data.token; pendingRoomId = data.roomId;
-    document.getElementById('shareUrl').textContent = data.shareUrl;
-    document.getElementById('shareBox').style.display = 'block'; btn.style.display = 'none';
-  } catch(e) { errEl.textContent = 'Could not reach server.'; }
-  finally { btn.disabled = false; btn.textContent = 'Create Room'; }
-}
+    function populateFolderDropdowns() {
+      const sel = document.getElementById('newFileFolder'); if (!sel) return;
+      sel.innerHTML = '<option value="">— Root —</option>';
+      fsFolders.filter(f => !f.parentId).forEach(f => { const o = document.createElement('option'); o.value = f._id; o.textContent = f.name; sel.appendChild(o); });
+    }
 
-async function enterAsHost() { await startSession(pendingRoomId, document.getElementById('createName').value.trim(), pendingHostToken, true); }
+    function openNewFileModal(folderId = null, fromSave = false) {
+      document.getElementById('newFileName').value = '';
+      document.getElementById('newFileLang').value = currentLang;
+      document.getElementById('newFileFolder').value = folderId || '';
+      document.getElementById('newFileModal')._fromSave = fromSave;
+      document.getElementById('newFileModal').classList.add('visible');
+      document.getElementById('newFileName').focus();
+    }
 
-async function joinRoom() {
-  const name  = document.getElementById('joinName').value.trim();
-  const rid   = document.getElementById('joinRoomId').value.trim();
-  const pw    = document.getElementById('joinPassword').value;
-  const errEl = document.getElementById('joinError'); errEl.textContent = '';
-  if (!name) { errEl.textContent = 'Enter your name.'; return; }
-  if (!rid)  { errEl.textContent = 'Enter a room ID.'; return; }
-  const btn = document.getElementById('joinRoomBtn'); btn.disabled = true; btn.textContent = 'Joining…';
-  try {
-    const res  = await fetch('/api/join-room', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ roomId: rid, name, password: pw || undefined }) });
-    const data = await res.json();
-    if (!res.ok) { errEl.textContent = data.error || 'Could not join.'; return; }
-    await startSession(rid, name, data.token, false);
-  } catch(e) { errEl.textContent = 'Could not reach server.'; }
-  finally { btn.disabled = false; btn.textContent = 'Join Room'; }
-}
+    async function fsCreateFile() {
+      if (!currentUser) { toast('Sign in first', 'var(--accent2)'); return; }
+      const name = document.getElementById('newFileName').value.trim();
+      const language = document.getElementById('newFileLang').value;
+      const folderId = document.getElementById('newFileFolder').value || null;
+      const fromSave = document.getElementById('newFileModal')._fromSave;
+      if (!name) { toast('Enter a file name', 'var(--accent2)'); return; }
+      const content = fromSave && cmEditor ? cmEditor.getValue() : STARTER[language];
+      try {
+        const ref = await filesRef().add({ name, language, content, folderId: folderId || null, createdAt: tsNow(), updatedAt: tsNow() });
+        document.getElementById('newFileModal').classList.remove('visible');
+        toast(`📄 Created: ${name}`, 'var(--success)'); await loadFileTree();
+        if (fromSave || !openFileId) await fsOpenFile(ref.id);
+      } catch (e) { toast('Create failed: ' + e.message, 'var(--error)'); }
+    }
 
-// ════════════════════════════════════════════════════════
-//  MEDIA — graceful fallback
-// ════════════════════════════════════════════════════════
-async function requestMedia() {
-  micOn = true; camOn = true;
-  try { myStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true }); return; } catch(e) {}
-  try { myStream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true }); camOn = false; toast('No camera — audio only'); return; } catch(e) {}
-  try { myStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false }); micOn = false; toast('No mic — video only'); return; } catch(e) {}
-  myStream = null; micOn = false; camOn = false; toast('Camera & mic unavailable');
-}
+    async function fsCreateFolder() {
+      if (!currentUser) { toast('Sign in first', 'var(--accent2)'); return; }
+      const name = document.getElementById('newFolderName').value.trim();
+      if (!name) { toast('Enter a folder name', 'var(--accent2)'); return; }
+      try {
+        await foldersRef().add({ name, parentId: null, createdAt: tsNow() });
+        document.getElementById('newFolderModal').classList.remove('visible');
+        document.getElementById('newFolderName').value = '';
+        toast(`📁 Created: ${name}`, 'var(--success)'); await loadFileTree();
+      } catch (e) { toast('Create failed: ' + e.message, 'var(--error)'); }
+    }
 
-async function startSession(rid, name, token, isHost) {
-  myName = name; myIsHost = isHost; roomId = rid;
-  await requestMedia();
-  updateMediaBtnUI();
-  buildMyTile();
-  socket = io({ auth: { token } });
-  bindSocketEvents();
-  document.getElementById('lobby').classList.remove('visible');
-  document.getElementById('roomIdBadge').textContent = `Room: ${rid.slice(0,8)}…`;
-}
+    function openRenameModal(type, id, currentName) {
+      const m = document.getElementById('renameModal');
+      document.getElementById('renameTitle').textContent = type === 'folder' ? '📁 Rename Folder' : '📄 Rename File';
+      document.getElementById('renameInput').value = currentName;
+      m._type = type; m._id = id; m.classList.add('visible'); document.getElementById('renameInput').focus();
+    }
 
-// ════════════════════════════════════════════════════════
-//  SOCKET EVENTS
-// ════════════════════════════════════════════════════════
-function bindSocketEvents() {
-  socket.on('connect', () => {
-    mySocketId = socket.id;
-  });
-  socket.on('connect_error', err => toast('Connection error: ' + err.message));
+    async function fsDoRename() {
+      const m = document.getElementById('renameModal');
+      const name = document.getElementById('renameInput').value.trim();
+      if (!name) { toast('Enter a name', 'var(--accent2)'); return; }
+      try {
+        if (m._type === 'folder') await foldersRef().doc(m._id).update({ name });
+        else await filesRef().doc(m._id).update({ name, updatedAt: tsNow() });
+        if (m._type === 'file' && m._id === openFileId) { openFileName = name; document.getElementById('current-file-name').textContent = name; }
+        m.classList.remove('visible'); toast(`Renamed to: ${name}`, 'var(--success)'); await loadFileTree();
+      } catch (e) { toast('Rename failed: ' + e.message, 'var(--error)'); }
+    }
 
-  socket.on('room-state', ({ users, editorOwner: eo, code, yourSocketId }) => {
-    mySocketId = yourSocketId; // use server-confirmed ID
-    roomUsers  = users; editorOwner = eo;
-    initEditor(code);
-    buildMyTile();
-    renderMembers();
-    updateEditorLock();
-    // Existing users: initiate only if our ID is "less than" theirs (tie-breaking)
-    users.forEach(u => {
-      if (u.socketId !== mySocketId) {
-        // Polite peer: only the side with the smaller ID sends the offer
-        if (mySocketId < u.socketId) {
-          createPeerConnection(u.socketId, u.name, true);
-        } else {
-          // Just create the PC and wait for an offer from them
-          createPeerConnection(u.socketId, u.name, false);
+    async function fsDeleteFile(fileId, fileName) {
+      if (!confirm(`Delete "${fileName}"?`)) return;
+      try {
+        await filesRef().doc(fileId).delete();
+        if (fileId === openFileId) closeCurrentFile();
+        toast(`🗑 ${fileName}`, 'var(--accent2)'); await loadFileTree();
+      } catch (e) { toast('Delete failed: ' + e.message, 'var(--error)'); }
+    }
+
+    async function fsDeleteFolder(folderId, folderName) {
+      if (!confirm(`Delete folder "${folderName}" and ALL its files?`)) return;
+      try {
+        const snap = await filesRef().where('folderId', '==', folderId).get();
+        const batch = db.batch(); snap.docs.forEach(d => batch.delete(d.ref)); batch.delete(foldersRef().doc(folderId));
+        await batch.commit(); toast(`🗑 ${folderName}`, 'var(--accent2)'); await loadFileTree();
+      } catch (e) { toast('Delete failed: ' + e.message, 'var(--error)'); }
+    }
+
+    // ════════════════════════════════════════════════════════
+    //  PANEL / MODE
+    // ════════════════════════════════════════════════════════
+    function toggleFilesPanel() {
+      filesPanelOpen = !filesPanelOpen;
+      const panel = document.getElementById('left-panel');
+      if (filesPanelOpen) {
+        panel.classList.add('visible');
+        if (appMode !== 'team') {
+          document.getElementById('panelTabs').style.display = 'none';
+          document.getElementById('membersTabContent').classList.remove('active');
+          document.getElementById('filesTabContent').classList.add('active');
+        }
+        loadFileTree();
+      } else {
+        if (appMode !== 'team') panel.classList.remove('visible');
+      }
+    }
+
+    function setMode(mode) {
+      appMode = mode; const isTeam = mode === 'team';
+      document.getElementById('modeTeam').classList.toggle('active', isTeam);
+      document.getElementById('modeSolo').classList.toggle('active', !isTeam);
+      document.getElementById('left-panel').classList.toggle('visible', isTeam || filesPanelOpen);
+      document.getElementById('right-panel').classList.toggle('visible', isTeam);
+      document.getElementById('media-bar').classList.toggle('visible', isTeam);
+      document.getElementById('room-bar').classList.toggle('visible', isTeam);
+      const tabs = document.getElementById('panelTabs');
+      if (isTeam) { tabs.style.display = 'flex'; switchPanelTab('members'); document.getElementById('lobby').classList.add('visible'); }
+      else { tabs.style.display = 'none'; if (socket) performLeave(); document.getElementById('lobby').classList.remove('visible'); document.getElementById('room-bar').classList.remove('visible'); if (!filesPanelOpen) document.getElementById('left-panel').classList.remove('visible'); }
+    }
+
+    function switchPanelTab(tab) {
+      document.getElementById('tabMembers').classList.toggle('active', tab === 'members');
+      document.getElementById('tabFiles').classList.toggle('active', tab === 'files');
+      document.getElementById('membersTabContent').classList.toggle('active', tab === 'members');
+      document.getElementById('filesTabContent').classList.toggle('active', tab === 'files');
+      if (tab === 'files') loadFileTree();
+    }
+
+    // ════════════════════════════════════════════════════════
+    //  RUN CODE
+    // ════════════════════════════════════════════════════════
+    async function runCode() {
+      const code = cmEditor ? cmEditor.getValue().trim() : '';
+      const out = document.getElementById('output'), btn = document.getElementById('runBtn');
+      if (!code) { toast('No code to run'); return; }
+
+      // Ensure trailing newline so scanf/input() doesn't hang
+      const stdinRaw = document.getElementById('stdinInput').value;
+      const stdin = stdinRaw ? (stdinRaw.endsWith('\n') ? stdinRaw : stdinRaw + '\n') : '';
+
+      btn.disabled = true; btn.textContent = '⏳';
+      out.textContent = 'Running…'; out.className = ''; out.style.borderTop = '';
+      try {
+        const res = await fetch('/api/run', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code, language: currentLang, stdin }) });
+        const text = await res.text();
+        out.innerHTML = escHtml(text || '(No output)');
+        out.className = res.ok ? '' : 'has-error';
+        out.style.borderTop = `2px solid var(--${res.ok ? 'success' : 'error'})`;
+      } catch (e) { out.innerHTML = escHtml('❌ Could not reach the server.'); out.className = 'has-error'; out.style.borderTop = '2px solid var(--error)'; }
+      finally { btn.disabled = false; btn.textContent = '▶ Run'; }
+    }
+
+    // ════════════════════════════════════════════════════════
+    //  LOBBY
+    // ════════════════════════════════════════════════════════
+    function switchLobbyTab(tab) {
+      const c = tab === 'create';
+      document.getElementById('tabBtnCreate').classList.toggle('active', c);
+      document.getElementById('tabBtnJoin').classList.toggle('active', !c);
+      document.getElementById('tab-create').classList.toggle('active', c);
+      document.getElementById('tab-join').classList.toggle('active', !c);
+    }
+
+    async function createRoom() {
+      const name = document.getElementById('createName').value.trim();
+      const pw = document.getElementById('createPassword').value;
+      const errEl = document.getElementById('createError'); errEl.textContent = '';
+      if (!name) { errEl.textContent = 'Enter your name.'; return; }
+      const btn = document.getElementById('createRoomBtn'); btn.disabled = true; btn.textContent = 'Creating…';
+      try {
+        const res = await fetch('/api/create-room', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, password: pw || undefined }) });
+        const data = await res.json();
+        if (!res.ok) { errEl.textContent = data.error || 'Server error.'; return; }
+        pendingHostToken = data.token; pendingRoomId = data.roomId;
+        document.getElementById('shareUrl').textContent = data.shareUrl;
+        document.getElementById('shareBox').style.display = 'block'; btn.style.display = 'none';
+      } catch (e) { errEl.textContent = 'Could not reach server.'; }
+      finally { btn.disabled = false; btn.textContent = 'Create Room'; }
+    }
+
+    async function enterAsHost() { await startSession(pendingRoomId, document.getElementById('createName').value.trim(), pendingHostToken, true); }
+
+    async function joinRoom() {
+      const name = document.getElementById('joinName').value.trim();
+      const rid = document.getElementById('joinRoomId').value.trim();
+      const pw = document.getElementById('joinPassword').value;
+      const errEl = document.getElementById('joinError'); errEl.textContent = '';
+      if (!name) { errEl.textContent = 'Enter your name.'; return; }
+      if (!rid) { errEl.textContent = 'Enter a room ID.'; return; }
+      const btn = document.getElementById('joinRoomBtn'); btn.disabled = true; btn.textContent = 'Joining…';
+      try {
+        const res = await fetch('/api/join-room', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ roomId: rid, name, password: pw || undefined }) });
+        const data = await res.json();
+        if (!res.ok) { errEl.textContent = data.error || 'Could not join.'; return; }
+        await startSession(rid, name, data.token, false);
+      } catch (e) { errEl.textContent = 'Could not reach server.'; }
+      finally { btn.disabled = false; btn.textContent = 'Join Room'; }
+    }
+
+    // ════════════════════════════════════════════════════════
+    //  MEDIA — graceful fallback
+    // ════════════════════════════════════════════════════════
+    async function requestMedia() {
+      micOn = true; camOn = true;
+      try { myStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true }); return; } catch (e) { }
+      try { myStream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true }); camOn = false; toast('No camera — audio only'); return; } catch (e) { }
+      try { myStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false }); micOn = false; toast('No mic — video only'); return; } catch (e) { }
+      myStream = null; micOn = false; camOn = false; toast('Camera & mic unavailable');
+    }
+
+    async function startSession(rid, name, token, isHost) {
+      myName = name; myIsHost = isHost; roomId = rid;
+      await requestMedia();
+      updateMediaBtnUI();
+      buildMyTile();
+      socket = io({ auth: { token } });
+      bindSocketEvents();
+      document.getElementById('lobby').classList.remove('visible');
+      document.getElementById('roomIdBadge').textContent = `Room: ${rid.slice(0, 8)}…`;
+    }
+
+    // ════════════════════════════════════════════════════════
+    //  SOCKET EVENTS
+    // ════════════════════════════════════════════════════════
+    function bindSocketEvents() {
+      socket.on('connect', () => {
+        mySocketId = socket.id;
+      });
+      socket.on('connect_error', err => toast('Connection error: ' + err.message));
+
+      socket.on('room-state', ({ users, editorOwner: eo, code, yourSocketId }) => {
+        mySocketId = yourSocketId; // use server-confirmed ID
+        roomUsers = users; editorOwner = eo;
+        initEditor(code);
+        buildMyTile();
+        renderMembers();
+        updateEditorLock();
+        // Existing users: initiate only if our ID is "less than" theirs (tie-breaking)
+        users.forEach(u => {
+          if (u.socketId !== mySocketId) {
+            // Polite peer: only the side with the smaller ID sends the offer
+            if (mySocketId < u.socketId) {
+              createPeerConnection(u.socketId, u.name, true);
+            } else {
+              // Just create the PC and wait for an offer from them
+              createPeerConnection(u.socketId, u.name, false);
+            }
+          }
+        });
+      });
+
+      socket.on('user-joined', ({ socketId, name, isHost }) => {
+        toast(`${name} joined`);
+        roomUsers.push({ socketId, name, isHost });
+        renderMembers();
+        // Newcomer always sends offers to everyone already in the room.
+        // Existing members receive 'rtc-offer' and answer — they should NOT
+        // also call createPeerConnection(isInitiator=true) here.
+        // We are an existing member; the newcomer will send us an offer.
+        // Just pre-create the PC (non-initiator) so it's ready when the offer arrives.
+        createPeerConnection(socketId, name, false);
+      });
+
+      socket.on('user-left', ({ socketId, name }) => {
+        toast(`${name} left`);
+        if (peers[socketId]) { peers[socketId].pc.close(); delete peers[socketId]; }
+        removeTile(socketId);
+        roomUsers = roomUsers.filter(u => u.socketId !== socketId);
+        renderMembers();
+      });
+
+      socket.on('rtc-offer', async ({ from, name, offer }) => {
+        // Ensure PC exists (non-initiator side)
+        if (!peers[from]) await createPeerConnection(from, name, false);
+        const pc = peers[from].pc;
+        // Guard: only set remote description if we are in the right state
+        if (pc.signalingState !== 'stable') {
+          console.warn(`Ignoring offer from ${name} — unexpected state: ${pc.signalingState}`);
+          return;
+        }
+        await pc.setRemoteDescription(new RTCSessionDescription(offer));
+        const answer = await pc.createAnswer();
+        await pc.setLocalDescription(answer);
+        socket.emit('rtc-answer', { to: from, answer });
+      });
+
+      socket.on('rtc-answer', async ({ from, answer }) => {
+        if (!peers[from]) return;
+        const pc = peers[from].pc;
+        // Guard: only accept answer when we are in have-local-offer state
+        if (pc.signalingState !== 'have-local-offer') {
+          console.warn(`Ignoring answer from ${peers[from].name} — unexpected state: ${pc.signalingState}`);
+          return;
+        }
+        try {
+          await pc.setRemoteDescription(new RTCSessionDescription(answer));
+        } catch (e) {
+          console.error('setRemoteDescription (answer) failed:', e);
+        }
+      });
+
+      socket.on('rtc-ice', async ({ from, candidate }) => {
+        if (peers[from]) {
+          try { await peers[from].pc.addIceCandidate(new RTCIceCandidate(candidate)); }
+          catch (e) { console.warn('ICE candidate error:', e.message); }
+        }
+      });
+
+      socket.on('editor-assigned', ({ editorOwner: eo }) => { editorOwner = eo; updateEditorLock(); renderMembers(); });
+      socket.on('editor-request', ({ fromSocketId, fromName }) => {
+        pendingRequest = { fromSocketId, fromName };
+        document.getElementById('notifText').textContent = `"${fromName}" wants editor access`;
+        document.getElementById('notifBanner').style.display = 'block';
+      });
+      socket.on('editor-request-denied', () => {
+        toast('Your editor request was denied.');
+        const b = document.getElementById('requestBtn');
+        if (b) { b.textContent = '🙋 Request Editor Access'; b.disabled = false; }
+      });
+      socket.on('code-update', ({ code }) => { if (editorOwner !== mySocketId) applyRemoteCode(code); });
+    }
+
+    // ════════════════════════════════════════════════════════
+    //  WebRTC PEER CONNECTION
+    // ════════════════════════════════════════════════════════
+    async function createPeerConnection(peerId, peerName, isInitiator) {
+      if (peers[peerId]) return; // already exists — do nothing
+
+      const pc = new RTCPeerConnection(ICE_CFG);
+      peers[peerId] = { pc, name: peerName };
+
+      // Add all local tracks before offer/answer
+      if (myStream) {
+        myStream.getTracks().forEach(track => pc.addTrack(track, myStream));
+      }
+
+      pc.onicecandidate = e => {
+        if (e.candidate) socket.emit('rtc-ice', { to: peerId, candidate: e.candidate });
+      };
+
+      pc.oniceconnectionstatechange = () => {
+        if (pc.iceConnectionState === 'failed') {
+          console.warn(`ICE failed for ${peerName} — restarting`);
+          pc.restartIce();
+        }
+      };
+
+      pc.ontrack = e => {
+        if (e.streams && e.streams[0]) {
+          peers[peerId].stream = e.streams[0];
+          attachRemoteStream(peerId, e.streams[0]);
+        }
+      };
+
+      addTile(peerId, peerName);
+
+      if (isInitiator) {
+        try {
+          const offer = await pc.createOffer({ offerToReceiveAudio: true, offerToReceiveVideo: true });
+          await pc.setLocalDescription(offer);
+          socket.emit('rtc-offer', { to: peerId, offer });
+        } catch (e) {
+          console.error('createOffer failed:', e);
         }
       }
-    });
-  });
-
-  socket.on('user-joined', ({ socketId, name, isHost }) => {
-    toast(`${name} joined`);
-    roomUsers.push({ socketId, name, isHost });
-    renderMembers();
-    // Newcomer always sends offers to everyone already in the room.
-    // Existing members receive 'rtc-offer' and answer — they should NOT
-    // also call createPeerConnection(isInitiator=true) here.
-    // We are an existing member; the newcomer will send us an offer.
-    // Just pre-create the PC (non-initiator) so it's ready when the offer arrives.
-    createPeerConnection(socketId, name, false);
-  });
-
-  socket.on('user-left', ({ socketId, name }) => {
-    toast(`${name} left`);
-    if (peers[socketId]) { peers[socketId].pc.close(); delete peers[socketId]; }
-    removeTile(socketId);
-    roomUsers = roomUsers.filter(u => u.socketId !== socketId);
-    renderMembers();
-  });
-
-  socket.on('rtc-offer', async ({ from, name, offer }) => {
-    // Ensure PC exists (non-initiator side)
-    if (!peers[from]) await createPeerConnection(from, name, false);
-    const pc = peers[from].pc;
-    // Guard: only set remote description if we are in the right state
-    if (pc.signalingState !== 'stable') {
-      console.warn(`Ignoring offer from ${name} — unexpected state: ${pc.signalingState}`);
-      return;
     }
-    await pc.setRemoteDescription(new RTCSessionDescription(offer));
-    const answer = await pc.createAnswer();
-    await pc.setLocalDescription(answer);
-    socket.emit('rtc-answer', { to: from, answer });
-  });
 
-  socket.on('rtc-answer', async ({ from, answer }) => {
-    if (!peers[from]) return;
-    const pc = peers[from].pc;
-    // Guard: only accept answer when we are in have-local-offer state
-    if (pc.signalingState !== 'have-local-offer') {
-      console.warn(`Ignoring answer from ${peers[from].name} — unexpected state: ${pc.signalingState}`);
-      return;
+    // ════════════════════════════════════════════════════════
+    //  VIDEO TILES
+    // ════════════════════════════════════════════════════════
+    function buildMyTile() {
+      const ex = document.getElementById('tile-me'); if (ex) ex.remove();
+      const tile = document.createElement('div'); tile.className = 'video-tile'; tile.id = 'tile-me';
+
+      if (myStream && camOn) {
+        const v = document.createElement('video');
+        v.autoplay = true; v.muted = true; v.playsInline = true; // muted for own stream (avoid echo)
+        v.srcObject = myStream;
+        v.onloadedmetadata = () => v.play().catch(() => { });
+        tile.appendChild(v);
+      } else {
+        const o = document.createElement('div'); o.className = 'cam-off';
+        o.innerHTML = `<span class="cam-off-icon">🚫</span><span>${myStream ? 'Cam Off' : 'No Camera'}</span>`;
+        tile.appendChild(o);
+      }
+
+      const lbl = document.createElement('div'); lbl.className = 'tile-label';
+      lbl.textContent = myName + (myIsHost ? ' 👑' : '') + ' (you)'; tile.appendChild(lbl);
+      document.getElementById('videoGrid').insertBefore(tile, document.getElementById('videoGrid').firstChild);
     }
-    try {
-      await pc.setRemoteDescription(new RTCSessionDescription(answer));
-    } catch(e) {
-      console.error('setRemoteDescription (answer) failed:', e);
-    }
-  });
 
-  socket.on('rtc-ice', async ({ from, candidate }) => {
-    if (peers[from]) {
-      try { await peers[from].pc.addIceCandidate(new RTCIceCandidate(candidate)); }
-      catch(e) { console.warn('ICE candidate error:', e.message); }
-    }
-  });
-
-  socket.on('editor-assigned',       ({ editorOwner: eo }) => { editorOwner = eo; updateEditorLock(); renderMembers(); });
-  socket.on('editor-request',        ({ fromSocketId, fromName }) => {
-    pendingRequest = { fromSocketId, fromName };
-    document.getElementById('notifText').textContent = `"${fromName}" wants editor access`;
-    document.getElementById('notifBanner').style.display = 'block';
-  });
-  socket.on('editor-request-denied', () => {
-    toast('Your editor request was denied.');
-    const b = document.getElementById('requestBtn');
-    if (b) { b.textContent = '🙋 Request Editor Access'; b.disabled = false; }
-  });
-  socket.on('code-update', ({ code }) => { if (editorOwner !== mySocketId) applyRemoteCode(code); });
-}
-
-// ════════════════════════════════════════════════════════
-//  WebRTC PEER CONNECTION
-// ════════════════════════════════════════════════════════
-async function createPeerConnection(peerId, peerName, isInitiator) {
-  if (peers[peerId]) return; // already exists — do nothing
-
-  const pc = new RTCPeerConnection(ICE_CFG);
-  peers[peerId] = { pc, name: peerName };
-
-  // Add all local tracks before offer/answer
-  if (myStream) {
-    myStream.getTracks().forEach(track => pc.addTrack(track, myStream));
-  }
-
-  pc.onicecandidate = e => {
-    if (e.candidate) socket.emit('rtc-ice', { to: peerId, candidate: e.candidate });
-  };
-
-  pc.oniceconnectionstatechange = () => {
-    if (pc.iceConnectionState === 'failed') {
-      console.warn(`ICE failed for ${peerName} — restarting`);
-      pc.restartIce();
-    }
-  };
-
-  pc.ontrack = e => {
-    if (e.streams && e.streams[0]) {
-      peers[peerId].stream = e.streams[0];
-      attachRemoteStream(peerId, e.streams[0]);
-    }
-  };
-
-  addTile(peerId, peerName);
-
-  if (isInitiator) {
-    try {
-      const offer = await pc.createOffer({ offerToReceiveAudio: true, offerToReceiveVideo: true });
-      await pc.setLocalDescription(offer);
-      socket.emit('rtc-offer', { to: peerId, offer });
-    } catch(e) {
-      console.error('createOffer failed:', e);
-    }
-  }
-}
-
-// ════════════════════════════════════════════════════════
-//  VIDEO TILES
-// ════════════════════════════════════════════════════════
-function buildMyTile() {
-  const ex = document.getElementById('tile-me'); if (ex) ex.remove();
-  const tile = document.createElement('div'); tile.className = 'video-tile'; tile.id = 'tile-me';
-
-  if (myStream && camOn) {
-    const v = document.createElement('video');
-    v.autoplay = true; v.muted = true; v.playsInline = true; // muted for own stream (avoid echo)
-    v.srcObject = myStream;
-    v.onloadedmetadata = () => v.play().catch(() => {});
-    tile.appendChild(v);
-  } else {
-    const o = document.createElement('div'); o.className = 'cam-off';
-    o.innerHTML = `<span class="cam-off-icon">🚫</span><span>${myStream ? 'Cam Off' : 'No Camera'}</span>`;
-    tile.appendChild(o);
-  }
-
-  const lbl = document.createElement('div'); lbl.className = 'tile-label';
-  lbl.textContent = myName + (myIsHost ? ' 👑' : '') + ' (you)'; tile.appendChild(lbl);
-  document.getElementById('videoGrid').insertBefore(tile, document.getElementById('videoGrid').firstChild);
-}
-
-function addTile(socketId, name) {
-  if (document.getElementById('tile-' + socketId)) return;
-  const tile = document.createElement('div'); tile.className = 'video-tile'; tile.id = 'tile-' + socketId;
-  const o = document.createElement('div'); o.className = 'cam-off';
-  o.innerHTML = '<span class="cam-off-icon">⏳</span><span>Connecting…</span>'; tile.appendChild(o);
-  const lbl = document.createElement('div'); lbl.className = 'tile-label'; lbl.textContent = name; tile.appendChild(lbl);
-  document.getElementById('videoGrid').appendChild(tile);
-}
-
-function attachRemoteStream(socketId, stream) {
-  const tile = document.getElementById('tile-' + socketId);
-  if (!tile) return;
-
-  const o = tile.querySelector('.cam-off'); if (o) o.remove();
-
-  let v = tile.querySelector('video');
-  if (!v) {
-    v = document.createElement('video');
-    v.autoplay    = true;
-    v.playsInline = true;
-    v.muted       = false; // NEVER mute remote peers
-    v.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;background:#000;';
-    tile.insertBefore(v, tile.querySelector('.tile-label'));
-  }
-
-  v.srcObject = stream;
-  const tryPlay = () => v.play().catch(err => console.warn('play() failed:', err.message));
-  if (v.readyState >= 2) tryPlay();
-  else v.onloadedmetadata = tryPlay;
-}
-
-function removeTile(socketId) { const t = document.getElementById('tile-' + socketId); if (t) t.remove(); }
-
-// ════════════════════════════════════════════════════════
-//  MIC / CAM TOGGLE
-// ════════════════════════════════════════════════════════
-function toggleMic() {
-  if (!myStream || myStream.getAudioTracks().length === 0) { toast('No microphone available'); return; }
-  micOn = !micOn;
-  myStream.getAudioTracks().forEach(t => { t.enabled = micOn; });
-  updateMediaBtnUI();
-  toast(micOn ? '🎙 Mic on' : '🔇 Mic muted');
-}
-
-function toggleCam() {
-  if (!myStream || myStream.getVideoTracks().length === 0) { toast('No camera available'); return; }
-  camOn = !camOn;
-  myStream.getVideoTracks().forEach(t => { t.enabled = camOn; });
-  updateMediaBtnUI();
-  refreshMyTileVideo();
-  toast(camOn ? '📹 Camera on' : '🚫 Camera off');
-}
-
-function refreshMyTileVideo() {
-  const tile = document.getElementById('tile-me'); if (!tile) return;
-  if (camOn) {
-    let o = tile.querySelector('.cam-off'); if (o) o.remove();
-    let v = tile.querySelector('video');
-    if (!v) {
-      v = document.createElement('video'); v.autoplay = true; v.muted = true; v.playsInline = true;
-      v.srcObject = myStream; tile.insertBefore(v, tile.querySelector('.tile-label'));
-    }
-    v.style.display = 'block';
-    v.onloadedmetadata = () => v.play().catch(() => {});
-    if (v.readyState >= 2) v.play().catch(() => {});
-  } else {
-    const v = tile.querySelector('video'); if (v) v.style.display = 'none';
-    if (!tile.querySelector('.cam-off')) {
+    function addTile(socketId, name) {
+      if (document.getElementById('tile-' + socketId)) return;
+      const tile = document.createElement('div'); tile.className = 'video-tile'; tile.id = 'tile-' + socketId;
       const o = document.createElement('div'); o.className = 'cam-off';
-      o.innerHTML = '<span class="cam-off-icon">🚫</span><span>Cam Off</span>';
-      tile.insertBefore(o, tile.querySelector('.tile-label'));
+      o.innerHTML = '<span class="cam-off-icon">⏳</span><span>Connecting…</span>'; tile.appendChild(o);
+      const lbl = document.createElement('div'); lbl.className = 'tile-label'; lbl.textContent = name; tile.appendChild(lbl);
+      document.getElementById('videoGrid').appendChild(tile);
     }
-  }
-}
 
-function updateMediaBtnUI() {
-  const mic = document.getElementById('micBtn'), cam = document.getElementById('camBtn');
-  mic.textContent = micOn ? '🎙 Mic On' : '🔇 Mic Off'; mic.className = 'tool-btn ' + (micOn ? 'on' : 'off');
-  cam.textContent = camOn ? '📹 Cam On' : '🚫 Cam Off'; cam.className = 'tool-btn ' + (camOn ? 'on' : 'off');
-}
+    function attachRemoteStream(socketId, stream) {
+      const tile = document.getElementById('tile-' + socketId);
+      if (!tile) return;
 
-// ════════════════════════════════════════════════════════
-//  EDITOR LOCK
-// ════════════════════════════════════════════════════════
-function updateEditorLock() {
-  if (!cmEditor || !mySocketId) return;
-  const isMine = editorOwner === mySocketId;
-  cmEditor.setOption('readOnly', isMine ? false : 'nocursor');
-  document.getElementById('lockOverlay').classList.toggle('visible', !isMine);
-  const st = document.getElementById('editor-status');
-  if (isMine) { st.textContent = '✏️ You are editing'; st.style.color = 'var(--accent3)'; }
-  else {
-    const o = roomUsers.find(u => u.socketId === editorOwner);
-    st.textContent = o ? `🔒 ${o.name} is editing` : '🔒 Locked'; st.style.color = 'var(--text-muted)';
-    document.getElementById('lockMsg').textContent = o ? `🔒 ${o.name} is editing` : '🔒 Editor locked';
-  }
-  const sec = document.getElementById('requestSection'); sec.innerHTML = '';
-  if (myIsHost) {
-    if (!isMine) { const b = document.createElement('button'); b.className = 'btn-action btn-reclaim'; b.textContent = '↩ Take Back Editor'; b.onclick = () => socket.emit('reclaim-editor'); sec.appendChild(b); }
-  } else {
-    if (isMine) { const b = document.createElement('button'); b.className = 'btn-action btn-handback'; b.textContent = '↩ Hand Back Editor'; b.onclick = () => { const h = roomUsers.find(u => u.isHost); if (h) socket.emit('return-editor', { toSocketId: h.socketId }); }; sec.appendChild(b); }
-    else { const b = document.createElement('button'); b.className = 'btn-action btn-request'; b.id = 'requestBtn'; b.textContent = '🙋 Request Editor Access'; b.onclick = () => { socket.emit('request-editor'); b.textContent = '⏳ Sent…'; b.disabled = true; }; sec.appendChild(b); }
-  }
-}
+      const o = tile.querySelector('.cam-off'); if (o) o.remove();
 
-function renderMembers() {
-  const list = document.getElementById('membersList'); list.innerHTML = '';
-  const all  = [...roomUsers];
-  if (!all.find(u => u.socketId === mySocketId)) all.unshift({ socketId: mySocketId, name: myName, isHost: myIsHost });
-  all.forEach(u => {
-    const isMe = u.socketId === mySocketId, isEd = u.socketId === editorOwner;
-    const div = document.createElement('div'); div.className = 'member-item';
-    const dot = document.createElement('div'); dot.className = 'member-dot'; div.appendChild(dot);
-    const nm  = document.createElement('div'); nm.className = 'member-name'; nm.textContent = u.name + (u.isHost ? ' 👑' : ''); div.appendChild(nm);
-    if (isMe) { const y = document.createElement('span'); y.className = 'member-you'; y.textContent = 'you'; div.appendChild(y); }
-    if (isEd) { const e = document.createElement('span'); e.className = 'member-editing'; e.textContent = '✏️'; div.appendChild(e); }
-    if (myIsHost && !isMe) { const b = document.createElement('button'); b.className = 'btn-assign'; b.textContent = isEd ? 'Take' : 'Give'; b.onclick = () => isEd ? socket.emit('reclaim-editor') : socket.emit('assign-editor', { toSocketId: u.socketId }); div.appendChild(b); }
-    list.appendChild(div);
-  });
-}
+      let v = tile.querySelector('video');
+      if (!v) {
+        v = document.createElement('video');
+        v.autoplay = true;
+        v.playsInline = true;
+        v.muted = false; // NEVER mute remote peers
+        v.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;background:#000;';
+        tile.insertBefore(v, tile.querySelector('.tile-label'));
+      }
 
-// ════════════════════════════════════════════════════════
-//  LEAVE
-// ════════════════════════════════════════════════════════
-function performLeave() {
-  if (myStream) { myStream.getTracks().forEach(t => t.stop()); myStream = null; }
-  Object.values(peers).forEach(p => p.pc.close()); peers = {};
-  if (socket) { socket.disconnect(); socket = null; }
-  roomUsers = []; pendingRequest = null; micOn = true; camOn = true;
-  updateMediaBtnUI();
-  document.getElementById('videoGrid').innerHTML    = '';
-  document.getElementById('membersList').innerHTML  = '';
-  document.getElementById('shareBox').style.display      = 'none';
-  document.getElementById('createRoomBtn').style.display = 'block';
-  document.getElementById('notifBanner').style.display   = 'none';
-  const out = document.getElementById('output'); out.textContent = '// Run your code to see output here'; out.style.borderTop = ''; out.className = '';
-  document.getElementById('editor-status').textContent = '';
-  document.getElementById('roomIdBadge').textContent    = 'Room: —';
-  initEditor(STARTER[currentLang]);
-  appMode = 'solo';
-  document.getElementById('modeTeam').classList.remove('active');
-  document.getElementById('modeSolo').classList.add('active');
-  document.getElementById('right-panel').classList.remove('visible');
-  document.getElementById('media-bar').classList.remove('visible');
-  document.getElementById('room-bar').classList.remove('visible');
-  document.getElementById('lobby').classList.remove('visible');
-  document.getElementById('panelTabs').style.display = 'none';
-  if (!filesPanelOpen) document.getElementById('left-panel').classList.remove('visible');
-}
+      v.srcObject = stream;
+      const tryPlay = () => v.play().catch(err => console.warn('play() failed:', err.message));
+      if (v.readyState >= 2) tryPlay();
+      else v.onloadedmetadata = tryPlay;
+    }
 
-function respondRequest(grant) {
-  document.getElementById('notifBanner').style.display = 'none';
-  if (grant && pendingRequest)  { socket.emit('assign-editor', { toSocketId: pendingRequest.fromSocketId }); toast(`Editor given to ${pendingRequest.fromName}`); }
-  else if (pendingRequest)      { socket.emit('deny-editor-request', { toSocketId: pendingRequest.fromSocketId }); toast('Request denied'); }
-  pendingRequest = null;
-}
+    function removeTile(socketId) { const t = document.getElementById('tile-' + socketId); if (t) t.remove(); }
 
-// ════════════════════════════════════════════════════════
-//  BOOT
-// ════════════════════════════════════════════════════════
-document.addEventListener('DOMContentLoaded', async () => {
-  initEditor();
-  await initFirebase();
+    // ════════════════════════════════════════════════════════
+    //  MIC / CAM TOGGLE
+    // ════════════════════════════════════════════════════════
+    function toggleMic() {
+      if (!myStream || myStream.getAudioTracks().length === 0) { toast('No microphone available'); return; }
+      micOn = !micOn;
+      myStream.getAudioTracks().forEach(t => { t.enabled = micOn; });
+      updateMediaBtnUI();
+      toast(micOn ? '🎙 Mic on' : '🔇 Mic muted');
+    }
 
-  document.getElementById('modeSolo').addEventListener('click', () => { if (appMode === 'team') performLeave(); else setMode('solo'); });
-  document.getElementById('modeTeam').addEventListener('click', () => setMode('team'));
-  document.querySelectorAll('.lang-pill').forEach(b => b.addEventListener('click', () => { if (b.dataset.lang) setLanguage(b.dataset.lang); }));
-  document.getElementById('runBtn').addEventListener('click', runCode);
-  document.getElementById('clearOutputBtn').addEventListener('click', () => { const o = document.getElementById('output'); o.textContent = '// Run your code to see output here'; o.className = ''; o.style.borderTop = ''; });
-  document.addEventListener('keydown', e => {
-    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); runCode(); }
-    if ((e.ctrlKey || e.metaKey) && e.key === 's')     { e.preventDefault(); fsSaveCurrentFile(); }
-  });
+    function toggleCam() {
+      if (!myStream || myStream.getVideoTracks().length === 0) { toast('No camera available'); return; }
+      camOn = !camOn;
+      myStream.getVideoTracks().forEach(t => { t.enabled = camOn; });
+      updateMediaBtnUI();
+      refreshMyTileVideo();
+      toast(camOn ? '📹 Camera on' : '🚫 Camera off');
+    }
 
-  document.getElementById('topbarSaveBtn').addEventListener('click', fsSaveCurrentFile);
-  document.getElementById('topbarExportBtn').addEventListener('click', exportCurrentToPC);
-  document.getElementById('topbarFilesBtn').addEventListener('click', toggleFilesPanel);
-  document.getElementById('inlineCloseFileBtn').addEventListener('click', closeCurrentFile);
-  document.getElementById('signInBtn').addEventListener('click', signInWithGoogle);
-  document.getElementById('signOutBtn').addEventListener('click', signOutUser);
-  document.getElementById('tabMembers').addEventListener('click', () => switchPanelTab('members'));
-  document.getElementById('tabFiles').addEventListener('click', () => switchPanelTab('files'));
-  document.getElementById('newFileBtn').addEventListener('click', () => { if (!currentUser) { toast('Sign in to save', 'var(--accent2)'); return; } openNewFileModal(); });
-  document.getElementById('newFolderBtn').addEventListener('click', () => { if (!currentUser) { toast('Sign in to save', 'var(--accent2)'); return; } document.getElementById('newFolderModal').classList.add('visible'); document.getElementById('newFolderName').focus(); });
-  document.getElementById('exportAllBtn').addEventListener('click', exportAllFiles);
-  document.getElementById('refreshFilesBtn').addEventListener('click', loadFileTree);
-  document.getElementById('newFileConfirm').addEventListener('click', fsCreateFile);
-  document.getElementById('newFileCancel').addEventListener('click', () => document.getElementById('newFileModal').classList.remove('visible'));
-  document.getElementById('newFileName').addEventListener('keydown', e => { if (e.key === 'Enter') fsCreateFile(); });
-  document.getElementById('newFolderConfirm').addEventListener('click', fsCreateFolder);
-  document.getElementById('newFolderCancel').addEventListener('click', () => document.getElementById('newFolderModal').classList.remove('visible'));
-  document.getElementById('newFolderName').addEventListener('keydown', e => { if (e.key === 'Enter') fsCreateFolder(); });
-  document.getElementById('renameConfirm').addEventListener('click', fsDoRename);
-  document.getElementById('renameCancel').addEventListener('click', () => document.getElementById('renameModal').classList.remove('visible'));
-  document.getElementById('renameInput').addEventListener('keydown', e => { if (e.key === 'Enter') fsDoRename(); });
-  ['newFileModal','newFolderModal','renameModal'].forEach(id => {
-    document.getElementById(id).addEventListener('click', e => { if (e.target.id === id) document.getElementById(id).classList.remove('visible'); });
-  });
-  document.getElementById('tabBtnCreate').addEventListener('click', () => switchLobbyTab('create'));
-  document.getElementById('tabBtnJoin').addEventListener('click',   () => switchLobbyTab('join'));
-  document.getElementById('createRoomBtn').addEventListener('click', createRoom);
-  document.getElementById('enterRoomBtn').addEventListener('click',  enterAsHost);
-  document.getElementById('joinRoomBtn').addEventListener('click',   joinRoom);
-  document.getElementById('shareUrl').addEventListener('click', () => navigator.clipboard.writeText(document.getElementById('shareUrl').textContent).then(() => toast('Link copied!')));
-  document.getElementById('roomIdBadge').addEventListener('click', () => navigator.clipboard.writeText(roomId).then(() => toast('Room ID copied!')));
-  document.getElementById('leaveBtn').addEventListener('click', performLeave);
-  document.getElementById('grantBtn').addEventListener('click', () => respondRequest(true));
-  document.getElementById('denyBtn').addEventListener('click',  () => respondRequest(false));
-  document.getElementById('micBtn').addEventListener('click', toggleMic);
-  document.getElementById('camBtn').addEventListener('click', toggleCam);
+    function refreshMyTileVideo() {
+      const tile = document.getElementById('tile-me'); if (!tile) return;
+      if (camOn) {
+        let o = tile.querySelector('.cam-off'); if (o) o.remove();
+        let v = tile.querySelector('video');
+        if (!v) {
+          v = document.createElement('video'); v.autoplay = true; v.muted = true; v.playsInline = true;
+          v.srcObject = myStream; tile.insertBefore(v, tile.querySelector('.tile-label'));
+        }
+        v.style.display = 'block';
+        v.onloadedmetadata = () => v.play().catch(() => { });
+        if (v.readyState >= 2) v.play().catch(() => { });
+      } else {
+        const v = tile.querySelector('video'); if (v) v.style.display = 'none';
+        if (!tile.querySelector('.cam-off')) {
+          const o = document.createElement('div'); o.className = 'cam-off';
+          o.innerHTML = '<span class="cam-off-icon">🚫</span><span>Cam Off</span>';
+          tile.insertBefore(o, tile.querySelector('.tile-label'));
+        }
+      }
+    }
 
-  const urlRoom = new URLSearchParams(window.location.search).get('room');
-  if (urlRoom) { document.getElementById('joinRoomId').value = urlRoom; switchLobbyTab('join'); setMode('team'); }
-});
-</script>
+    function updateMediaBtnUI() {
+      const mic = document.getElementById('micBtn'), cam = document.getElementById('camBtn');
+      mic.textContent = micOn ? '🎙 Mic On' : '🔇 Mic Off'; mic.className = 'tool-btn ' + (micOn ? 'on' : 'off');
+      cam.textContent = camOn ? '📹 Cam On' : '🚫 Cam Off'; cam.className = 'tool-btn ' + (camOn ? 'on' : 'off');
+    }
 
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3159193304868741" crossorigin="anonymous"></script>
-<script type="application/ld+json">
+    // ════════════════════════════════════════════════════════
+    //  EDITOR LOCK
+    // ════════════════════════════════════════════════════════
+    function updateEditorLock() {
+      if (!cmEditor || !mySocketId) return;
+      const isMine = editorOwner === mySocketId;
+      cmEditor.setOption('readOnly', isMine ? false : 'nocursor');
+      document.getElementById('lockOverlay').classList.toggle('visible', !isMine);
+      const st = document.getElementById('editor-status');
+      if (isMine) { st.textContent = '✏️ You are editing'; st.style.color = 'var(--accent3)'; }
+      else {
+        const o = roomUsers.find(u => u.socketId === editorOwner);
+        st.textContent = o ? `🔒 ${o.name} is editing` : '🔒 Locked'; st.style.color = 'var(--text-muted)';
+        document.getElementById('lockMsg').textContent = o ? `🔒 ${o.name} is editing` : '🔒 Editor locked';
+      }
+      const sec = document.getElementById('requestSection'); sec.innerHTML = '';
+      if (myIsHost) {
+        if (!isMine) { const b = document.createElement('button'); b.className = 'btn-action btn-reclaim'; b.textContent = '↩ Take Back Editor'; b.onclick = () => socket.emit('reclaim-editor'); sec.appendChild(b); }
+      } else {
+        if (isMine) { const b = document.createElement('button'); b.className = 'btn-action btn-handback'; b.textContent = '↩ Hand Back Editor'; b.onclick = () => { const h = roomUsers.find(u => u.isHost); if (h) socket.emit('return-editor', { toSocketId: h.socketId }); }; sec.appendChild(b); }
+        else { const b = document.createElement('button'); b.className = 'btn-action btn-request'; b.id = 'requestBtn'; b.textContent = '🙋 Request Editor Access'; b.onclick = () => { socket.emit('request-editor'); b.textContent = '⏳ Sent…'; b.disabled = true; }; sec.appendChild(b); }
+      }
+    }
+
+    function renderMembers() {
+      const list = document.getElementById('membersList'); list.innerHTML = '';
+      const all = [...roomUsers];
+      if (!all.find(u => u.socketId === mySocketId)) all.unshift({ socketId: mySocketId, name: myName, isHost: myIsHost });
+      all.forEach(u => {
+        const isMe = u.socketId === mySocketId, isEd = u.socketId === editorOwner;
+        const div = document.createElement('div'); div.className = 'member-item';
+        const dot = document.createElement('div'); dot.className = 'member-dot'; div.appendChild(dot);
+        const nm = document.createElement('div'); nm.className = 'member-name'; nm.textContent = u.name + (u.isHost ? ' 👑' : ''); div.appendChild(nm);
+        if (isMe) { const y = document.createElement('span'); y.className = 'member-you'; y.textContent = 'you'; div.appendChild(y); }
+        if (isEd) { const e = document.createElement('span'); e.className = 'member-editing'; e.textContent = '✏️'; div.appendChild(e); }
+        if (myIsHost && !isMe) { const b = document.createElement('button'); b.className = 'btn-assign'; b.textContent = isEd ? 'Take' : 'Give'; b.onclick = () => isEd ? socket.emit('reclaim-editor') : socket.emit('assign-editor', { toSocketId: u.socketId }); div.appendChild(b); }
+        list.appendChild(div);
+      });
+    }
+
+    // ════════════════════════════════════════════════════════
+    //  LEAVE
+    // ════════════════════════════════════════════════════════
+    function performLeave() {
+      if (myStream) { myStream.getTracks().forEach(t => t.stop()); myStream = null; }
+      Object.values(peers).forEach(p => p.pc.close()); peers = {};
+      if (socket) { socket.disconnect(); socket = null; }
+      roomUsers = []; pendingRequest = null; micOn = true; camOn = true;
+      updateMediaBtnUI();
+      document.getElementById('videoGrid').innerHTML = '';
+      document.getElementById('membersList').innerHTML = '';
+      document.getElementById('shareBox').style.display = 'none';
+      document.getElementById('createRoomBtn').style.display = 'block';
+      document.getElementById('notifBanner').style.display = 'none';
+      const out = document.getElementById('output'); out.textContent = '// Run your code to see output here'; out.style.borderTop = ''; out.className = '';
+      document.getElementById('editor-status').textContent = '';
+      document.getElementById('roomIdBadge').textContent = 'Room: —';
+      initEditor(STARTER[currentLang]);
+      appMode = 'solo';
+      document.getElementById('modeTeam').classList.remove('active');
+      document.getElementById('modeSolo').classList.add('active');
+      document.getElementById('right-panel').classList.remove('visible');
+      document.getElementById('media-bar').classList.remove('visible');
+      document.getElementById('room-bar').classList.remove('visible');
+      document.getElementById('lobby').classList.remove('visible');
+      document.getElementById('panelTabs').style.display = 'none';
+      if (!filesPanelOpen) document.getElementById('left-panel').classList.remove('visible');
+    }
+
+    function respondRequest(grant) {
+      document.getElementById('notifBanner').style.display = 'none';
+      if (grant && pendingRequest) { socket.emit('assign-editor', { toSocketId: pendingRequest.fromSocketId }); toast(`Editor given to ${pendingRequest.fromName}`); }
+      else if (pendingRequest) { socket.emit('deny-editor-request', { toSocketId: pendingRequest.fromSocketId }); toast('Request denied'); }
+      pendingRequest = null;
+    }
+
+    // ════════════════════════════════════════════════════════
+    //  BOOT
+    // ════════════════════════════════════════════════════════
+    document.addEventListener('DOMContentLoaded', async () => {
+      initEditor();
+      await initFirebase();
+
+      document.getElementById('modeSolo').addEventListener('click', () => { if (appMode === 'team') performLeave(); else setMode('solo'); });
+      document.getElementById('modeTeam').addEventListener('click', () => setMode('team'));
+      document.querySelectorAll('.lang-pill').forEach(b => b.addEventListener('click', () => { if (b.dataset.lang) setLanguage(b.dataset.lang); }));
+      document.getElementById('runBtn').addEventListener('click', runCode);
+      document.getElementById('clearOutputBtn').addEventListener('click', () => { const o = document.getElementById('output'); o.textContent = '// Run your code to see output here'; o.className = ''; o.style.borderTop = ''; });
+      document.addEventListener('keydown', e => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); runCode(); }
+        if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); fsSaveCurrentFile(); }
+      });
+
+      document.getElementById('topbarSaveBtn').addEventListener('click', fsSaveCurrentFile);
+      document.getElementById('topbarExportBtn').addEventListener('click', exportCurrentToPC);
+      document.getElementById('topbarFilesBtn').addEventListener('click', toggleFilesPanel);
+      document.getElementById('inlineCloseFileBtn').addEventListener('click', closeCurrentFile);
+      document.getElementById('signInBtn').addEventListener('click', signInWithGoogle);
+      document.getElementById('signOutBtn').addEventListener('click', signOutUser);
+      document.getElementById('tabMembers').addEventListener('click', () => switchPanelTab('members'));
+      document.getElementById('tabFiles').addEventListener('click', () => switchPanelTab('files'));
+      document.getElementById('newFileBtn').addEventListener('click', () => { if (!currentUser) { toast('Sign in to save', 'var(--accent2)'); return; } openNewFileModal(); });
+      document.getElementById('newFolderBtn').addEventListener('click', () => { if (!currentUser) { toast('Sign in to save', 'var(--accent2)'); return; } document.getElementById('newFolderModal').classList.add('visible'); document.getElementById('newFolderName').focus(); });
+      document.getElementById('exportAllBtn').addEventListener('click', exportAllFiles);
+      document.getElementById('refreshFilesBtn').addEventListener('click', loadFileTree);
+      document.getElementById('newFileConfirm').addEventListener('click', fsCreateFile);
+      document.getElementById('newFileCancel').addEventListener('click', () => document.getElementById('newFileModal').classList.remove('visible'));
+      document.getElementById('newFileName').addEventListener('keydown', e => { if (e.key === 'Enter') fsCreateFile(); });
+      document.getElementById('newFolderConfirm').addEventListener('click', fsCreateFolder);
+      document.getElementById('newFolderCancel').addEventListener('click', () => document.getElementById('newFolderModal').classList.remove('visible'));
+      document.getElementById('newFolderName').addEventListener('keydown', e => { if (e.key === 'Enter') fsCreateFolder(); });
+      document.getElementById('renameConfirm').addEventListener('click', fsDoRename);
+      document.getElementById('renameCancel').addEventListener('click', () => document.getElementById('renameModal').classList.remove('visible'));
+      document.getElementById('renameInput').addEventListener('keydown', e => { if (e.key === 'Enter') fsDoRename(); });
+      ['newFileModal', 'newFolderModal', 'renameModal'].forEach(id => {
+        document.getElementById(id).addEventListener('click', e => { if (e.target.id === id) document.getElementById(id).classList.remove('visible'); });
+      });
+      document.getElementById('tabBtnCreate').addEventListener('click', () => switchLobbyTab('create'));
+      document.getElementById('tabBtnJoin').addEventListener('click', () => switchLobbyTab('join'));
+      document.getElementById('createRoomBtn').addEventListener('click', createRoom);
+      document.getElementById('enterRoomBtn').addEventListener('click', enterAsHost);
+      document.getElementById('joinRoomBtn').addEventListener('click', joinRoom);
+      document.getElementById('shareUrl').addEventListener('click', () => navigator.clipboard.writeText(document.getElementById('shareUrl').textContent).then(() => toast('Link copied!')));
+      document.getElementById('roomIdBadge').addEventListener('click', () => navigator.clipboard.writeText(roomId).then(() => toast('Room ID copied!')));
+      document.getElementById('leaveBtn').addEventListener('click', performLeave);
+      document.getElementById('grantBtn').addEventListener('click', () => respondRequest(true));
+      document.getElementById('denyBtn').addEventListener('click', () => respondRequest(false));
+      document.getElementById('micBtn').addEventListener('click', toggleMic);
+      document.getElementById('camBtn').addEventListener('click', toggleCam);
+
+      const urlRoom = new URLSearchParams(window.location.search).get('room');
+      if (urlRoom) { document.getElementById('joinRoomId').value = urlRoom; switchLobbyTab('join'); setMode('team'); }
+    });
+  </script>
+
+  <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"SoftwareApplication","name":"CodeForge","url":"https://coding-vibes.onrender.com","description":"Real-time collaborative coding platform with live video, instant code execution, and team rooms.","applicationCategory":"DeveloperApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Person","name":"M. Rabi. K."}}
 </script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3159193304868741"
+    crossorigin="anonymous"></script>
 </body>
+
 </html>
