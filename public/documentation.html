@@ -8,7 +8,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="icon" type="image/png" href="/logo.png">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -37,7 +36,6 @@
       flex-direction: column;
     }
 
-    /* noise */
     body::before {
       content: '';
       position: fixed;
@@ -71,6 +69,7 @@
       color: var(--accent);
       text-decoration: none;
       letter-spacing: -0.5px;
+      white-space: nowrap;
     }
     .nav-logo span { color: var(--accent2); }
 
@@ -93,6 +92,7 @@
       font-size: 12px;
       text-decoration: none;
       transition: all 0.2s;
+      white-space: nowrap;
     }
     .nav-back:hover {
       border-color: var(--accent);
@@ -190,7 +190,7 @@
     }
 
     .doc-page-title {
-      font-size: clamp(32px, 4vw, 48px);
+      font-size: clamp(28px, 5vw, 48px);
       font-weight: 800;
       letter-spacing: -1.5px;
       line-height: 1.05;
@@ -205,7 +205,7 @@
     }
 
     .doc-page-sub {
-      font-size: 15px;
+      font-size: 14px;
       color: var(--text-muted);
       font-family: var(--font-mono);
       line-height: 1.7;
@@ -221,7 +221,12 @@
       position: relative;
       overflow: hidden;
       transition: border-color 0.2s;
+      animation: fadeUp 0.5s ease both;
     }
+    .doc-card:nth-child(1) { animation-delay: 0.05s; }
+    .doc-card:nth-child(2) { animation-delay: 0.12s; }
+    .doc-card:nth-child(3) { animation-delay: 0.19s; }
+
     .doc-card::before {
       content: '';
       position: absolute;
@@ -254,7 +259,6 @@
       flex-shrink: 0;
     }
 
-    .card-title-wrap {}
     .card-num {
       font-family: var(--font-mono);
       font-size: 10px;
@@ -271,7 +275,6 @@
       line-height: 1.2;
     }
 
-    /* Prose */
     .doc-card p {
       font-size: 14px;
       color: var(--text-muted);
@@ -281,7 +284,6 @@
     }
     .doc-card p:last-child { margin-bottom: 0; }
 
-    /* Subheadings */
     .doc-card h2 {
       font-size: 14px;
       font-weight: 700;
@@ -301,52 +303,7 @@
       flex-shrink: 0;
     }
 
-    .doc-card h4 {
-      font-family: var(--font-mono);
-      font-size: 10px;
-      font-weight: 700;
-      color: var(--text-muted);
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      text-align: center;
-      margin: 10px 0;
-    }
-
-    /* Lists */
-    .doc-card ul {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .doc-card ul li {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      font-size: 13px;
-      color: var(--text-muted);
-      font-family: var(--font-mono);
-      line-height: 1.6;
-      padding: 6px 10px;
-      border-radius: 5px;
-      border: 1px solid transparent;
-      transition: all 0.15s;
-    }
-    .doc-card ul li:hover {
-      background: var(--surface2);
-      border-color: var(--border);
-      color: var(--text);
-    }
-    .doc-card ul li::before {
-      content: '→';
-      color: var(--accent);
-      flex-shrink: 0;
-      font-size: 12px;
-      margin-top: 1px;
-    }
-
-    /* Feature grid inside card */
+    /* Feature grid */
     .feat-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -378,7 +335,7 @@
       flex-shrink: 0;
     }
 
-    /* Step list for Getting Started */
+    /* Steps */
     .steps-list {
       display: flex;
       flex-direction: column;
@@ -408,7 +365,6 @@
       margin-top: 1px;
     }
 
-    .step-content {}
     .step-title {
       font-size: 13px;
       font-weight: 700;
@@ -422,28 +378,6 @@
       line-height: 1.6;
     }
 
-    /* OR divider */
-    .or-divider {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin: 10px 0;
-    }
-    .or-divider::before, .or-divider::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: var(--border);
-    }
-    .or-text {
-      font-family: var(--font-mono);
-      font-size: 10px;
-      color: var(--text-muted);
-      letter-spacing: 1px;
-      text-transform: uppercase;
-    }
-
-    /* inline code */
     code {
       font-family: var(--font-mono);
       font-size: 12px;
@@ -489,29 +423,141 @@
     }
     .footer-links a:hover { color: var(--text); }
 
-    /* ── RESPONSIVE ──────────────────── */
-    @media (max-width: 768px) {
-      nav { padding: 0 20px; }
-      .page-wrap { padding: 32px 20px 60px; flex-direction: column; gap: 32px; }
-      .sidebar { width: 100%; }
-      .sidebar-sticky { position: static; }
-      .sidebar-nav { flex-direction: row; flex-wrap: wrap; }
-      .doc-card { padding: 22px 18px; }
-      .feat-grid { grid-template-columns: 1fr; }
-      footer { padding: 20px; flex-direction: column; text-align: center; }
-    }
-
-    /* fade in */
-    .doc-card {
-      animation: fadeUp 0.5s ease both;
-    }
-    .doc-card:nth-child(1) { animation-delay: 0.05s; }
-    .doc-card:nth-child(2) { animation-delay: 0.12s; }
-    .doc-card:nth-child(3) { animation-delay: 0.19s; }
-
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(16px); }
       to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ═══════════════════════════════════
+       TABLET  481px – 900px
+    ═══════════════════════════════════ */
+    @media (max-width: 900px) {
+      .page-wrap {
+        padding: 36px 32px 64px;
+        gap: 32px;
+      }
+      .sidebar { width: 180px; }
+      nav { padding: 0 32px; }
+      footer { padding: 20px 32px; }
+    }
+
+    /* ═══════════════════════════════════
+       MOBILE + SMALL TABLET  ≤ 720px
+    ═══════════════════════════════════ */
+    @media (max-width: 720px) {
+      /* Nav */
+      nav {
+        padding: 0 16px;
+        height: 52px;
+      }
+      .nav-logo { font-size: 13px; }
+      .nav-back {
+        padding: 5px 12px;
+        font-size: 11px;
+      }
+      /* Hide long label on very small nav */
+      .nav-back-label { display: none; }
+
+      /* Layout: stack sidebar above content */
+      .page-wrap {
+        flex-direction: column;
+        padding: 24px 16px 56px;
+        gap: 20px;
+      }
+
+      /* Sidebar becomes a horizontal pill strip */
+      .sidebar { width: 100%; }
+      .sidebar-sticky { position: static; }
+      .sidebar-label { display: none; }
+
+      .sidebar-nav {
+        flex-direction: row;
+        flex-wrap: nowrap;
+        gap: 6px;
+        overflow-x: auto;
+        padding-bottom: 4px;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+      .sidebar-nav::-webkit-scrollbar { display: none; }
+
+      .sidebar-link {
+        padding: 6px 14px;
+        font-size: 12px;
+        white-space: nowrap;
+        flex-shrink: 0;
+        border-radius: 20px;
+      }
+
+      /* Page header */
+      .doc-header {
+        margin-bottom: 28px;
+        padding-bottom: 24px;
+      }
+      .doc-page-title {
+        font-size: clamp(26px, 7vw, 38px);
+        letter-spacing: -1px;
+      }
+      .doc-page-sub { font-size: 12px; }
+
+      /* Cards */
+      .doc-card {
+        padding: 20px 18px 18px;
+        margin-bottom: 16px;
+        border-radius: 8px;
+      }
+
+      .doc-card h1 { font-size: 17px; }
+
+      .card-icon {
+        width: 34px; height: 34px;
+        font-size: 16px;
+        border-radius: 7px;
+      }
+
+      .doc-card p { font-size: 13px; }
+      .doc-card h2 { font-size: 13px; margin: 18px 0 8px; }
+
+      /* Feature grid: 1 col on phones, 2 on wider mobile */
+      .feat-grid {
+        grid-template-columns: 1fr;
+        gap: 6px;
+      }
+      .feat-item { font-size: 12px; padding: 9px 10px; }
+
+      /* Steps */
+      .step-item { gap: 12px; padding: 12px 0; }
+      .step-title { font-size: 13px; }
+      .step-desc  { font-size: 11px; }
+
+      /* Footer */
+      footer {
+        padding: 18px 16px;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 10px;
+      }
+      .footer-links { justify-content: center; }
+    }
+
+    /* ═══════════════════════════════════
+       TABLET LANDSCAPE  721px – 900px
+       2-col feat grid restored
+    ═══════════════════════════════════ */
+    @media (min-width: 521px) and (max-width: 720px) {
+      .feat-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    /* ═══════════════════════════════════
+       VERY SMALL  ≤ 380px
+    ═══════════════════════════════════ */
+    @media (max-width: 380px) {
+      .doc-page-title { font-size: 24px; letter-spacing: -0.5px; }
+      .doc-card { padding: 16px 14px 14px; }
+      .nav-back { padding: 4px 10px; font-size: 10px; }
+      .step-desc { font-size: 11px; }
+      code { font-size: 11px; }
     }
   </style>
 </head>
@@ -521,7 +567,7 @@
   <nav>
     <a href="landing.html" class="nav-logo">Code<span>Forge</span></a>
     <div class="nav-right">
-      <a href="index.html" class="nav-back">← Back to Editor</a>
+      <a href="index.html" class="nav-back">← <span class="nav-back-label">Back to </span>Editor</a>
     </div>
   </nav>
 
@@ -548,7 +594,6 @@
     <!-- MAIN -->
     <main class="doc-main">
 
-      <!-- Page header -->
       <div class="doc-header">
         <div class="doc-eyebrow">📖 Documentation</div>
         <h1 class="doc-page-title">CodeForge <em>Docs</em></h1>
@@ -672,7 +717,6 @@
   </footer>
 
   <script>
-    // Sidebar active link on scroll
     const sections = document.querySelectorAll('#overview, #features, #getting-started');
     const links = document.querySelectorAll('.sidebar-link');
 
@@ -681,10 +725,16 @@
         if (e.isIntersecting) {
           links.forEach(l => l.classList.remove('active'));
           const active = document.querySelector(`.sidebar-link[href="#${e.target.id}"]`);
-          if (active) active.classList.add('active');
+          if (active) {
+            active.classList.add('active');
+            // On mobile, scroll the active pill into view
+            if (window.innerWidth <= 720) {
+              active.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
+          }
         }
       });
-    }, { threshold: 0.5 });
+    }, { rootMargin: '-20% 0px -60% 0px' });
 
     sections.forEach(s => observer.observe(s));
   </script>

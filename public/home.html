@@ -1390,6 +1390,238 @@
       background: var(--border);
       border-radius: 3px;
     }
+
+    /* ══════════════════════════════════════════════════════
+       TABLET: 601–900px
+    ══════════════════════════════════════════════════════ */
+    @media (max-width: 900px) {
+      #left-panel { width: 200px; }
+      #right-panel { width: 180px; }
+      .logo-text { font-size: 13px; }
+      .lang-pill { padding: 3px 7px; font-size: 10px; }
+      .topbar-btn { padding: 3px 7px; font-size: 10px; }
+      #topbar { gap: 5px; padding: 0 10px; }
+      /* On tablet, show row-acts always (no hover on touch) */
+      .row-acts { display: flex; }
+    }
+
+    /* ══════════════════════════════════════════════════════
+       MOBILE: ≤600px
+    ══════════════════════════════════════════════════════ */
+    @media (max-width: 600px) {
+      html, body { overflow: hidden; touch-action: manipulation; }
+      #app-shell { height: 100dvh; padding-bottom: 52px; }
+
+      /* ── TOPBAR ── */
+      #topbar { height: 48px; padding: 0 10px; gap: 5px; }
+      .logo-text { font-size: 13px; margin-right: 0; }
+
+      /* Hide desktop-only topbar items */
+      .topbar-sep,
+      #topbarExportBtn,
+      #topbarFilesBtn,
+      a.topbar-btn { display: none; }
+
+      /* Keep save button but compact */
+      .topbar-btn.save { padding: 4px 9px; font-size: 11px; }
+
+      /* Smaller mode toggle */
+      .mode-btn { padding: 3px 9px; font-size: 11px; }
+
+      /* Scrollable language pills */
+      .lang-pills {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        max-width: 110px;
+        flex-shrink: 1;
+      }
+      .lang-pills::-webkit-scrollbar { display: none; }
+      .lang-pill { padding: 2px 7px; font-size: 10px; }
+
+      /* Run button */
+      #runBtn { padding: 5px 12px; font-size: 12px; gap: 4px; }
+
+      /* Auth area */
+      #signInBtn { padding: 3px 8px; font-size: 10px; }
+      .user-name { display: none; }
+      #signOutBtn { padding: 2px 6px; font-size: 9px; }
+      .user-avatar { width: 20px; height: 20px; }
+
+      /* Room bar compact */
+      #room-bar { gap: 4px; }
+      .room-badge { font-size: 10px; padding: 2px 6px; }
+      #leaveBtn { font-size: 10px; padding: 3px 6px; }
+      #editor-status { display: none; }
+
+      /* ── FILE BAR ── */
+      #current-file-bar { padding: 3px 8px; gap: 6px; }
+      #current-file-name { font-size: 10px; }
+      #save-indicator { font-size: 9px; }
+      #inlineCloseFileBtn { font-size: 9px; padding: 2px 5px; }
+
+      /* ── MAIN AREA ── */
+      #main-area { position: relative; }
+
+      /* Left panel: slide over as overlay */
+      #left-panel {
+        position: absolute;
+        top: 0; left: 0; bottom: 0;
+        width: 270px;
+        z-index: 50;
+        display: flex !important; /* always in DOM for transition */
+        transform: translateX(-100%);
+        transition: transform 0.22s ease;
+        box-shadow: 4px 0 24px rgba(0,0,0,0.55);
+      }
+      #left-panel.visible {
+        transform: translateX(0);
+      }
+
+      /* Right panel: slide over from right as overlay */
+      #right-panel {
+        position: absolute;
+        top: 0; right: 0; bottom: 0;
+        width: 230px;
+        z-index: 50;
+        display: flex !important;
+        transform: translateX(100%);
+        transition: transform 0.22s ease;
+        box-shadow: -4px 0 24px rgba(0,0,0,0.55);
+      }
+      #right-panel.visible {
+        transform: translateX(0);
+      }
+
+      /* Editor full width */
+      #editor-panel { width: 100%; }
+
+      /* ── STDIN BAR ── */
+      #stdin-bar { padding: 4px 8px; gap: 5px; }
+      #stdinInput { min-height: 26px; max-height: 55px; font-size: 11px; padding: 3px 6px; }
+      #stdin-hint { display: none; }
+      #stdin-bar label { font-size: 10px; padding-top: 4px; }
+
+      /* ── OUTPUT PANEL ── */
+      #output-panel { height: 130px; }
+      #output { font-size: 11px; padding: 6px 10px; }
+      .output-label { font-size: 9px; }
+      #clearOutputBtn { font-size: 10px; }
+
+      /* ── MEDIA BAR ── */
+      #media-bar { padding: 5px 10px; gap: 5px; }
+      .tool-btn { padding: 6px 4px; font-size: 10px; }
+
+      /* ── LOBBY — bottom sheet ── */
+      #lobby {
+        align-items: flex-end;
+        padding: 0;
+      }
+      .lobby-card {
+        width: 100%;
+        max-width: 100%;
+        border-radius: 18px 18px 0 0;
+        padding: 20px 18px 36px;
+        max-height: 88vh;
+        overflow-y: auto;
+      }
+      .lobby-card h2 { font-size: 16px; }
+      .lobby-card p { font-size: 12px; margin-bottom: 14px; }
+      .field input {
+        font-size: 16px; /* prevents iOS zoom */
+        padding: 10px;
+      }
+      .btn-main { padding: 13px; font-size: 15px; }
+      .tab-btn { font-size: 13px; padding: 7px; }
+      .share-url { font-size: 10px; }
+
+      /* ── MODALS — bottom sheet ── */
+      .modal-overlay { align-items: flex-end; padding: 0; }
+      .modal-box {
+        width: 100%;
+        border-radius: 18px 18px 0 0;
+        padding: 20px 18px 36px;
+      }
+      .modal-box input,
+      .modal-box select {
+        font-size: 16px; /* prevents iOS zoom */
+        padding: 10px;
+      }
+      .modal-btns button { padding: 11px; font-size: 14px; }
+
+      /* ── EDITOR UI ── */
+      .CodeMirror { font-size: 12px !important; }
+      #lockOverlay { font-size: 12px; }
+      #lockMsg { font-size: 12px; }
+
+      /* ── PANEL TABS ── */
+      .panel-tab { font-size: 9px; padding: 8px 3px; letter-spacing: 0.5px; }
+
+      /* ── MEMBERS ── */
+      .member-item { font-size: 11px; padding: 7px 0; }
+      .btn-assign { font-size: 9px; padding: 3px 6px; }
+      .btn-action { padding: 8px; font-size: 11px; }
+
+      /* ── FILES TREE ── always show row-acts on touch ── */
+      .row-acts { display: flex; }
+      .row-act { padding: 3px 6px; font-size: 9px; }
+      .files-toolbar button { font-size: 9px; padding: 6px 3px; }
+
+      /* ── TOAST ── lift above bottom nav ── */
+      #toast { bottom: 64px; font-size: 11px; padding: 7px 14px; }
+
+      /* ── PANEL BACKDROP ── */
+      #panel-backdrop {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.48);
+        z-index: 49;
+        -webkit-tap-highlight-color: transparent;
+      }
+      #panel-backdrop.visible { display: block; }
+    }
+
+    /* ══════════════════════════════════════════════════════
+       MOBILE BOTTOM NAV
+    ══════════════════════════════════════════════════════ */
+    #mobile-nav { display: none; }
+
+    @media (max-width: 600px) {
+      #mobile-nav {
+        display: flex;
+        position: fixed;
+        bottom: 0; left: 0; right: 0;
+        height: 52px;
+        background: var(--surface);
+        border-top: 1px solid var(--border);
+        z-index: 60;
+        align-items: stretch;
+        -webkit-tap-highlight-color: transparent;
+      }
+    }
+
+    .mobile-nav-btn {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      cursor: pointer;
+      padding: 5px 2px;
+      transition: color 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .mobile-nav-btn .nav-icon { font-size: 20px; line-height: 1; }
+    .mobile-nav-btn.active { color: var(--accent); }
   </style>
 </head>
 
@@ -1441,6 +1673,9 @@
     </div>
 
     <div id="main-area">
+      <!-- Panel backdrop for mobile tap-to-close -->
+      <div id="panel-backdrop"></div>
+
       <div id="left-panel">
         <div class="panel-tabs" id="panelTabs" style="display:none;">
           <button class="panel-tab active" id="tabMembers">Members</button>
@@ -1513,6 +1748,25 @@
       <button class="tool-btn on" id="camBtn">📹 Cam On</button>
     </div>
   </div>
+
+  <!-- MOBILE BOTTOM NAV (only visible ≤600px via CSS) -->
+  <nav id="mobile-nav" aria-label="Main navigation">
+    <button class="mobile-nav-btn active" id="mnavEditor" aria-label="Editor">
+      <span class="nav-icon">✏️</span>Editor
+    </button>
+    <button class="mobile-nav-btn" id="mnavFiles" aria-label="Files">
+      <span class="nav-icon">📁</span>Files
+    </button>
+    <button class="mobile-nav-btn" id="mnavRun" aria-label="Run code">
+      <span class="nav-icon">▶️</span>Run
+    </button>
+    <button class="mobile-nav-btn" id="mnavTeam" aria-label="Team">
+      <span class="nav-icon">👥</span>Team
+    </button>
+    <button class="mobile-nav-btn" id="mnavVideo" aria-label="Video">
+      <span class="nav-icon">📹</span>Video
+    </button>
+  </nav>
 
   <!-- LOBBY -->
   <div id="lobby">
@@ -1702,6 +1956,25 @@
     }
     function escHtml(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
     function escAttr(s) { return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;'); }
+    function isMobile() { return window.innerWidth <= 600; }
+
+    // ════════════════════════════════════════════════════════
+    //  MOBILE PANEL HELPERS
+    // ════════════════════════════════════════════════════════
+    function showBackdrop() {
+      document.getElementById('panel-backdrop').classList.add('visible');
+    }
+    function hideBackdrop() {
+      document.getElementById('panel-backdrop').classList.remove('visible');
+    }
+    function closeAllMobilePanels() {
+      document.getElementById('left-panel').classList.remove('visible');
+      document.getElementById('right-panel').classList.remove('visible');
+      hideBackdrop();
+      // Reset nav active state to editor
+      document.querySelectorAll('.mobile-nav-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('mnavEditor').classList.add('active');
+    }
 
     // ════════════════════════════════════════════════════════
     //  CODEMIRROR
@@ -1858,11 +2131,11 @@
         if (btn) {
           e.stopPropagation();
           const { act, id, name } = btn.dataset;
-          if (act === 'open') await fsOpenFile(id);
+          if (act === 'open') { await fsOpenFile(id); if (isMobile()) closeAllMobilePanels(); }
           if (act === 'dl') await fsDownloadFile(id);
           if (act === 'ren-file') openRenameModal('file', id, name);
           if (act === 'del-file') await fsDeleteFile(id, file.name);
-        } else { await fsOpenFile(file._id); }
+        } else { await fsOpenFile(file._id); if (isMobile()) closeAllMobilePanels(); }
       });
       return row;
     }
@@ -2018,9 +2291,15 @@
           document.getElementById('membersTabContent').classList.remove('active');
           document.getElementById('filesTabContent').classList.add('active');
         }
+        if (isMobile()) {
+          // Close right panel if open
+          document.getElementById('right-panel').classList.remove('visible');
+          showBackdrop();
+        }
         loadFileTree();
       } else {
         if (appMode !== 'team') panel.classList.remove('visible');
+        if (isMobile()) hideBackdrop();
       }
     }
 
@@ -2028,13 +2307,15 @@
       appMode = mode; const isTeam = mode === 'team';
       document.getElementById('modeTeam').classList.toggle('active', isTeam);
       document.getElementById('modeSolo').classList.toggle('active', !isTeam);
-      document.getElementById('left-panel').classList.toggle('visible', isTeam || filesPanelOpen);
-      document.getElementById('right-panel').classList.toggle('visible', isTeam);
+      if (!isMobile()) {
+        document.getElementById('left-panel').classList.toggle('visible', isTeam || filesPanelOpen);
+        document.getElementById('right-panel').classList.toggle('visible', isTeam);
+      }
       document.getElementById('media-bar').classList.toggle('visible', isTeam);
       document.getElementById('room-bar').classList.toggle('visible', isTeam);
       const tabs = document.getElementById('panelTabs');
       if (isTeam) { tabs.style.display = 'flex'; switchPanelTab('members'); document.getElementById('lobby').classList.add('visible'); }
-      else { tabs.style.display = 'none'; if (socket) performLeave(); document.getElementById('lobby').classList.remove('visible'); document.getElementById('room-bar').classList.remove('visible'); if (!filesPanelOpen) document.getElementById('left-panel').classList.remove('visible'); }
+      else { tabs.style.display = 'none'; if (socket) performLeave(); document.getElementById('lobby').classList.remove('visible'); document.getElementById('room-bar').classList.remove('visible'); if (!filesPanelOpen && !isMobile()) document.getElementById('left-panel').classList.remove('visible'); }
     }
 
     function switchPanelTab(tab) {
@@ -2053,7 +2334,6 @@
       const out = document.getElementById('output'), btn = document.getElementById('runBtn');
       if (!code) { toast('No code to run'); return; }
 
-      // Ensure trailing newline so scanf/input() doesn't hang
       const stdinRaw = document.getElementById('stdinInput').value;
       const stdin = stdinRaw ? (stdinRaw.endsWith('\n') ? stdinRaw : stdinRaw + '\n') : '';
 
@@ -2117,7 +2397,7 @@
     }
 
     // ════════════════════════════════════════════════════════
-    //  MEDIA — graceful fallback
+    //  MEDIA
     // ════════════════════════════════════════════════════════
     async function requestMedia() {
       micOn = true; camOn = true;
@@ -2142,28 +2422,20 @@
     //  SOCKET EVENTS
     // ════════════════════════════════════════════════════════
     function bindSocketEvents() {
-      socket.on('connect', () => {
-        mySocketId = socket.id;
-      });
+      socket.on('connect', () => { mySocketId = socket.id; });
       socket.on('connect_error', err => toast('Connection error: ' + err.message));
 
       socket.on('room-state', ({ users, editorOwner: eo, code, yourSocketId }) => {
-        mySocketId = yourSocketId; // use server-confirmed ID
+        mySocketId = yourSocketId;
         roomUsers = users; editorOwner = eo;
         initEditor(code);
         buildMyTile();
         renderMembers();
         updateEditorLock();
-        // Existing users: initiate only if our ID is "less than" theirs (tie-breaking)
         users.forEach(u => {
           if (u.socketId !== mySocketId) {
-            // Polite peer: only the side with the smaller ID sends the offer
-            if (mySocketId < u.socketId) {
-              createPeerConnection(u.socketId, u.name, true);
-            } else {
-              // Just create the PC and wait for an offer from them
-              createPeerConnection(u.socketId, u.name, false);
-            }
+            if (mySocketId < u.socketId) createPeerConnection(u.socketId, u.name, true);
+            else createPeerConnection(u.socketId, u.name, false);
           }
         });
       });
@@ -2172,11 +2444,6 @@
         toast(`${name} joined`);
         roomUsers.push({ socketId, name, isHost });
         renderMembers();
-        // Newcomer always sends offers to everyone already in the room.
-        // Existing members receive 'rtc-offer' and answer — they should NOT
-        // also call createPeerConnection(isInitiator=true) here.
-        // We are an existing member; the newcomer will send us an offer.
-        // Just pre-create the PC (non-initiator) so it's ready when the offer arrives.
         createPeerConnection(socketId, name, false);
       });
 
@@ -2189,14 +2456,9 @@
       });
 
       socket.on('rtc-offer', async ({ from, name, offer }) => {
-        // Ensure PC exists (non-initiator side)
         if (!peers[from]) await createPeerConnection(from, name, false);
         const pc = peers[from].pc;
-        // Guard: only set remote description if we are in the right state
-        if (pc.signalingState !== 'stable') {
-          console.warn(`Ignoring offer from ${name} — unexpected state: ${pc.signalingState}`);
-          return;
-        }
+        if (pc.signalingState !== 'stable') { console.warn(`Ignoring offer from ${name} — unexpected state: ${pc.signalingState}`); return; }
         await pc.setRemoteDescription(new RTCSessionDescription(offer));
         const answer = await pc.createAnswer();
         await pc.setLocalDescription(answer);
@@ -2206,16 +2468,9 @@
       socket.on('rtc-answer', async ({ from, answer }) => {
         if (!peers[from]) return;
         const pc = peers[from].pc;
-        // Guard: only accept answer when we are in have-local-offer state
-        if (pc.signalingState !== 'have-local-offer') {
-          console.warn(`Ignoring answer from ${peers[from].name} — unexpected state: ${pc.signalingState}`);
-          return;
-        }
-        try {
-          await pc.setRemoteDescription(new RTCSessionDescription(answer));
-        } catch (e) {
-          console.error('setRemoteDescription (answer) failed:', e);
-        }
+        if (pc.signalingState !== 'have-local-offer') { console.warn(`Ignoring answer from ${peers[from].name} — unexpected state: ${pc.signalingState}`); return; }
+        try { await pc.setRemoteDescription(new RTCSessionDescription(answer)); }
+        catch (e) { console.error('setRemoteDescription (answer) failed:', e); }
       });
 
       socket.on('rtc-ice', async ({ from, candidate }) => {
@@ -2240,47 +2495,23 @@
     }
 
     // ════════════════════════════════════════════════════════
-    //  WebRTC PEER CONNECTION
+    //  WebRTC
     // ════════════════════════════════════════════════════════
     async function createPeerConnection(peerId, peerName, isInitiator) {
-      if (peers[peerId]) return; // already exists — do nothing
-
+      if (peers[peerId]) return;
       const pc = new RTCPeerConnection(ICE_CFG);
       peers[peerId] = { pc, name: peerName };
-
-      // Add all local tracks before offer/answer
-      if (myStream) {
-        myStream.getTracks().forEach(track => pc.addTrack(track, myStream));
-      }
-
-      pc.onicecandidate = e => {
-        if (e.candidate) socket.emit('rtc-ice', { to: peerId, candidate: e.candidate });
-      };
-
-      pc.oniceconnectionstatechange = () => {
-        if (pc.iceConnectionState === 'failed') {
-          console.warn(`ICE failed for ${peerName} — restarting`);
-          pc.restartIce();
-        }
-      };
-
-      pc.ontrack = e => {
-        if (e.streams && e.streams[0]) {
-          peers[peerId].stream = e.streams[0];
-          attachRemoteStream(peerId, e.streams[0]);
-        }
-      };
-
+      if (myStream) myStream.getTracks().forEach(track => pc.addTrack(track, myStream));
+      pc.onicecandidate = e => { if (e.candidate) socket.emit('rtc-ice', { to: peerId, candidate: e.candidate }); };
+      pc.oniceconnectionstatechange = () => { if (pc.iceConnectionState === 'failed') { console.warn(`ICE failed for ${peerName} — restarting`); pc.restartIce(); } };
+      pc.ontrack = e => { if (e.streams && e.streams[0]) { peers[peerId].stream = e.streams[0]; attachRemoteStream(peerId, e.streams[0]); } };
       addTile(peerId, peerName);
-
       if (isInitiator) {
         try {
           const offer = await pc.createOffer({ offerToReceiveAudio: true, offerToReceiveVideo: true });
           await pc.setLocalDescription(offer);
           socket.emit('rtc-offer', { to: peerId, offer });
-        } catch (e) {
-          console.error('createOffer failed:', e);
-        }
+        } catch (e) { console.error('createOffer failed:', e); }
       }
     }
 
@@ -2290,10 +2521,9 @@
     function buildMyTile() {
       const ex = document.getElementById('tile-me'); if (ex) ex.remove();
       const tile = document.createElement('div'); tile.className = 'video-tile'; tile.id = 'tile-me';
-
       if (myStream && camOn) {
         const v = document.createElement('video');
-        v.autoplay = true; v.muted = true; v.playsInline = true; // muted for own stream (avoid echo)
+        v.autoplay = true; v.muted = true; v.playsInline = true;
         v.srcObject = myStream;
         v.onloadedmetadata = () => v.play().catch(() => { });
         tile.appendChild(v);
@@ -2302,7 +2532,6 @@
         o.innerHTML = `<span class="cam-off-icon">🚫</span><span>${myStream ? 'Cam Off' : 'No Camera'}</span>`;
         tile.appendChild(o);
       }
-
       const lbl = document.createElement('div'); lbl.className = 'tile-label';
       lbl.textContent = myName + (myIsHost ? ' 👑' : '') + ' (you)'; tile.appendChild(lbl);
       document.getElementById('videoGrid').insertBefore(tile, document.getElementById('videoGrid').firstChild);
@@ -2318,47 +2547,36 @@
     }
 
     function attachRemoteStream(socketId, stream) {
-      const tile = document.getElementById('tile-' + socketId);
-      if (!tile) return;
-
+      const tile = document.getElementById('tile-' + socketId); if (!tile) return;
       const o = tile.querySelector('.cam-off'); if (o) o.remove();
-
       let v = tile.querySelector('video');
       if (!v) {
-        v = document.createElement('video');
-        v.autoplay = true;
-        v.playsInline = true;
-        v.muted = false; // NEVER mute remote peers
+        v = document.createElement('video'); v.autoplay = true; v.playsInline = true; v.muted = false;
         v.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;background:#000;';
         tile.insertBefore(v, tile.querySelector('.tile-label'));
       }
-
       v.srcObject = stream;
       const tryPlay = () => v.play().catch(err => console.warn('play() failed:', err.message));
-      if (v.readyState >= 2) tryPlay();
-      else v.onloadedmetadata = tryPlay;
+      if (v.readyState >= 2) tryPlay(); else v.onloadedmetadata = tryPlay;
     }
 
     function removeTile(socketId) { const t = document.getElementById('tile-' + socketId); if (t) t.remove(); }
 
     // ════════════════════════════════════════════════════════
-    //  MIC / CAM TOGGLE
+    //  MIC / CAM
     // ════════════════════════════════════════════════════════
     function toggleMic() {
       if (!myStream || myStream.getAudioTracks().length === 0) { toast('No microphone available'); return; }
       micOn = !micOn;
       myStream.getAudioTracks().forEach(t => { t.enabled = micOn; });
-      updateMediaBtnUI();
-      toast(micOn ? '🎙 Mic on' : '🔇 Mic muted');
+      updateMediaBtnUI(); toast(micOn ? '🎙 Mic on' : '🔇 Mic muted');
     }
 
     function toggleCam() {
       if (!myStream || myStream.getVideoTracks().length === 0) { toast('No camera available'); return; }
       camOn = !camOn;
       myStream.getVideoTracks().forEach(t => { t.enabled = camOn; });
-      updateMediaBtnUI();
-      refreshMyTileVideo();
-      toast(camOn ? '📹 Camera on' : '🚫 Camera off');
+      updateMediaBtnUI(); refreshMyTileVideo(); toast(camOn ? '📹 Camera on' : '🚫 Camera off');
     }
 
     function refreshMyTileVideo() {
@@ -2455,7 +2673,8 @@
       document.getElementById('room-bar').classList.remove('visible');
       document.getElementById('lobby').classList.remove('visible');
       document.getElementById('panelTabs').style.display = 'none';
-      if (!filesPanelOpen) document.getElementById('left-panel').classList.remove('visible');
+      if (!filesPanelOpen && !isMobile()) document.getElementById('left-panel').classList.remove('visible');
+      if (isMobile()) closeAllMobilePanels();
     }
 
     function respondRequest(grant) {
@@ -2518,6 +2737,67 @@
       document.getElementById('denyBtn').addEventListener('click', () => respondRequest(false));
       document.getElementById('micBtn').addEventListener('click', toggleMic);
       document.getElementById('camBtn').addEventListener('click', toggleCam);
+
+      // ── MOBILE NAV ──
+      document.getElementById('mnavEditor').addEventListener('click', () => {
+        closeAllMobilePanels();
+      });
+
+      document.getElementById('mnavFiles').addEventListener('click', () => {
+        const leftPanel = document.getElementById('left-panel');
+        const alreadyOpen = leftPanel.classList.contains('visible');
+        closeAllMobilePanels();
+        if (!alreadyOpen) {
+          // Show files tab
+          document.getElementById('panelTabs').style.display = appMode === 'team' ? 'flex' : 'none';
+          document.getElementById('membersTabContent').classList.remove('active');
+          document.getElementById('filesTabContent').classList.add('active');
+          document.getElementById('tabFiles').classList.add('active');
+          document.getElementById('tabMembers').classList.remove('active');
+          leftPanel.classList.add('visible');
+          showBackdrop();
+          loadFileTree();
+          document.getElementById('mnavFiles').classList.add('active');
+          document.getElementById('mnavEditor').classList.remove('active');
+        }
+      });
+
+      document.getElementById('mnavRun').addEventListener('click', () => {
+        closeAllMobilePanels();
+        runCode();
+      });
+
+      document.getElementById('mnavTeam').addEventListener('click', () => {
+        if (appMode !== 'team') { setMode('team'); return; }
+        const leftPanel = document.getElementById('left-panel');
+        const alreadyOpen = leftPanel.classList.contains('visible');
+        const showingMembers = document.getElementById('membersTabContent').classList.contains('active');
+        closeAllMobilePanels();
+        if (!alreadyOpen || !showingMembers) {
+          document.getElementById('panelTabs').style.display = 'flex';
+          switchPanelTab('members');
+          leftPanel.classList.add('visible');
+          showBackdrop();
+          document.getElementById('mnavTeam').classList.add('active');
+          document.getElementById('mnavEditor').classList.remove('active');
+        }
+      });
+
+      document.getElementById('mnavVideo').addEventListener('click', () => {
+        if (appMode !== 'team') { toast('Join a team room first'); return; }
+        const rightPanel = document.getElementById('right-panel');
+        const alreadyOpen = rightPanel.classList.contains('visible');
+        closeAllMobilePanels();
+        if (!alreadyOpen) {
+          rightPanel.classList.add('visible');
+          showBackdrop();
+          document.getElementById('mnavVideo').classList.add('active');
+          document.getElementById('mnavEditor').classList.remove('active');
+        }
+      });
+
+      // Backdrop closes panels
+      document.getElementById('panel-backdrop').addEventListener('click', closeAllMobilePanels);
 
       const urlRoom = new URLSearchParams(window.location.search).get('room');
       if (urlRoom) { document.getElementById('joinRoomId').value = urlRoom; switchLobbyTab('join'); setMode('team'); }

@@ -51,23 +51,92 @@
     nav {
       position: fixed;
       top: 0; left: 0; right: 0;
-      z-index: 50;
+      z-index: 100;
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 0 48px;
       height: 60px;
-      background: rgba(14,13,11,0.85);
+      background: rgba(14,13,11,0.92);
       backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       border-bottom: 1px solid rgba(255,255,255,0.04);
     }
-    .nav-logo { font-family: var(--font-mono); font-size: 15px; font-weight: 700; color: var(--accent); letter-spacing: -0.5px; }
+    .nav-logo { font-family: var(--font-mono); font-size: 15px; font-weight: 700; color: var(--accent); letter-spacing: -0.5px; flex-shrink: 0; }
     .nav-logo span { color: var(--accent2); }
     .nav-links { display: flex; gap: 32px; list-style: none; }
-    .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 13px; font-weight: 600; letter-spacing: 0.5px; transition: color 0.2s; }
+    .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 13px; font-weight: 600; letter-spacing: 0.5px; transition: color 0.2s; white-space: nowrap; }
     .nav-links a:hover { color: var(--text); }
-    .nav-cta { padding: 7px 20px; background: var(--accent); color: #fff; border: none; border-radius: 5px; font-family: var(--font-display); font-size: 13px; font-weight: 700; cursor: pointer; text-decoration: none; transition: all 0.2s; }
+    .nav-cta { padding: 7px 20px; background: var(--accent); color: #fff; border: none; border-radius: 5px; font-family: var(--font-display); font-size: 13px; font-weight: 700; cursor: pointer; text-decoration: none; transition: all 0.2s; white-space: nowrap; flex-shrink: 0; }
     .nav-cta:hover { background: #4070ee; transform: translateY(-1px); }
+
+    /* Mobile nav hamburger */
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+      background: none;
+      border: none;
+      z-index: 110;
+    }
+    .nav-hamburger span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: var(--text-muted);
+      border-radius: 2px;
+      transition: all 0.3s;
+    }
+    .nav-hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); background: var(--text); }
+    .nav-hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .nav-hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); background: var(--text); }
+
+    /* Mobile menu drawer */
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      top: 60px; left: 0; right: 0;
+      background: rgba(14,13,11,0.98);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      z-index: 99;
+      padding: 20px 24px 28px;
+      flex-direction: column;
+      gap: 4px;
+      transform: translateY(-10px);
+      opacity: 0;
+      transition: transform 0.25s ease, opacity 0.25s ease;
+    }
+    .mobile-menu.open {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    .mobile-menu a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 600;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      transition: color 0.2s;
+      display: block;
+    }
+    .mobile-menu a:hover { color: var(--text); }
+    .mobile-menu a:last-child { border-bottom: none; }
+    .mobile-menu .mobile-cta {
+      margin-top: 16px;
+      display: block;
+      text-align: center;
+      padding: 12px 24px;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 6px;
+      font-weight: 700;
+      border-bottom: none;
+    }
 
     /* ── HERO ── */
     .hero {
@@ -108,7 +177,7 @@
     .eyebrow-dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; animation: pulse 2s ease infinite; }
     @keyframes pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.6); } }
 
-    .hero-title { font-size: clamp(56px,9vw,96px); font-weight: 800; line-height: 0.95; letter-spacing: -3px; margin-bottom: 24px; animation: fadeUp 0.6s 0.1s ease both; }
+    .hero-title { font-size: clamp(44px,9vw,96px); font-weight: 800; line-height: 0.95; letter-spacing: -3px; margin-bottom: 24px; animation: fadeUp 0.6s 0.1s ease both; }
     .title-line-1 { display: block; color: var(--text); }
     .title-line-2 { display: block; background: linear-gradient(135deg, var(--accent) 0%, var(--accent3) 60%, var(--accent2) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
 
@@ -129,11 +198,11 @@
     .preview-wrap { max-width: 900px; margin: 20px auto 0; padding: 0 48px; animation: fadeUp 0.8s 0.5s ease both; position: relative; z-index: 2; }
     .editor-mock { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; box-shadow: 0 40px 100px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.03); }
     .mock-titlebar { display: flex; align-items: center; gap: 8px; padding: 10px 16px; background: var(--surface2); border-bottom: 1px solid var(--border); }
-    .mock-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .mock-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
     .mock-dot:nth-child(1) { background: #ff5f57; }
     .mock-dot:nth-child(2) { background: #febc2e; }
     .mock-dot:nth-child(3) { background: #28c840; }
-    .mock-filename { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); margin-left: 8px; }
+    .mock-filename { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); margin-left: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .mock-body { display: grid; grid-template-columns: 40px 1fr 220px; min-height: 280px; }
     .mock-gutter { background: rgba(0,0,0,0.2); border-right: 1px solid var(--border); padding: 16px 0; display: flex; flex-direction: column; gap: 1px; }
     .ln { font-family: var(--font-mono); font-size: 11px; color: var(--text-muted); text-align: right; padding: 0 10px; line-height: 22px; opacity: 0.4; }
@@ -151,8 +220,8 @@
     .out-line { font-family: var(--font-mono); font-size: 12px; color: #4ade80; line-height: 1.7; }
 
     /* ── STATS BAR ── */
-    .stats-bar { display: flex; justify-content: center; gap: 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); background: var(--surface); overflow: hidden; }
-    .stat-item { flex: 1; max-width: 220px; padding: 28px 24px; text-align: center; border-right: 1px solid var(--border); transition: background 0.2s; }
+    .stats-bar { display: flex; justify-content: center; gap: 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); background: var(--surface); overflow: hidden; flex-wrap: wrap; }
+    .stat-item { flex: 1; min-width: 140px; max-width: 220px; padding: 28px 24px; text-align: center; border-right: 1px solid var(--border); transition: background 0.2s; }
     .stat-item:last-child { border-right: none; }
     .stat-item:hover { background: var(--surface2); }
     .stat-num { font-size: 36px; font-weight: 800; font-family: var(--font-mono); background: linear-gradient(135deg, var(--accent), var(--accent3)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1; margin-bottom: 4px; }
@@ -161,7 +230,7 @@
     /* ── SECTIONS ── */
     .section { padding: 100px 48px; max-width: 1080px; margin: 0 auto; }
     .section-label { font-family: var(--font-mono); font-size: 11px; color: var(--accent); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 14px; }
-    .section-title { font-size: clamp(32px,4vw,52px); font-weight: 800; letter-spacing: -1.5px; line-height: 1.1; margin-bottom: 60px; }
+    .section-title { font-size: clamp(28px,4vw,52px); font-weight: 800; letter-spacing: -1.5px; line-height: 1.1; margin-bottom: 60px; }
     .section-title em { font-style: normal; color: var(--accent); }
 
     /* ── FEATURES ── */
@@ -210,7 +279,7 @@
     .cta-section { padding: 100px 48px; text-align: center; position: relative; overflow: hidden; }
     .cta-section::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(91,142,255,0.06) 0%, transparent 70%); pointer-events: none; }
     .cta-inner { max-width: 600px; margin: 0 auto; position: relative; z-index: 2; }
-    .cta-title { font-size: clamp(38px,5vw,60px); font-weight: 800; letter-spacing: -2px; line-height: 1.05; margin-bottom: 18px; }
+    .cta-title { font-size: clamp(32px,5vw,60px); font-weight: 800; letter-spacing: -2px; line-height: 1.05; margin-bottom: 18px; }
     .cta-sub { font-size: 16px; color: var(--text-muted); margin-bottom: 36px; line-height: 1.6; font-family: var(--font-mono); }
     .btn-launch { display: inline-flex; align-items: center; gap: 10px; padding: 16px 40px; background: linear-gradient(135deg, var(--accent) 0%, #7b9fff 100%); color: #fff; border: none; border-radius: 8px; font-family: var(--font-display); font-size: 16px; font-weight: 700; cursor: pointer; text-decoration: none; transition: all 0.25s; box-shadow: 0 8px 32px rgba(91,142,255,0.25); }
     .btn-launch:hover { transform: translateY(-3px); box-shadow: 0 16px 48px rgba(91,142,255,0.4); }
@@ -233,33 +302,169 @@
     .footer-legal a { font-size: 12px; color: var(--text-muted); text-decoration: none; font-family: var(--font-mono); transition: color 0.2s; }
     .footer-legal a:hover { color: var(--text); }
 
-    /* ── RESPONSIVE ── */
-    @media (max-width: 768px) {
-      nav { padding: 0 20px; }
-      .nav-links { display: none; }
-      .hero { padding: 100px 24px 40px; }
-      .preview-wrap { padding: 0 24px; }
-      .section { padding: 60px 24px; }
-      .features-grid { grid-template-columns: 1fr; }
-      .steps-grid { grid-template-columns: 1fr; }
-      .step::after { display: none; }
-      .stats-bar { flex-wrap: wrap; }
-      .langs-section { padding: 50px 24px; }
-      .langs-inner { gap: 32px; }
-      .cta-section { padding: 70px 24px; }
-      .about-section { padding: 60px 24px; }
-      .about-inner { grid-template-columns: 1fr; gap: 40px; }
-      .faq-section { padding: 60px 24px; }
-      .faq-grid { grid-template-columns: 1fr; }
-      footer { padding: 32px 24px 20px; }
-      .footer-top { flex-direction: column; gap: 28px; }
-      .footer-bottom { flex-direction: column; text-align: center; }
-      .mock-sidebar { display: none; }
-      .mock-body { grid-template-columns: 40px 1fr; }
-    }
-
     .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
     .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ══════════════════════════════════════
+       TABLET  (≤ 1024px)
+    ══════════════════════════════════════ */
+    @media (max-width: 1024px) {
+      nav { padding: 0 28px; gap: 16px; }
+      .nav-links { gap: 20px; }
+      .nav-links a { font-size: 12px; }
+
+      .hero { padding: 100px 32px 60px; }
+      .hero-title { letter-spacing: -2px; }
+
+      .preview-wrap { padding: 0 32px; }
+
+      .section { padding: 80px 32px; }
+
+      .features-grid { grid-template-columns: repeat(2, 1fr); }
+
+      .about-section { padding: 70px 32px; }
+      .about-inner { gap: 48px; }
+
+      .langs-section { padding: 60px 32px; }
+      .langs-inner { gap: 40px; }
+
+      .faq-section { padding: 80px 32px; }
+
+      .cta-section { padding: 80px 32px; }
+
+      footer { padding: 36px 32px 24px; }
+
+      /* Editor mock: hide sidebar on tablet too, give more room to code */
+      .mock-body { grid-template-columns: 40px 1fr; }
+      .mock-sidebar { display: none; }
+    }
+
+    /* ══════════════════════════════════════
+       LARGE MOBILE / SMALL TABLET  (≤ 768px)
+    ══════════════════════════════════════ */
+    @media (max-width: 768px) {
+      /* Nav */
+      nav { padding: 0 20px; }
+      .nav-links { display: none; }
+      .nav-cta { display: none; }
+      .nav-hamburger { display: flex; }
+      .mobile-menu { display: flex; }
+
+      /* Hero */
+      .hero { padding: 90px 20px 48px; min-height: auto; }
+      .hero-title { letter-spacing: -1.5px; }
+      .hero-eyebrow { font-size: 10px; }
+      .hero-sub { font-size: 16px; }
+      .hero-actions { flex-direction: column; align-items: center; gap: 10px; }
+      .btn-primary, .btn-ghost { width: 100%; max-width: 320px; justify-content: center; font-size: 14px; padding: 13px 24px; }
+
+      /* Preview */
+      .preview-wrap { padding: 0 16px; margin-top: 32px; }
+      .mock-body { grid-template-columns: 32px 1fr; min-height: 200px; }
+      .mock-gutter { padding: 12px 0; }
+      .ln { font-size: 10px; padding: 0 6px; line-height: 20px; }
+      .mock-code { padding: 12px 12px; font-size: 10.5px; line-height: 20px; }
+      .code-line { gap: 3px; }
+      .indent { width: 16px; }
+      .mock-sidebar { display: none; }
+      .out-line { font-size: 10px; }
+      .mock-filename { font-size: 10px; }
+
+      /* Stats */
+      .stats-bar { margin-top: 48px; }
+      .stat-item {
+        min-width: 50%;
+        max-width: 50%;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+      /* Remove bottom border from last two items */
+      .stat-item:nth-child(3),
+      .stat-item:nth-child(4) { border-bottom: none; }
+      /* Restore right divider for left-column items */
+      .stat-item:nth-child(odd) { border-right: 1px solid var(--border); }
+      .stat-num { font-size: 28px; }
+      .stat-label { font-size: 11px; }
+
+      /* Sections */
+      .section { padding: 60px 20px; }
+      .section-title { margin-bottom: 36px; letter-spacing: -1px; }
+
+      /* Features: single column */
+      .features-grid { grid-template-columns: 1fr; }
+      .feat-card { padding: 24px 20px; }
+
+      /* About */
+      .about-section { padding: 60px 20px; }
+      .about-inner { grid-template-columns: 1fr; gap: 40px; }
+
+      /* Languages */
+      .langs-section { padding: 50px 20px; }
+      .langs-inner { flex-direction: column; gap: 28px; }
+      .langs-text { min-width: 0; width: 100%; }
+      .langs-pills { min-width: 0; width: 100%; }
+
+      /* How it works */
+      .steps-grid { grid-template-columns: 1fr; gap: 36px; }
+      .step::after { display: none; }
+      .step-num { font-size: 44px; }
+
+      /* FAQ */
+      .faq-section { padding: 60px 20px; }
+      .faq-grid { grid-template-columns: 1fr; }
+      .faq-item { padding: 22px 20px; }
+      .faq-q { font-size: 14px; }
+
+      /* CTA */
+      .cta-section { padding: 70px 20px; }
+      .cta-title { letter-spacing: -1.5px; }
+      .cta-sub { font-size: 14px; }
+      .btn-launch { font-size: 15px; padding: 14px 32px; }
+
+      /* Footer */
+      footer { padding: 36px 20px 20px; }
+      .footer-top { flex-direction: column; gap: 28px; }
+      .footer-brand p { max-width: 100%; }
+      .footer-bottom { flex-direction: column; text-align: center; }
+      .footer-legal { justify-content: center; }
+    }
+
+    /* ══════════════════════════════════════
+       SMALL MOBILE  (≤ 480px)
+    ══════════════════════════════════════ */
+    @media (max-width: 480px) {
+      .hero-title { letter-spacing: -1px; }
+      .hero-sub { font-size: 14px; }
+
+      /* Code preview: very compact */
+      .mock-code { font-size: 9.5px; padding: 10px 8px; line-height: 18px; }
+      .ln { font-size: 9px; line-height: 18px; }
+      .mock-gutter { min-width: 28px; }
+      .mock-body { grid-template-columns: 28px 1fr; }
+      .indent { width: 12px; }
+
+      /* Stats: stack fully */
+      .stat-item {
+        min-width: 100%;
+        max-width: 100%;
+        border-right: none !important;
+        border-bottom: 1px solid var(--border);
+      }
+      .stat-item:last-child { border-bottom: none; }
+      .stat-num { font-size: 32px; }
+
+      .features-grid { border-radius: 8px; }
+      .feat-card { padding: 20px 16px; }
+      .feat-icon { font-size: 24px; }
+
+      .faq-item { padding: 18px 16px; }
+
+      .section-title { letter-spacing: -0.8px; }
+
+      /* Footer columns: two-col mini grid */
+      .footer-top { gap: 24px; }
+      .footer-cols-group { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; width: 100%; }
+    }
   </style>
 </head>
 <body>
@@ -276,7 +481,21 @@
       <li><a href="login.html">Login</a></li>
     </ul>
     <a href="home.html" class="nav-cta">Launch Editor →</a>
+    <button class="nav-hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
   </nav>
+
+  <!-- MOBILE MENU DRAWER -->
+  <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+    <a href="#features" class="mobile-link">Features</a>
+    <a href="#about" class="mobile-link">About</a>
+    <a href="#how" class="mobile-link">How it works</a>
+    <a href="#faq" class="mobile-link">FAQ</a>
+    <a href="documentation.html" class="mobile-link">Docs</a>
+    <a href="login.html" class="mobile-link">Login</a>
+    <a href="home.html" class="mobile-cta">Launch Editor →</a>
+  </div>
 
   <!-- HERO -->
   <section class="hero">
@@ -340,9 +559,9 @@
           </div>
         </div>
       </div>
-      <div style="border-top:1px solid var(--border);padding:8px 60px 10px 20px;background:rgba(0,0,0,0.2);">
+      <div style="border-top:1px solid var(--border);padding:8px 20px 10px;background:rgba(0,0,0,0.2);">
         <div class="out-label">Output</div>
-        <div class="out-line">[2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47]</div>
+        <div class="out-line" style="overflow-x:auto;white-space:nowrap">[2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47]</div>
         <div style="font-size:11px;color:var(--text-muted);font-family:var(--font-mono);margin-top:2px">Process finished with exit code 0 · 0.18s</div>
       </div>
     </div>
@@ -413,7 +632,7 @@
     <div class="about-inner">
       <div class="reveal">
         <div class="section-label">// About CodeForge</div>
-        <h2 style="font-size:clamp(28px,3.5vw,44px);font-weight:800;letter-spacing:-1.2px;line-height:1.1;margin-bottom:24px">
+        <h2 style="font-size:clamp(24px,3.5vw,44px);font-weight:800;letter-spacing:-1.2px;line-height:1.1;margin-bottom:24px">
           Built for developers<br>who work <em style="font-style:normal;color:var(--accent)">together</em>.
         </h2>
         <div class="about-body">
@@ -451,7 +670,7 @@
     <div class="langs-inner">
       <div class="langs-text reveal">
         <div class="section-label">// Languages</div>
-        <h2 style="font-size:clamp(26px,3vw,38px);font-weight:800;letter-spacing:-1px;line-height:1.15;margin-bottom:10px">Your stack,<br>fully supported.</h2>
+        <h2 style="font-size:clamp(24px,3vw,38px);font-weight:800;letter-spacing:-1px;line-height:1.15;margin-bottom:10px">Your stack,<br>fully supported.</h2>
         <p style="font-size:13px;color:var(--text-muted);line-height:1.8;font-family:var(--font-mono)">
           CodeForge currently supports Python 3, C++ (GCC), C, and Java. Each language comes with a starter template that loads the moment you select it. You can switch languages mid-session without losing your code history. Additional languages including JavaScript, Go, and Rust are planned for future releases.
         </p>
@@ -556,28 +775,30 @@
         <div class="footer-logo">Code<span>Forge</span></div>
         <p>A free, real-time collaborative coding platform. Write, run, and debug code together — no installs, no accounts required.</p>
       </div>
-      <div class="footer-col">
-        <h4>Product</h4>
-        <ul>
-          <li><a href="home.html">Editor</a></li>
-          <li><a href="documentation.html">Documentation</a></li>
-          <li><a href="#features">Features</a></li>
-          <li><a href="#faq">FAQ</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>Account</h4>
-        <ul>
-          <li><a href="login.html">Login</a></li>
-          <li><a href="signup.html">Sign Up</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>Legal</h4>
-        <ul>
-          <li><a href="privacy.html">Privacy Policy</a></li>
-          <li><a href="terms.html">Terms of Service</a></li>
-        </ul>
+      <div class="footer-cols-group">
+        <div class="footer-col">
+          <h4>Product</h4>
+          <ul>
+            <li><a href="home.html">Editor</a></li>
+            <li><a href="documentation.html">Documentation</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#faq">FAQ</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Account</h4>
+          <ul>
+            <li><a href="login.html">Login</a></li>
+            <li><a href="signup.html">Sign Up</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="privacy.html">Privacy Policy</a></li>
+            <li><a href="terms.html">Terms of Service</a></li>
+          </ul>
+        </div>
       </div>
     </div>
     <div class="footer-bottom">
@@ -598,6 +819,7 @@
   </noscript>
 
   <script>
+    // Scroll reveal
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(e => {
         if (e.isIntersecting) {
@@ -605,10 +827,43 @@
           observer.unobserve(e.target);
         }
       });
-    }, { threshold: 0.1 });
+    }, { threshold: 0.08 });
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // Mobile hamburger menu
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    let menuOpen = false;
+
+    function toggleMenu(open) {
+      menuOpen = open;
+      hamburger.classList.toggle('open', open);
+      mobileMenu.classList.toggle('open', open);
+      hamburger.setAttribute('aria-expanded', open);
+      mobileMenu.setAttribute('aria-hidden', !open);
+      // show/hide with display flex
+      mobileMenu.style.display = open ? 'flex' : '';
+    }
+
+    hamburger.addEventListener('click', () => toggleMenu(!menuOpen));
+
+    // Close menu when a link is clicked
+    mobileMenu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => toggleMenu(false));
+    });
+
+    // Close menu on outside click
+    document.addEventListener('click', (e) => {
+      if (menuOpen && !mobileMenu.contains(e.target) && !hamburger.contains(e.target)) {
+        toggleMenu(false);
+      }
+    });
+
+    // Close menu on resize back to desktop
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 768 && menuOpen) toggleMenu(false);
+    });
   </script>
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3159193304868741"
-     crossorigin="anonymous"></script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3159193304868741" crossorigin="anonymous"></script>
 </body>
 </html>
