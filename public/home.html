@@ -35,13 +35,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <script src="/socket.io/socket.io.js"></script>
   <style>
-    *,
-    *::before,
-    *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
       --bg: #0f1117;
@@ -58,15 +52,19 @@
       --gold: #f5a623;
       --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
       --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+      --topbar-h: 52px;
+      --output-h: 180px;
+      --left-w: 240px;
+      --right-w: 210px;
     }
 
-    html,
-    body {
+    html, body {
       height: 100%;
       background: var(--bg);
       color: var(--text);
       font-family: 'Segoe UI', system-ui, sans-serif;
       font-size: 14px;
+      /* Allow scroll on mobile; overflow:hidden is only for desktop */
       overflow: hidden;
     }
 
@@ -74,40 +72,37 @@
       display: flex;
       flex-direction: column;
       height: 100vh;
+      height: 100dvh; /* dynamic viewport height for mobile */
     }
 
-    /* TOPBAR */
+    /* ════════════ TOPBAR ════════════ */
     #topbar {
       display: flex;
       align-items: center;
-      gap: 8px;
-      padding: 0 14px;
-      height: 52px;
+      gap: 6px;
+      padding: 0 10px;
+      height: var(--topbar-h);
       background: var(--surface);
       border-bottom: 1px solid var(--border);
       flex-shrink: 0;
-      z-index: 10;
+      z-index: 50;
       overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
     }
-
-    #topbar::-webkit-scrollbar {
-      height: 0;
-    }
+    #topbar::-webkit-scrollbar { height: 0; }
 
     .logo-text {
       font-family: var(--font-mono);
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 700;
       color: var(--accent);
       letter-spacing: -0.5px;
-      margin-right: 4px;
+      margin-right: 2px;
       white-space: nowrap;
       flex-shrink: 0;
     }
-
-    .logo-text span {
-      color: var(--accent2);
-    }
+    .logo-text span { color: var(--accent2); }
 
     .mode-toggle {
       display: flex;
@@ -118,33 +113,23 @@
       gap: 2px;
       flex-shrink: 0;
     }
-
     .mode-btn {
-      padding: 4px 12px;
+      padding: 4px 10px;
       border: none;
       background: transparent;
       color: var(--text-muted);
       border-radius: 4px;
       cursor: pointer;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 600;
       transition: all 0.15s;
       white-space: nowrap;
     }
+    .mode-btn.active { background: var(--accent); color: #fff; }
 
-    .mode-btn.active {
-      background: var(--accent);
-      color: #fff;
-    }
-
-    .lang-pills {
-      display: flex;
-      gap: 3px;
-      flex-shrink: 0;
-    }
-
+    .lang-pills { display: flex; gap: 3px; flex-shrink: 0; }
     .lang-pill {
-      padding: 3px 9px;
+      padding: 3px 8px;
       border: 1px solid var(--border);
       background: transparent;
       color: var(--text-muted);
@@ -156,28 +141,13 @@
       transition: all 0.15s;
       white-space: nowrap;
     }
+    .lang-pill:hover { border-color: var(--accent); color: var(--accent); }
+    .lang-pill.active { background: var(--accent); border-color: var(--accent); color: #fff; }
 
-    .lang-pill:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-
-    .lang-pill.active {
-      background: var(--accent);
-      border-color: var(--accent);
-      color: #fff;
-    }
-
-    .topbar-sep {
-      width: 1px;
-      height: 24px;
-      background: var(--border);
-      flex-shrink: 0;
-      margin: 0 2px;
-    }
+    .topbar-sep { width: 1px; height: 24px; background: var(--border); flex-shrink: 0; margin: 0 2px; }
 
     .topbar-btn {
-      padding: 4px 10px;
+      padding: 4px 9px;
       background: transparent;
       border: 1px solid var(--border);
       color: var(--text-muted);
@@ -192,60 +162,33 @@
       display: inline-flex;
       align-items: center;
     }
-
-    .topbar-btn:hover {
-      border-color: var(--accent3);
-      color: var(--accent3);
-    }
-
-    .topbar-btn.save {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-
-    .topbar-btn.save:hover {
-      background: var(--accent);
-      color: #fff;
-    }
+    .topbar-btn:hover { border-color: var(--accent3); color: var(--accent3); }
+    .topbar-btn.save { border-color: var(--accent); color: var(--accent); }
+    .topbar-btn.save:hover { background: var(--accent); color: #fff; }
 
     #runBtn {
       margin-left: auto;
-      padding: 6px 16px;
+      padding: 6px 14px;
       background: var(--accent);
       color: #fff;
       border: none;
       border-radius: 6px;
       font-weight: 700;
-      font-size: 13px;
+      font-size: 12px;
       cursor: pointer;
       transition: all 0.15s;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       white-space: nowrap;
       flex-shrink: 0;
     }
+    #runBtn:hover:not(:disabled) { background: #4070ee; transform: translateY(-1px); }
+    #runBtn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-    #runBtn:hover:not(:disabled) {
-      background: #4070ee;
-      transform: translateY(-1px);
-    }
-
-    #runBtn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      transform: none;
-    }
-
-    #authArea {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex-shrink: 0;
-    }
-
+    #authArea { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
     #signInBtn {
-      padding: 4px 10px;
+      padding: 4px 9px;
       background: transparent;
       border: 1px solid var(--accent3);
       color: var(--accent3);
@@ -256,107 +199,38 @@
       white-space: nowrap;
       transition: all 0.15s;
     }
+    #signInBtn:hover { background: var(--accent3); color: #000; }
 
-    #signInBtn:hover {
-      background: var(--accent3);
-      color: #000;
-    }
+    #userInfo { display: none; align-items: center; gap: 6px; }
+    #userInfo.visible { display: flex; }
+    .user-avatar { width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--border); }
+    .user-name { font-size: 11px; color: var(--text-muted); font-family: var(--font-mono); max-width: 80px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    #signOutBtn { padding: 2px 6px; background: transparent; border: 1px solid var(--border); color: var(--text-muted); border-radius: 3px; cursor: pointer; font-size: 10px; transition: all 0.15s; }
+    #signOutBtn:hover { border-color: var(--accent2); color: var(--accent2); }
 
-    #userInfo {
+    #room-bar { display: none; align-items: center; gap: 5px; font-size: 12px; flex-shrink: 0; }
+    #room-bar.visible { display: flex; }
+    .room-badge { background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; padding: 3px 7px; font-family: var(--font-mono); font-size: 11px; cursor: pointer; white-space: nowrap; }
+    .room-badge:hover { border-color: var(--accent); }
+    #editor-status { font-size: 11px; color: var(--text-muted); white-space: nowrap; }
+    #leaveBtn { padding: 4px 7px; background: transparent; border: 1px solid var(--accent2); color: var(--accent2); border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: 600; transition: all 0.15s; white-space: nowrap; }
+    #leaveBtn:hover { background: var(--accent2); color: #fff; }
+
+    /* Mobile topbar overflow toggle */
+    #topbarOverflowBtn {
       display: none;
-      align-items: center;
-      gap: 6px;
-    }
-
-    #userInfo.visible {
-      display: flex;
-    }
-
-    .user-avatar {
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      border: 1px solid var(--border);
-    }
-
-    .user-name {
-      font-size: 11px;
-      color: var(--text-muted);
-      font-family: var(--font-mono);
-      max-width: 90px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    #signOutBtn {
-      padding: 2px 7px;
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--text-muted);
-      border-radius: 3px;
-      cursor: pointer;
-      font-size: 10px;
-      transition: all 0.15s;
-    }
-
-    #signOutBtn:hover {
-      border-color: var(--accent2);
-      color: var(--accent2);
-    }
-
-    #room-bar {
-      display: none;
-      align-items: center;
-      gap: 6px;
-      font-size: 12px;
       flex-shrink: 0;
-    }
-
-    #room-bar.visible {
-      display: flex;
-    }
-
-    .room-badge {
+      padding: 4px 8px;
       background: var(--surface2);
       border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 3px 8px;
-      font-family: var(--font-mono);
-      font-size: 11px;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-
-    .room-badge:hover {
-      border-color: var(--accent);
-    }
-
-    #editor-status {
-      font-size: 11px;
       color: var(--text-muted);
-      white-space: nowrap;
-    }
-
-    #leaveBtn {
-      padding: 4px 8px;
-      background: transparent;
-      border: 1px solid var(--accent2);
-      color: var(--accent2);
       border-radius: 4px;
       cursor: pointer;
-      font-size: 11px;
-      font-weight: 600;
-      transition: all 0.15s;
-      white-space: nowrap;
+      font-size: 13px;
+      line-height: 1;
     }
 
-    #leaveBtn:hover {
-      background: var(--accent2);
-      color: #fff;
-    }
-
-    /* FILE BAR */
+    /* ════════════ FILE BAR ════════════ */
     #current-file-bar {
       display: none;
       align-items: center;
@@ -368,57 +242,33 @@
       font-size: 11px;
       font-family: var(--font-mono);
     }
+    #current-file-bar.visible { display: flex; }
+    #current-file-name { color: var(--accent3); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    #save-indicator { font-size: 10px; color: var(--text-muted); white-space: nowrap; }
+    #save-indicator.unsaved { color: var(--gold); }
 
-    #current-file-bar.visible {
-      display: flex;
-    }
-
-    #current-file-name {
-      color: var(--accent3);
-      flex: 1;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    #save-indicator {
-      font-size: 10px;
-      color: var(--text-muted);
-      white-space: nowrap;
-    }
-
-    #save-indicator.unsaved {
-      color: var(--gold);
-    }
-
-    /* MAIN */
+    /* ════════════ MAIN AREA ════════════ */
     #main-area {
       display: flex;
       flex: 1;
       overflow: hidden;
+      position: relative;
     }
 
-    /* LEFT PANEL */
+    /* ════════════ LEFT PANEL ════════════ */
     #left-panel {
-      width: 240px;
+      width: var(--left-w);
       flex-shrink: 0;
       background: var(--surface);
       border-right: 1px solid var(--border);
       display: none;
       flex-direction: column;
       overflow: hidden;
+      transition: transform 0.25s ease;
     }
+    #left-panel.visible { display: flex; }
 
-    #left-panel.visible {
-      display: flex;
-    }
-
-    .panel-tabs {
-      display: flex;
-      border-bottom: 1px solid var(--border);
-      flex-shrink: 0;
-    }
-
+    .panel-tabs { display: flex; border-bottom: 1px solid var(--border); flex-shrink: 0; }
     .panel-tab {
       flex: 1;
       padding: 8px 4px;
@@ -433,413 +283,83 @@
       border-bottom: 2px solid transparent;
       transition: all 0.15s;
     }
+    .panel-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .panel-tab-content { display: none; flex-direction: column; flex: 1; overflow: hidden; }
+    .panel-tab-content.active { display: flex; }
 
-    .panel-tab.active {
-      color: var(--accent);
-      border-bottom-color: var(--accent);
-    }
+    .panel-section { padding: 10px 12px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+    .panel-title { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; }
 
-    .panel-tab-content {
-      display: none;
-      flex-direction: column;
-      flex: 1;
-      overflow: hidden;
-    }
+    .member-item { display: flex; align-items: center; gap: 6px; padding: 5px 0; font-size: 12px; border-bottom: 1px solid var(--border); }
+    .member-item:last-child { border-bottom: none; }
+    .member-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--success); flex-shrink: 0; }
+    .member-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .member-you { font-size: 10px; color: var(--text-muted); }
+    .member-editing { font-size: 10px; color: var(--accent3); }
+    .btn-assign { font-size: 10px; padding: 2px 6px; background: transparent; border: 1px solid var(--border); color: var(--text-muted); border-radius: 3px; cursor: pointer; transition: all 0.15s; }
+    .btn-assign:hover { border-color: var(--accent3); color: var(--accent3); }
 
-    .panel-tab-content.active {
-      display: flex;
-    }
+    .btn-action { width: 100%; padding: 7px; border: none; border-radius: 5px; font-size: 11px; font-weight: 600; cursor: pointer; margin-top: 6px; transition: all 0.15s; }
+    .btn-request { background: var(--surface2); border: 1px solid var(--accent); color: var(--accent); }
+    .btn-request:hover { background: var(--accent); color: #fff; }
+    .btn-reclaim { background: var(--surface2); border: 1px solid var(--accent2); color: var(--accent2); }
+    .btn-reclaim:hover { background: var(--accent2); color: #fff; }
+    .btn-handback { background: var(--surface2); border: 1px solid var(--accent3); color: var(--accent3); }
+    .btn-handback:hover { background: var(--accent3); color: #000; }
 
-    .panel-section {
-      padding: 10px 12px;
-      border-bottom: 1px solid var(--border);
-      flex-shrink: 0;
-    }
+    #notifBanner { display: none; background: var(--surface2); border: 1px solid var(--accent); border-radius: 6px; padding: 8px; margin-top: 6px; font-size: 11px; }
+    #notifBanner .banner-btns { display: flex; gap: 4px; margin-top: 6px; }
+    .bbtn { flex: 1; padding: 4px; border: none; border-radius: 4px; font-size: 11px; font-weight: 700; cursor: pointer; }
+    .bbtn.yes { background: var(--success); color: #000; }
+    .bbtn.no { background: var(--error); color: #fff; }
 
-    .panel-title {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-bottom: 8px;
-    }
+    /* FILES PANEL */
+    #files-panel { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
+    .files-toolbar { display: flex; gap: 4px; padding: 8px 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+    .files-toolbar button { flex: 1; padding: 5px 4px; border: 1px solid var(--border); background: var(--surface2); color: var(--text-muted); border-radius: 4px; cursor: pointer; font-size: 10px; font-weight: 600; transition: all 0.15s; }
+    .files-toolbar button:hover { border-color: var(--accent3); color: var(--accent3); }
+    .files-toolbar .btn-newfile:hover { border-color: var(--accent); color: var(--accent); }
+    .files-toolbar .btn-export:hover { border-color: var(--gold); color: var(--gold); }
+    .files-tree { flex: 1; overflow-y: auto; padding: 4px 0; }
+    .files-notice { padding: 18px 14px; text-align: center; font-size: 12px; color: var(--text-muted); line-height: 1.8; }
 
-    .member-item {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 5px 0;
-      font-size: 12px;
-      border-bottom: 1px solid var(--border);
-    }
+    .google-signin-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 9px 12px; margin-bottom: 10px; background: #fff; color: #3c4043; border: 1px solid #dadce0; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; transition: all 0.15s; }
+    .google-signin-btn:hover { background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
 
-    .member-item:last-child {
-      border-bottom: none;
-    }
+    .folder-row { display: flex; align-items: center; gap: 5px; padding: 5px 10px; cursor: pointer; transition: background 0.12s; user-select: none; }
+    .folder-row:hover { background: var(--surface2); }
+    .folder-chevron { font-size: 9px; color: var(--text-muted); transition: transform 0.15s; flex-shrink: 0; width: 10px; }
+    .folder-chevron.open { transform: rotate(90deg); }
+    .folder-icon { font-size: 13px; flex-shrink: 0; }
+    .folder-name { flex: 1; font-size: 12px; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .folder-children { padding-left: 12px; }
+    .file-row { display: flex; align-items: center; gap: 5px; padding: 4px 10px 4px 20px; cursor: pointer; transition: background 0.12s; }
+    .file-row:hover { background: var(--surface2); }
+    .file-row.active { background: rgba(91,142,255,0.12); border-left: 2px solid var(--accent); padding-left: 18px; }
+    .file-icon { font-size: 12px; flex-shrink: 0; }
+    .file-name { flex: 1; font-size: 11px; font-family: var(--font-mono); color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .file-lang-tag { font-size: 9px; color: var(--text-muted); flex-shrink: 0; text-transform: uppercase; letter-spacing: 0.3px; }
+    .row-acts { display: none; gap: 2px; flex-shrink: 0; }
+    .folder-row:hover .row-acts, .file-row:hover .row-acts { display: flex; }
+    .row-act { padding: 1px 4px; background: transparent; border: 1px solid var(--border); color: var(--text-muted); border-radius: 3px; cursor: pointer; font-size: 9px; line-height: 1.4; transition: all 0.12s; }
+    .row-act:hover { border-color: var(--accent2); color: var(--accent2); }
+    .row-act.act-open:hover { border-color: var(--accent); color: var(--accent); }
+    .row-act.act-dl:hover { border-color: var(--gold); color: var(--gold); }
 
-    .member-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--success);
-      flex-shrink: 0;
-    }
-
-    .member-name {
-      flex: 1;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .member-you {
-      font-size: 10px;
-      color: var(--text-muted);
-    }
-
-    .member-editing {
-      font-size: 10px;
-      color: var(--accent3);
-    }
-
-    .btn-assign {
-      font-size: 10px;
-      padding: 2px 6px;
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--text-muted);
-      border-radius: 3px;
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-
-    .btn-assign:hover {
-      border-color: var(--accent3);
-      color: var(--accent3);
-    }
-
-    .btn-action {
-      width: 100%;
-      padding: 7px;
-      border: none;
-      border-radius: 5px;
-      font-size: 11px;
-      font-weight: 600;
-      cursor: pointer;
-      margin-top: 6px;
-      transition: all 0.15s;
-    }
-
-    .btn-request {
-      background: var(--surface2);
-      border: 1px solid var(--accent);
-      color: var(--accent);
-    }
-
-    .btn-request:hover {
-      background: var(--accent);
-      color: #fff;
-    }
-
-    .btn-reclaim {
-      background: var(--surface2);
-      border: 1px solid var(--accent2);
-      color: var(--accent2);
-    }
-
-    .btn-reclaim:hover {
-      background: var(--accent2);
-      color: #fff;
-    }
-
-    .btn-handback {
-      background: var(--surface2);
-      border: 1px solid var(--accent3);
-      color: var(--accent3);
-    }
-
-    .btn-handback:hover {
-      background: var(--accent3);
-      color: #000;
-    }
-
-    #notifBanner {
-      display: none;
-      background: var(--surface2);
-      border: 1px solid var(--accent);
-      border-radius: 6px;
-      padding: 8px;
-      margin-top: 6px;
-      font-size: 11px;
-    }
-
-    #notifBanner .banner-btns {
-      display: flex;
-      gap: 4px;
-      margin-top: 6px;
-    }
-
-    .bbtn {
-      flex: 1;
-      padding: 4px;
-      border: none;
-      border-radius: 4px;
-      font-size: 11px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .bbtn.yes {
-      background: var(--success);
-      color: #000;
-    }
-
-    .bbtn.no {
-      background: var(--error);
-      color: #fff;
-    }
-
-    /* FILE PANEL */
-    #files-panel {
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-      overflow: hidden;
-    }
-
-    .files-toolbar {
-      display: flex;
-      gap: 4px;
-      padding: 8px 10px;
-      border-bottom: 1px solid var(--border);
-      flex-shrink: 0;
-    }
-
-    .files-toolbar button {
-      flex: 1;
-      padding: 5px 4px;
-      border: 1px solid var(--border);
-      background: var(--surface2);
-      color: var(--text-muted);
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 10px;
-      font-weight: 600;
-      transition: all 0.15s;
-    }
-
-    .files-toolbar button:hover {
-      border-color: var(--accent3);
-      color: var(--accent3);
-    }
-
-    .files-toolbar .btn-newfile:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-
-    .files-toolbar .btn-export:hover {
-      border-color: var(--gold);
-      color: var(--gold);
-    }
-
-    .files-tree {
-      flex: 1;
-      overflow-y: auto;
-      padding: 4px 0;
-    }
-
-    .files-notice {
-      padding: 18px 14px;
-      text-align: center;
-      font-size: 12px;
-      color: var(--text-muted);
-      line-height: 1.8;
-    }
-
-    .google-signin-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      width: 100%;
-      padding: 9px 12px;
-      margin-bottom: 10px;
-      background: #fff;
-      color: #3c4043;
-      border: 1px solid #dadce0;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 12px;
-      font-weight: 600;
-      transition: all 0.15s;
-    }
-
-    .google-signin-btn:hover {
-      background: #f8f9fa;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    }
-
-    .folder-row {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      padding: 5px 10px;
-      cursor: pointer;
-      transition: background 0.12s;
-      user-select: none;
-    }
-
-    .folder-row:hover {
-      background: var(--surface2);
-    }
-
-    .folder-chevron {
-      font-size: 9px;
-      color: var(--text-muted);
-      transition: transform 0.15s;
-      flex-shrink: 0;
-      width: 10px;
-    }
-
-    .folder-chevron.open {
-      transform: rotate(90deg);
-    }
-
-    .folder-icon {
-      font-size: 13px;
-      flex-shrink: 0;
-    }
-
-    .folder-name {
-      flex: 1;
-      font-size: 12px;
-      color: var(--text);
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .folder-children {
-      padding-left: 12px;
-    }
-
-    .file-row {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      padding: 4px 10px 4px 20px;
-      cursor: pointer;
-      transition: background 0.12s;
-    }
-
-    .file-row:hover {
-      background: var(--surface2);
-    }
-
-    .file-row.active {
-      background: rgba(91, 142, 255, 0.12);
-      border-left: 2px solid var(--accent);
-      padding-left: 18px;
-    }
-
-    .file-icon {
-      font-size: 12px;
-      flex-shrink: 0;
-    }
-
-    .file-name {
-      flex: 1;
-      font-size: 11px;
-      font-family: var(--font-mono);
-      color: var(--text);
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .file-lang-tag {
-      font-size: 9px;
-      color: var(--text-muted);
-      flex-shrink: 0;
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
-    }
-
-    .row-acts {
-      display: none;
-      gap: 2px;
-      flex-shrink: 0;
-    }
-
-    .folder-row:hover .row-acts,
-    .file-row:hover .row-acts {
-      display: flex;
-    }
-
-    .row-act {
-      padding: 1px 4px;
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--text-muted);
-      border-radius: 3px;
-      cursor: pointer;
-      font-size: 9px;
-      line-height: 1.4;
-      transition: all 0.12s;
-    }
-
-    .row-act:hover {
-      border-color: var(--accent2);
-      color: var(--accent2);
-    }
-
-    .row-act.act-open:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-
-    .row-act.act-dl:hover {
-      border-color: var(--gold);
-      color: var(--gold);
-    }
-
-    /* EDITOR */
-    #editor-panel {
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-      overflow: hidden;
-      min-width: 0;
-    }
+    /* ════════════ EDITOR ════════════ */
+    #editor-panel { display: flex; flex-direction: column; flex: 1; overflow: hidden; min-width: 0; }
 
     #stdin-bar {
       display: flex;
       align-items: flex-start;
       gap: 8px;
-      padding: 6px 12px;
+      padding: 5px 10px;
       background: var(--surface);
       border-bottom: 1px solid var(--border);
       flex-shrink: 0;
     }
-
-    #stdin-bar label {
-      font-size: 11px;
-      color: var(--text-muted);
-      white-space: nowrap;
-      font-family: var(--font-mono);
-      padding-top: 5px;
-      flex-shrink: 0;
-    }
-
-    #stdin-wrap {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
+    #stdin-bar label { font-size: 11px; color: var(--text-muted); white-space: nowrap; font-family: var(--font-mono); padding-top: 5px; flex-shrink: 0; }
+    #stdin-wrap { flex: 1; display: flex; flex-direction: column; gap: 2px; }
     #stdinInput {
       width: 100%;
       background: var(--bg);
@@ -852,56 +372,22 @@
       outline: none;
       transition: border-color 0.15s;
       resize: vertical;
-      min-height: 30px;
-      max-height: 100px;
+      min-height: 28px;
+      max-height: 80px;
       line-height: 1.5;
     }
+    #stdinInput:focus { border-color: var(--accent); }
+    #stdin-hint { font-size: 10px; color: var(--text-muted); }
 
-    #stdinInput:focus {
-      border-color: var(--accent);
-    }
+    #lockOverlay { display: none; position: absolute; inset: 0; background: rgba(15,17,23,0.7); z-index: 5; align-items: center; justify-content: center; font-size: 13px; color: var(--text-muted); pointer-events: none; }
+    #lockOverlay.visible { display: flex; }
 
-    #stdin-hint {
-      font-size: 10px;
-      color: var(--text-muted);
-    }
-
-    #lockOverlay {
-      display: none;
-      position: absolute;
-      inset: 0;
-      background: rgba(15, 17, 23, 0.7);
-      z-index: 5;
-      align-items: center;
-      justify-content: center;
-      font-size: 13px;
-      color: var(--text-muted);
-      pointer-events: none;
-    }
-
-    #lockOverlay.visible {
-      display: flex;
-    }
-
-    .cm-wrapper {
-      position: relative;
-      flex: 1;
-      overflow: hidden;
-    }
-
-    .CodeMirror {
-      height: 100% !important;
-      font-family: var(--font-mono) !important;
-      font-size: 13px !important;
-      background: var(--bg) !important;
-    }
-
-    .CodeMirror-scroll {
-      padding-bottom: 0 !important;
-    }
+    .cm-wrapper { position: relative; flex: 1; overflow: hidden; }
+    .CodeMirror { height: 100% !important; font-family: var(--font-mono) !important; font-size: 13px !important; background: var(--bg) !important; }
+    .CodeMirror-scroll { padding-bottom: 0 !important; }
 
     #output-panel {
-      height: 180px;
+      height: var(--output-h);
       flex-shrink: 0;
       background: var(--surface);
       border-top: 1px solid var(--border);
@@ -909,59 +395,16 @@
       flex-direction: column;
       overflow: hidden;
     }
+    .output-header { display: flex; align-items: center; justify-content: space-between; padding: 6px 12px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+    .output-label { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); font-family: var(--font-mono); }
+    #clearOutputBtn { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 11px; padding: 2px 6px; border-radius: 3px; transition: color 0.15s; }
+    #clearOutputBtn:hover { color: var(--text); }
+    #output { flex: 1; overflow-y: auto; padding: 10px 14px; font-family: var(--font-mono); font-size: 12px; white-space: pre-wrap; word-break: break-all; color: var(--text); line-height: 1.6; }
+    #output.has-error { color: var(--error); }
 
-    .output-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 6px 12px;
-      border-bottom: 1px solid var(--border);
-      flex-shrink: 0;
-    }
-
-    .output-label {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      font-family: var(--font-mono);
-    }
-
-    #clearOutputBtn {
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      cursor: pointer;
-      font-size: 11px;
-      padding: 2px 6px;
-      border-radius: 3px;
-      transition: color 0.15s;
-    }
-
-    #clearOutputBtn:hover {
-      color: var(--text);
-    }
-
-    #output {
-      flex: 1;
-      overflow-y: auto;
-      padding: 10px 14px;
-      font-family: var(--font-mono);
-      font-size: 12px;
-      white-space: pre-wrap;
-      word-break: break-all;
-      color: var(--text);
-      line-height: 1.6;
-    }
-
-    #output.has-error {
-      color: var(--error);
-    }
-
-    /* RIGHT PANEL — VIDEO */
+    /* ════════════ RIGHT PANEL — VIDEO ════════════ */
     #right-panel {
-      width: 210px;
+      width: var(--right-w);
       flex-shrink: 0;
       background: var(--surface);
       border-left: 1px solid var(--border);
@@ -969,686 +412,271 @@
       flex-direction: column;
       overflow: hidden;
     }
+    #right-panel.visible { display: flex; }
+    .rp-header { padding: 8px 12px; border-bottom: 1px solid var(--border); flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; }
+    .rp-title { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); }
+    .video-grid { flex: 1; overflow-y: auto; padding: 8px; display: flex; flex-direction: column; gap: 6px; }
+    .video-tile { position: relative; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; aspect-ratio: 4/3; flex-shrink: 0; }
+    .video-tile video { width: 100%; height: 100%; object-fit: cover; display: block; background: #000; }
+    .cam-off { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-muted); font-size: 11px; gap: 6px; background: var(--surface2); }
+    .cam-off-icon { font-size: 24px; }
+    .tile-label { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.75)); color: #fff; font-size: 10px; padding: 8px 6px 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: var(--font-mono); }
 
-    #right-panel.visible {
-      display: flex;
-    }
+    #media-bar { display: none; align-items: center; gap: 6px; padding: 8px 12px; background: var(--surface); border-top: 1px solid var(--border); flex-shrink: 0; }
+    #media-bar.visible { display: flex; }
+    .tool-btn { flex: 1; padding: 7px 4px; background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: 5px; cursor: pointer; font-size: 11px; font-weight: 600; transition: all 0.15s; text-align: center; }
+    .tool-btn.on { background: rgba(74,222,128,0.08); border-color: var(--success); color: var(--success); }
+    .tool-btn.off { background: rgba(248,113,113,0.08); border-color: var(--error); color: var(--error); }
 
-    .rp-header {
-      padding: 8px 12px;
-      border-bottom: 1px solid var(--border);
-      flex-shrink: 0;
-    }
+    /* ════════════ LOBBY ════════════ */
+    #lobby { position: fixed; inset: 0; background: rgba(10,12,18,0.92); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 100; padding: 16px; }
+    #lobby.visible { display: flex; }
+    .lobby-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px 28px; width: 100%; max-width: 380px; box-shadow: var(--shadow); max-height: 90vh; overflow-y: auto; }
+    .lobby-card h2 { font-family: var(--font-mono); font-size: 16px; color: var(--accent); margin-bottom: 4px; }
+    .lobby-card p { color: var(--text-muted); font-size: 13px; margin-bottom: 16px; }
+    .tabs { display: flex; gap: 4px; margin-bottom: 16px; background: var(--bg); border-radius: 6px; padding: 3px; }
+    .tab-btn { flex: 1; padding: 7px; border: none; background: transparent; color: var(--text-muted); border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.15s; }
+    .tab-btn.active { background: var(--accent); color: #fff; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .field { margin-bottom: 10px; }
+    .field label { display: block; font-size: 11px; font-weight: 600; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .field input { width: 100%; padding: 8px 10px; background: var(--bg); border: 1px solid var(--border); border-radius: 5px; color: var(--text); font-size: 13px; outline: none; transition: border-color 0.15s; }
+    .field input:focus { border-color: var(--accent); }
+    .hint { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+    .btn-main { width: 100%; padding: 10px; background: var(--accent); color: #fff; border: none; border-radius: 6px; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.15s; margin-top: 4px; }
+    .btn-main:hover:not(:disabled) { background: #4070ee; }
+    .btn-main:disabled { opacity: 0.5; cursor: not-allowed; }
+    .share-box { display: none; margin-top: 14px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 12px; font-size: 12px; }
+    .share-url { font-family: var(--font-mono); font-size: 10px; color: var(--accent3); word-break: break-all; cursor: pointer; margin-top: 6px; padding: 6px; background: var(--surface); border-radius: 4px; }
+    .share-url:hover { text-decoration: underline; }
+    .lobby-error { color: var(--error); font-size: 12px; margin-top: 8px; min-height: 16px; }
 
-    .rp-title {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      color: var(--text-muted);
-    }
+    /* ════════════ MODALS ════════════ */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(10,12,18,0.85); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 300; padding: 16px; }
+    .modal-overlay.visible { display: flex; }
+    .modal-box { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px 22px; width: 100%; max-width: 340px; box-shadow: var(--shadow); }
+    .modal-box h3 { font-family: var(--font-mono); font-size: 14px; color: var(--accent); margin-bottom: 14px; }
+    .modal-label { font-size: 11px; color: var(--text-muted); margin-bottom: 5px; display: block; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+    .modal-box input, .modal-box select { width: 100%; padding: 8px 10px; background: var(--bg); border: 1px solid var(--border); border-radius: 5px; color: var(--text); font-size: 13px; font-family: var(--font-mono); outline: none; margin-bottom: 10px; transition: border-color 0.15s; }
+    .modal-box input:focus, .modal-box select:focus { border-color: var(--accent); }
+    .modal-box select option { background: var(--surface); }
+    .modal-btns { display: flex; gap: 8px; margin-top: 4px; }
+    .modal-btns button { flex: 1; padding: 9px; border: none; border-radius: 6px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.15s; }
+    .modal-confirm { background: var(--accent); color: #fff; }
+    .modal-confirm:hover { background: #4070ee; }
+    .modal-cancel { background: var(--surface2); color: var(--text-muted); border: 1px solid var(--border); }
+    .modal-cancel:hover { color: var(--text); }
 
-    .video-grid {
-      flex: 1;
-      overflow-y: auto;
-      padding: 8px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
+    /* ════════════ TOAST ════════════ */
+    #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 8px 18px; border-radius: 20px; font-size: 12px; opacity: 0; transition: all 0.25s; z-index: 500; pointer-events: none; white-space: nowrap; max-width: calc(100vw - 32px); text-align: center; }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-    .video-tile {
-      position: relative;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      overflow: hidden;
-      aspect-ratio: 4/3;
-      flex-shrink: 0;
-    }
-
-    .video-tile video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      background: #000;
-    }
-
-    .cam-off {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      color: var(--text-muted);
-      font-size: 11px;
-      gap: 6px;
-      background: var(--surface2);
-    }
-
-    .cam-off-icon {
-      font-size: 24px;
-    }
-
-    .tile-label {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: linear-gradient(transparent, rgba(0, 0, 0, 0.75));
-      color: #fff;
-      font-size: 10px;
-      padding: 8px 6px 4px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      font-family: var(--font-mono);
-    }
-
-    #media-bar {
+    /* ════════════ MOBILE DRAWER OVERLAY ════════════ */
+    #panel-backdrop {
       display: none;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 12px;
-      background: var(--surface);
-      border-top: 1px solid var(--border);
-      flex-shrink: 0;
-    }
-
-    #media-bar.visible {
-      display: flex;
-    }
-
-    .tool-btn {
-      flex: 1;
-      padding: 7px 4px;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      color: var(--text);
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 11px;
-      font-weight: 600;
-      transition: all 0.15s;
-      text-align: center;
-    }
-
-    .tool-btn.on {
-      background: rgba(74, 222, 128, 0.08);
-      border-color: var(--success);
-      color: var(--success);
-    }
-
-    .tool-btn.off {
-      background: rgba(248, 113, 113, 0.08);
-      border-color: var(--error);
-      color: var(--error);
-    }
-
-    /* LOBBY */
-    #lobby {
       position: fixed;
       inset: 0;
-      background: rgba(10, 12, 18, 0.92);
-      backdrop-filter: blur(8px);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 100;
-    }
-
-    #lobby.visible {
-      display: flex;
-    }
-
-    .lobby-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 28px 32px;
-      width: 380px;
-      box-shadow: var(--shadow);
-    }
-
-    .lobby-card h2 {
-      font-family: var(--font-mono);
-      font-size: 18px;
-      color: var(--accent);
-      margin-bottom: 4px;
-    }
-
-    .lobby-card p {
-      color: var(--text-muted);
-      font-size: 13px;
-      margin-bottom: 20px;
-    }
-
-    .tabs {
-      display: flex;
-      gap: 4px;
-      margin-bottom: 18px;
-      background: var(--bg);
-      border-radius: 6px;
-      padding: 3px;
-    }
-
-    .tab-btn {
-      flex: 1;
-      padding: 7px;
-      border: none;
-      background: transparent;
-      color: var(--text-muted);
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 13px;
-      font-weight: 600;
-      transition: all 0.15s;
-    }
-
-    .tab-btn.active {
-      background: var(--accent);
-      color: #fff;
-    }
-
-    .tab-panel {
-      display: none;
-    }
-
-    .tab-panel.active {
-      display: block;
-    }
-
-    .field {
-      margin-bottom: 12px;
-    }
-
-    .field label {
-      display: block;
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--text-muted);
-      margin-bottom: 5px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .field input {
-      width: 100%;
-      padding: 8px 10px;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 5px;
-      color: var(--text);
-      font-size: 13px;
-      outline: none;
-      transition: border-color 0.15s;
-    }
-
-    .field input:focus {
-      border-color: var(--accent);
-    }
-
-    .hint {
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-top: 4px;
-    }
-
-    .btn-main {
-      width: 100%;
-      padding: 10px;
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.15s;
-      margin-top: 4px;
-    }
-
-    .btn-main:hover:not(:disabled) {
-      background: #4070ee;
-    }
-
-    .btn-main:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    .share-box {
-      display: none;
-      margin-top: 14px;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 12px;
-      font-size: 12px;
-    }
-
-    .share-url {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      color: var(--accent3);
-      word-break: break-all;
-      cursor: pointer;
-      margin-top: 6px;
-      padding: 6px;
-      background: var(--surface);
-      border-radius: 4px;
-    }
-
-    .share-url:hover {
-      text-decoration: underline;
-    }
-
-    .lobby-error {
-      color: var(--error);
-      font-size: 12px;
-      margin-top: 8px;
-      min-height: 16px;
-    }
-
-    /* MODALS */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(10, 12, 18, 0.85);
-      backdrop-filter: blur(4px);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 300;
-    }
-
-    .modal-overlay.visible {
-      display: flex;
-    }
-
-    .modal-box {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 24px 28px;
-      width: 340px;
-      box-shadow: var(--shadow);
-    }
-
-    .modal-box h3 {
-      font-family: var(--font-mono);
-      font-size: 15px;
-      color: var(--accent);
-      margin-bottom: 16px;
-    }
-
-    .modal-label {
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-bottom: 5px;
-      display: block;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      font-weight: 600;
-    }
-
-    .modal-box input,
-    .modal-box select {
-      width: 100%;
-      padding: 8px 10px;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 5px;
-      color: var(--text);
-      font-size: 13px;
-      font-family: var(--font-mono);
-      outline: none;
-      margin-bottom: 10px;
-      transition: border-color 0.15s;
-    }
-
-    .modal-box input:focus,
-    .modal-box select:focus {
-      border-color: var(--accent);
-    }
-
-    .modal-box select option {
-      background: var(--surface);
-    }
-
-    .modal-btns {
-      display: flex;
-      gap: 8px;
-      margin-top: 4px;
-    }
-
-    .modal-btns button {
-      flex: 1;
-      padding: 9px;
-      border: none;
-      border-radius: 6px;
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-
-    .modal-confirm {
-      background: var(--accent);
-      color: #fff;
-    }
-
-    .modal-confirm:hover {
-      background: #4070ee;
-    }
-
-    .modal-cancel {
-      background: var(--surface2);
-      color: var(--text-muted);
-      border: 1px solid var(--border);
-    }
-
-    .modal-cancel:hover {
-      color: var(--text);
-    }
-
-    /* TOAST */
-    #toast {
-      position: fixed;
-      bottom: 24px;
-      left: 50%;
-      transform: translateX(-50%) translateY(20px);
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 8px 18px;
-      border-radius: 20px;
-      font-size: 12px;
-      opacity: 0;
-      transition: all 0.25s;
-      z-index: 500;
-      pointer-events: none;
-      white-space: nowrap;
-    }
-
-    #toast.show {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
-
-    ::-webkit-scrollbar {
-      width: 5px;
-    }
-
-    ::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: var(--border);
-      border-radius: 3px;
-    }
-
-    /* ══════════════════════════════════════════════════════
-       TABLET: 601–900px
-    ══════════════════════════════════════════════════════ */
-    @media (max-width: 900px) {
-      #left-panel { width: 200px; }
-      #right-panel { width: 180px; }
-      .logo-text { font-size: 13px; }
-      .lang-pill { padding: 3px 7px; font-size: 10px; }
-      .topbar-btn { padding: 3px 7px; font-size: 10px; }
-      #topbar { gap: 5px; padding: 0 10px; }
-      /* On tablet, show row-acts always (no hover on touch) */
-      .row-acts { display: flex; }
-    }
-
-    /* ══════════════════════════════════════════════════════
-       MOBILE: ≤600px
-    ══════════════════════════════════════════════════════ */
-    @media (max-width: 600px) {
-      html, body { overflow: hidden; touch-action: manipulation; }
-      #app-shell { height: 100dvh; padding-bottom: 52px; }
-
-      /* ── TOPBAR ── */
-      #topbar { height: 48px; padding: 0 10px; gap: 5px; }
-      .logo-text { font-size: 13px; margin-right: 0; }
-
-      /* Hide desktop-only topbar items */
-      .topbar-sep,
-      #topbarExportBtn,
-      #topbarFilesBtn,
-      a.topbar-btn { display: none; }
-
-      /* Keep save button but compact */
-      .topbar-btn.save { padding: 4px 9px; font-size: 11px; }
-
-      /* Smaller mode toggle */
-      .mode-btn { padding: 3px 9px; font-size: 11px; }
-
-      /* Scrollable language pills */
-      .lang-pills {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;
-        max-width: 110px;
-        flex-shrink: 1;
-      }
-      .lang-pills::-webkit-scrollbar { display: none; }
-      .lang-pill { padding: 2px 7px; font-size: 10px; }
-
-      /* Run button */
-      #runBtn { padding: 5px 12px; font-size: 12px; gap: 4px; }
-
-      /* Auth area */
-      #signInBtn { padding: 3px 8px; font-size: 10px; }
-      .user-name { display: none; }
-      #signOutBtn { padding: 2px 6px; font-size: 9px; }
-      .user-avatar { width: 20px; height: 20px; }
-
-      /* Room bar compact */
-      #room-bar { gap: 4px; }
-      .room-badge { font-size: 10px; padding: 2px 6px; }
-      #leaveBtn { font-size: 10px; padding: 3px 6px; }
-      #editor-status { display: none; }
-
-      /* ── FILE BAR ── */
-      #current-file-bar { padding: 3px 8px; gap: 6px; }
-      #current-file-name { font-size: 10px; }
-      #save-indicator { font-size: 9px; }
-      #inlineCloseFileBtn { font-size: 9px; padding: 2px 5px; }
-
-      /* ── MAIN AREA ── */
-      #main-area { position: relative; }
-
-      /* Left panel: slide over as overlay */
-      #left-panel {
-        position: absolute;
-        top: 0; left: 0; bottom: 0;
-        width: 270px;
-        z-index: 50;
-        display: flex !important; /* always in DOM for transition */
-        transform: translateX(-100%);
-        transition: transform 0.22s ease;
-        box-shadow: 4px 0 24px rgba(0,0,0,0.55);
-      }
-      #left-panel.visible {
-        transform: translateX(0);
-      }
-
-      /* Right panel: slide over from right as overlay */
-      #right-panel {
-        position: absolute;
-        top: 0; right: 0; bottom: 0;
-        width: 230px;
-        z-index: 50;
-        display: flex !important;
-        transform: translateX(100%);
-        transition: transform 0.22s ease;
-        box-shadow: -4px 0 24px rgba(0,0,0,0.55);
-      }
-      #right-panel.visible {
-        transform: translateX(0);
-      }
-
-      /* Editor full width */
-      #editor-panel { width: 100%; }
-
-      /* ── STDIN BAR ── */
-      #stdin-bar { padding: 4px 8px; gap: 5px; }
-      #stdinInput { min-height: 26px; max-height: 55px; font-size: 11px; padding: 3px 6px; }
-      #stdin-hint { display: none; }
-      #stdin-bar label { font-size: 10px; padding-top: 4px; }
-
-      /* ── OUTPUT PANEL ── */
-      #output-panel { height: 130px; }
-      #output { font-size: 11px; padding: 6px 10px; }
-      .output-label { font-size: 9px; }
-      #clearOutputBtn { font-size: 10px; }
-
-      /* ── MEDIA BAR ── */
-      #media-bar { padding: 5px 10px; gap: 5px; }
-      .tool-btn { padding: 6px 4px; font-size: 10px; }
-
-      /* ── LOBBY — bottom sheet ── */
-      #lobby {
-        align-items: flex-end;
-        padding: 0;
-      }
-      .lobby-card {
-        width: 100%;
-        max-width: 100%;
-        border-radius: 18px 18px 0 0;
-        padding: 20px 18px 36px;
-        max-height: 88vh;
-        overflow-y: auto;
-      }
-      .lobby-card h2 { font-size: 16px; }
-      .lobby-card p { font-size: 12px; margin-bottom: 14px; }
-      .field input {
-        font-size: 16px; /* prevents iOS zoom */
-        padding: 10px;
-      }
-      .btn-main { padding: 13px; font-size: 15px; }
-      .tab-btn { font-size: 13px; padding: 7px; }
-      .share-url { font-size: 10px; }
-
-      /* ── MODALS — bottom sheet ── */
-      .modal-overlay { align-items: flex-end; padding: 0; }
-      .modal-box {
-        width: 100%;
-        border-radius: 18px 18px 0 0;
-        padding: 20px 18px 36px;
-      }
-      .modal-box input,
-      .modal-box select {
-        font-size: 16px; /* prevents iOS zoom */
-        padding: 10px;
-      }
-      .modal-btns button { padding: 11px; font-size: 14px; }
-
-      /* ── EDITOR UI ── */
-      .CodeMirror { font-size: 12px !important; }
-      #lockOverlay { font-size: 12px; }
-      #lockMsg { font-size: 12px; }
-
-      /* ── PANEL TABS ── */
-      .panel-tab { font-size: 9px; padding: 8px 3px; letter-spacing: 0.5px; }
-
-      /* ── MEMBERS ── */
-      .member-item { font-size: 11px; padding: 7px 0; }
-      .btn-assign { font-size: 9px; padding: 3px 6px; }
-      .btn-action { padding: 8px; font-size: 11px; }
-
-      /* ── FILES TREE ── always show row-acts on touch ── */
-      .row-acts { display: flex; }
-      .row-act { padding: 3px 6px; font-size: 9px; }
-      .files-toolbar button { font-size: 9px; padding: 6px 3px; }
-
-      /* ── TOAST ── lift above bottom nav ── */
-      #toast { bottom: 64px; font-size: 11px; padding: 7px 14px; }
-
-      /* ── PANEL BACKDROP ── */
-      #panel-backdrop {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(0,0,0,0.48);
-        z-index: 49;
-        -webkit-tap-highlight-color: transparent;
-      }
-      #panel-backdrop.visible { display: block; }
-    }
-
-    /* ══════════════════════════════════════════════════════
-       MOBILE BOTTOM NAV
-    ══════════════════════════════════════════════════════ */
-    #mobile-nav { display: none; }
-
-    @media (max-width: 600px) {
-      #mobile-nav {
-        display: flex;
-        position: fixed;
-        bottom: 0; left: 0; right: 0;
-        height: 52px;
-        background: var(--surface);
-        border-top: 1px solid var(--border);
-        z-index: 60;
-        align-items: stretch;
-        -webkit-tap-highlight-color: transparent;
-      }
-    }
-
-    .mobile-nav-btn {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 3px;
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      font-size: 8px;
-      font-weight: 700;
-      letter-spacing: 0.4px;
-      text-transform: uppercase;
-      cursor: pointer;
-      padding: 5px 2px;
-      transition: color 0.15s;
+      background: rgba(0,0,0,0.5);
+      z-index: 39;
       -webkit-tap-highlight-color: transparent;
     }
-    .mobile-nav-btn .nav-icon { font-size: 20px; line-height: 1; }
-    .mobile-nav-btn.active { color: var(--accent); }
+    #panel-backdrop.visible { display: block; }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    /* ════════════════════════════════════════════════
+       TABLET  (≤ 1024px)
+    ════════════════════════════════════════════════ */
+    @media (max-width: 1024px) {
+      :root {
+        --left-w: 220px;
+        --right-w: 190px;
+        --output-h: 150px;
+      }
+      .CodeMirror { font-size: 12px !important; }
+    }
+
+    /* ════════════════════════════════════════════════
+       MOBILE  (≤ 768px)
+       Strategy:
+       - Left & right panels become full-height drawers
+         that slide over the editor (position: fixed)
+       - Output panel collapses to shorter height
+       - Topbar scrolls horizontally — most items hidden
+         behind an overflow toggle
+       - stdin bar simplified
+    ════════════════════════════════════════════════ */
+    @media (max-width: 768px) {
+      :root {
+        --topbar-h: 48px;
+        --output-h: 130px;
+      }
+
+      html, body { overflow: hidden; }
+
+      /* Topbar: show logo + mode + lang + run always;
+         rest scrolls behind overflow button */
+      #topbar { gap: 5px; padding: 0 8px; }
+      .logo-text { font-size: 13px; }
+      .mode-btn { padding: 3px 8px; font-size: 10px; }
+      .lang-pill { padding: 3px 7px; font-size: 10px; }
+      #runBtn { padding: 5px 12px; font-size: 11px; }
+
+      /* Show overflow toggle, hide secondary topbar items */
+      #topbarOverflowBtn { display: inline-flex; align-items: center; }
+
+      /* Items hidden by default on mobile, revealed in overflow sheet */
+      .topbar-secondary { display: none !important; }
+
+      /* Left panel: slide-over drawer, fixed */
+      #left-panel {
+        position: fixed;
+        top: var(--topbar-h);
+        left: 0;
+        bottom: 0;
+        width: 280px;
+        z-index: 40;
+        transform: translateX(-100%);
+        transition: transform 0.25s ease;
+        border-right: 1px solid var(--border);
+        box-shadow: 4px 0 24px rgba(0,0,0,0.5);
+      }
+      #left-panel.visible {
+        display: flex;
+        transform: translateX(0);
+      }
+
+      /* Right panel: slide-over from right */
+      #right-panel {
+        position: fixed;
+        top: var(--topbar-h);
+        right: 0;
+        bottom: 0;
+        width: 260px;
+        z-index: 40;
+        transform: translateX(100%);
+        transition: transform 0.25s ease;
+        border-left: 1px solid var(--border);
+        box-shadow: -4px 0 24px rgba(0,0,0,0.5);
+      }
+      #right-panel.visible {
+        display: flex;
+        transform: translateX(0);
+      }
+
+      /* Media bar: attach inside right panel on mobile */
+      #media-bar {
+        position: fixed;
+        bottom: 0;
+        right: 0;
+        width: 260px;
+        z-index: 41;
+      }
+      #media-bar.visible { display: flex; }
+
+      /* Editor takes full width */
+      #editor-panel { width: 100%; }
+
+      /* stdin: collapse to single row */
+      #stdin-bar { padding: 4px 8px; gap: 5px; }
+      #stdin-hint { display: none; }
+      #stdinInput { min-height: 26px; max-height: 60px; font-size: 10px; }
+
+      /* Output panel */
+      #output-panel { height: var(--output-h); }
+      #output { font-size: 11px; padding: 8px 10px; }
+
+      /* CodeMirror */
+      .CodeMirror { font-size: 11.5px !important; }
+
+      /* Room bar compact */
+      #editor-status { display: none; } /* hide on tiny screens, too much space */
+      .room-badge { font-size: 10px; padding: 2px 6px; }
+    }
+
+    /* ════════════════════════════════════════════════
+       SMALL MOBILE  (≤ 480px)
+    ════════════════════════════════════════════════ */
+    @media (max-width: 480px) {
+      :root {
+        --output-h: 110px;
+      }
+      .logo-text { font-size: 12px; }
+      .mode-toggle { gap: 1px; }
+      .mode-btn { padding: 3px 6px; }
+      .lang-pills { gap: 2px; }
+      .lang-pill { padding: 2px 5px; font-size: 10px; }
+      #runBtn { padding: 4px 10px; font-size: 11px; }
+
+      /* Left & right panels full-width on very small screens */
+      #left-panel { width: 85vw; }
+      #right-panel { width: 85vw; }
+      #media-bar { width: 85vw; }
+
+      .lobby-card { padding: 18px 16px; }
+      .lobby-card h2 { font-size: 14px; }
+    }
+
+    /* ════════════════════════════════════════════════
+       OVERFLOW SHEET  (mobile secondary menu)
+    ════════════════════════════════════════════════ */
+    #overflow-sheet {
+      display: none;
+      position: fixed;
+      top: var(--topbar-h);
+      left: 0;
+      right: 0;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 12px;
+      z-index: 49;
+      gap: 6px;
+      flex-wrap: wrap;
+      align-items: center;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    }
+    #overflow-sheet.open { display: flex; }
+    #overflow-sheet .topbar-btn,
+    #overflow-sheet #signInBtn,
+    #overflow-sheet #userInfo,
+    #overflow-sheet #authArea { flex-shrink: 0; }
+    #overflow-sheet #userInfo { display: none; }
+    #overflow-sheet #userInfo.visible { display: flex; }
   </style>
 </head>
 
 <body>
   <div id="app-shell">
 
+    <!-- ════════ TOPBAR ════════ -->
     <div id="topbar">
       <span class="logo-text">Code<span>Forge</span></span>
+
       <div class="mode-toggle">
         <button class="mode-btn active" id="modeSolo">Solo</button>
         <button class="mode-btn" id="modeTeam">Team</button>
       </div>
+
       <div class="lang-pills">
-        <button class="lang-pill active" data-lang="python">Python</button>
+        <button class="lang-pill active" data-lang="python">Py</button>
         <button class="lang-pill" data-lang="cpp">C++</button>
         <button class="lang-pill" data-lang="c">C</button>
         <button class="lang-pill" data-lang="java">Java</button>
       </div>
-      <div class="topbar-sep"></div>
-      <button class="topbar-btn save" id="topbarSaveBtn">💾 Save</button>
-      <button class="topbar-btn" id="topbarExportBtn">⬇ Export</button>
-      <button class="topbar-btn" id="topbarFilesBtn">📁 Files</button>
-      <div class="topbar-sep"></div>
-      <a href="index.html" class="topbar-btn">Home</a>
-      <a href="documentation.html" class="topbar-btn">Docs</a>
-      <div class="topbar-sep"></div>
-      <div id="authArea">
+
+      <!-- Secondary items visible on desktop, hidden on mobile (shown in overflow sheet) -->
+      <div class="topbar-sep topbar-secondary"></div>
+      <button class="topbar-btn save topbar-secondary" id="topbarSaveBtn">💾 Save</button>
+      <button class="topbar-btn topbar-secondary" id="topbarExportBtn">⬇ Export</button>
+      <button class="topbar-btn topbar-secondary" id="topbarFilesBtn">📁 Files</button>
+      <div class="topbar-sep topbar-secondary"></div>
+      <a href="index.html" class="topbar-btn topbar-secondary">Home</a>
+      <a href="documentation.html" class="topbar-btn topbar-secondary">Docs</a>
+      <div class="topbar-sep topbar-secondary"></div>
+      <div id="authArea" class="topbar-secondary">
         <button id="signInBtn">🔑 Sign In</button>
         <div id="userInfo">
           <img class="user-avatar" id="userAvatar" src="" alt="avatar" style="display:none">
@@ -1656,26 +684,53 @@
           <button id="signOutBtn">Sign out</button>
         </div>
       </div>
+
       <div id="room-bar">
         <span id="editor-status"></span>
         <span class="room-badge" id="roomIdBadge">Room: —</span>
         <button id="leaveBtn">Leave</button>
       </div>
+
+      <!-- Mobile overflow toggle -->
+      <button id="topbarOverflowBtn" aria-label="More options">⋯</button>
+
       <button id="runBtn">▶ Run</button>
     </div>
 
+    <!-- ════════ MOBILE OVERFLOW SHEET ════════ -->
+    <div id="overflow-sheet">
+      <button class="topbar-btn save" id="overflowSaveBtn">💾 Save</button>
+      <button class="topbar-btn" id="overflowExportBtn">⬇ Export</button>
+      <button class="topbar-btn" id="overflowFilesBtn">📁 Files</button>
+      <button class="topbar-btn" id="overflowVideoBtn">📹 Video</button>
+      <div class="topbar-sep"></div>
+      <a href="index.html" class="topbar-btn">Home</a>
+      <a href="documentation.html" class="topbar-btn">Docs</a>
+      <div class="topbar-sep"></div>
+      <div id="overflowAuthArea">
+        <button id="overflowSignInBtn">🔑 Sign In</button>
+        <div id="overflowUserInfo" style="display:none;align-items:center;gap:5px;">
+          <span id="overflowUserName" style="font-size:11px;color:var(--text-muted);font-family:var(--font-mono);"></span>
+          <button id="overflowSignOutBtn" style="padding:2px 6px;background:transparent;border:1px solid var(--border);color:var(--text-muted);border-radius:3px;cursor:pointer;font-size:10px;">Sign out</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════ FILE BAR ════════ -->
     <div id="current-file-bar">
       <span>📄</span>
       <span id="current-file-name">Untitled</span>
       <span id="save-indicator">● Unsaved</span>
-      <button class="topbar-btn" id="inlineCloseFileBtn" style="margin-left:auto;font-size:10px;padding:2px 7px;">✕
-        Close</button>
+      <button class="topbar-btn" id="inlineCloseFileBtn" style="margin-left:auto;font-size:10px;padding:2px 7px;">✕ Close</button>
     </div>
 
+    <!-- ════════ MAIN ════════ -->
     <div id="main-area">
-      <!-- Panel backdrop for mobile tap-to-close -->
+
+      <!-- Backdrop for mobile panels -->
       <div id="panel-backdrop"></div>
 
+      <!-- LEFT PANEL -->
       <div id="left-panel">
         <div class="panel-tabs" id="panelTabs" style="display:none;">
           <button class="panel-tab active" id="tabMembers">Members</button>
@@ -1712,14 +767,15 @@
         </div>
       </div>
 
+      <!-- EDITOR PANEL -->
       <div id="editor-panel">
         <div id="stdin-bar">
           <label>stdin:</label>
           <div id="stdin-wrap">
-            <textarea id="stdinInput" rows="2"
-              placeholder="Pre-run input — use Enter for multiple lines (e.g. 2↵Alice↵101↵85)"
+            <textarea id="stdinInput" rows="1"
+              placeholder="Pre-run input — use Enter for multiple lines"
               autocomplete="off"></textarea>
-            <span id="stdin-hint">Each line = one input value · press Enter to separate</span>
+            <span id="stdin-hint">Each line = one input value · Enter to separate</span>
           </div>
         </div>
         <div class="cm-wrapper">
@@ -1735,40 +791,25 @@
         </div>
       </div>
 
+      <!-- RIGHT PANEL -->
       <div id="right-panel">
         <div class="rp-header">
           <div class="rp-title">Live Video</div>
+          <!-- Close button for mobile drawer -->
+          <button id="closeVideoPanel" style="display:none;background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:16px;padding:2px 6px;">✕</button>
         </div>
         <div class="video-grid" id="videoGrid"></div>
       </div>
     </div>
 
+    <!-- MEDIA BAR -->
     <div id="media-bar">
       <button class="tool-btn on" id="micBtn">🎙 Mic On</button>
       <button class="tool-btn on" id="camBtn">📹 Cam On</button>
     </div>
   </div>
 
-  <!-- MOBILE BOTTOM NAV (only visible ≤600px via CSS) -->
-  <nav id="mobile-nav" aria-label="Main navigation">
-    <button class="mobile-nav-btn active" id="mnavEditor" aria-label="Editor">
-      <span class="nav-icon">✏️</span>Editor
-    </button>
-    <button class="mobile-nav-btn" id="mnavFiles" aria-label="Files">
-      <span class="nav-icon">📁</span>Files
-    </button>
-    <button class="mobile-nav-btn" id="mnavRun" aria-label="Run code">
-      <span class="nav-icon">▶️</span>Run
-    </button>
-    <button class="mobile-nav-btn" id="mnavTeam" aria-label="Team">
-      <span class="nav-icon">👥</span>Team
-    </button>
-    <button class="mobile-nav-btn" id="mnavVideo" aria-label="Video">
-      <span class="nav-icon">📹</span>Video
-    </button>
-  </nav>
-
-  <!-- LOBBY -->
+  <!-- ════════ LOBBY ════════ -->
   <div id="lobby">
     <div class="lobby-card">
       <h2>CodeForge — Team Room</h2>
@@ -1778,8 +819,7 @@
         <button class="tab-btn" id="tabBtnJoin">Join Room</button>
       </div>
       <div class="tab-panel active" id="tab-create">
-        <div class="field"><label>Your Name</label><input id="createName" type="text" placeholder="e.g. Alex"
-            autocomplete="off" maxlength="32" /></div>
+        <div class="field"><label>Your Name</label><input id="createName" type="text" placeholder="e.g. Alex" autocomplete="off" maxlength="32" /></div>
         <div class="field">
           <label>Room Password <span style="color:#6b7a99;font-weight:normal">(optional)</span></label>
           <input id="createPassword" type="password" placeholder="Leave blank for open room" maxlength="128" />
@@ -1795,10 +835,8 @@
         <div class="lobby-error" id="createError"></div>
       </div>
       <div class="tab-panel" id="tab-join">
-        <div class="field"><label>Your Name</label><input id="joinName" type="text" placeholder="e.g. Jordan"
-            autocomplete="off" maxlength="32" /></div>
-        <div class="field"><label>Room ID</label><input id="joinRoomId" type="text" placeholder="Paste room ID here"
-            autocomplete="off" /></div>
+        <div class="field"><label>Your Name</label><input id="joinName" type="text" placeholder="e.g. Jordan" autocomplete="off" maxlength="32" /></div>
+        <div class="field"><label>Room ID</label><input id="joinRoomId" type="text" placeholder="Paste room ID here" autocomplete="off" /></div>
         <div class="field">
           <label>Password <span style="color:#6b7a99;font-weight:normal">(if required)</span></label>
           <input id="joinPassword" type="password" placeholder="Leave blank if none" maxlength="128" />
@@ -1822,8 +860,7 @@
         <option value="c">C</option>
         <option value="java">Java</option>
       </select>
-      <label class="modal-label">Folder <span
-          style="font-weight:normal;color:var(--text-muted)">(optional)</span></label>
+      <label class="modal-label">Folder <span style="font-weight:normal;color:var(--text-muted)">(optional)</span></label>
       <select id="newFileFolder">
         <option value="">— Root —</option>
       </select>
@@ -1875,15 +912,7 @@
       c: '#include <stdio.h>\n\nint main() {\n    printf("Hello, World!\\n");\n    return 0;\n}\n',
       java: 'public class Main {\n    public static void main(String[] args) {\n        System.out.println("Hello, World!");\n    }\n}\n',
     };
-
-    const ICE_CFG = {
-      iceServers: [
-        { urls: 'stun:stun.l.google.com:19302' },
-        { urls: 'stun:stun1.l.google.com:19302' },
-        { urls: 'stun:stun2.l.google.com:19302' },
-        { urls: 'stun:stun3.l.google.com:19302' },
-      ]
-    };
+    const ICE_CFG = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' },{ urls: 'stun:stun1.l.google.com:19302' },{ urls: 'stun:stun2.l.google.com:19302' },{ urls: 'stun:stun3.l.google.com:19302' }] };
 
     // ════════════════════════════════════════════════════════
     //  FIREBASE
@@ -1901,6 +930,7 @@
     }
 
     function updateAuthUI(user) {
+      // Desktop auth area
       if (user) {
         document.getElementById('signInBtn').style.display = 'none';
         document.getElementById('userInfo').classList.add('visible');
@@ -1910,6 +940,18 @@
       } else {
         document.getElementById('signInBtn').style.display = '';
         document.getElementById('userInfo').classList.remove('visible');
+      }
+      // Overflow sheet auth area
+      const oSignIn = document.getElementById('overflowSignInBtn');
+      const oInfo = document.getElementById('overflowUserInfo');
+      const oName = document.getElementById('overflowUserName');
+      if (user) {
+        oSignIn.style.display = 'none';
+        oInfo.style.display = 'flex';
+        oName.textContent = user.displayName || user.email || 'User';
+      } else {
+        oSignIn.style.display = '';
+        oInfo.style.display = 'none';
       }
     }
 
@@ -1943,6 +985,7 @@
     let pendingRequest = null, pendingHostToken = null, pendingRoomId = null;
     let fsFolders = [], fsFiles = [], openFileId = null, openFileName = null, filesDirty = false;
     let expandedFolderIds = new Set(), filesPanelOpen = false;
+    let overflowSheetOpen = false;
 
     // ════════════════════════════════════════════════════════
     //  UTILS
@@ -1956,25 +999,25 @@
     }
     function escHtml(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
     function escAttr(s) { return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;'); }
-    function isMobile() { return window.innerWidth <= 600; }
+    function isMobile() { return window.innerWidth <= 768; }
 
     // ════════════════════════════════════════════════════════
-    //  MOBILE PANEL HELPERS
+    //  OVERFLOW SHEET (mobile secondary nav)
     // ════════════════════════════════════════════════════════
-    function showBackdrop() {
-      document.getElementById('panel-backdrop').classList.add('visible');
+    function toggleOverflowSheet() {
+      overflowSheetOpen = !overflowSheetOpen;
+      document.getElementById('overflow-sheet').classList.toggle('open', overflowSheetOpen);
     }
-    function hideBackdrop() {
-      document.getElementById('panel-backdrop').classList.remove('visible');
+    function closeOverflowSheet() {
+      overflowSheetOpen = false;
+      document.getElementById('overflow-sheet').classList.remove('open');
     }
-    function closeAllMobilePanels() {
-      document.getElementById('left-panel').classList.remove('visible');
-      document.getElementById('right-panel').classList.remove('visible');
-      hideBackdrop();
-      // Reset nav active state to editor
-      document.querySelectorAll('.mobile-nav-btn').forEach(b => b.classList.remove('active'));
-      document.getElementById('mnavEditor').classList.add('active');
-    }
+
+    // ════════════════════════════════════════════════════════
+    //  PANEL BACKDROP (mobile drawer)
+    // ════════════════════════════════════════════════════════
+    function showBackdrop() { document.getElementById('panel-backdrop').classList.add('visible'); }
+    function hideBackdrop() { document.getElementById('panel-backdrop').classList.remove('visible'); }
 
     // ════════════════════════════════════════════════════════
     //  CODEMIRROR
@@ -1992,7 +1035,10 @@
       destroyEditor();
       cmEditor = CodeMirror.fromTextArea(document.getElementById('editor'), {
         lineNumbers: true, mode: LANG_MODE[currentLang] || 'python',
-        theme: 'dracula', indentUnit: 4, tabSize: 4, indentWithTabs: false, lineWrapping: true,
+        theme: 'dracula', indentUnit: 4, tabSize: 4, indentWithTabs: false,
+        lineWrapping: true,
+        // Better mobile experience
+        extraKeys: { 'Tab': 'indentMore', 'Shift-Tab': 'indentLess' }
       });
       suppressSync = true;
       cmEditor.setValue(initialCode !== undefined ? initialCode : STARTER[currentLang]);
@@ -2052,12 +1098,12 @@
       const tree = document.getElementById('filesTree');
       if (!currentUser) {
         tree.innerHTML = `<div class="files-notice">
-      <button class="google-signin-btn" onclick="signInWithGoogle()">
-        <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#4285F4" d="M43.6 20H24v8h11.3C33.6 33.1 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3 0 5.7 1.1 7.8 2.9l5.7-5.7C33.9 6.5 29.2 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20c11 0 19.6-7.9 19.6-20 0-1.3-.1-2.7-.3-4h.3z"/></svg>
-        Sign in with Google
-      </button>
-      <div style="font-size:11px">Files stored privately in the cloud.</div>
-    </div>`; return;
+          <button class="google-signin-btn" onclick="signInWithGoogle()">
+            <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#4285F4" d="M43.6 20H24v8h11.3C33.6 33.1 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3 0 5.7 1.1 7.8 2.9l5.7-5.7C33.9 6.5 29.2 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20c11 0 19.6-7.9 19.6-20 0-1.3-.1-2.7-.3-4h.3z"/></svg>
+            Sign in with Google
+          </button>
+          <div style="font-size:11px">Files stored privately in the cloud.</div>
+        </div>`; return;
       }
       tree.innerHTML = '<div class="files-notice">Loading…</div>';
       try {
@@ -2085,14 +1131,14 @@
       const wrap = document.createElement('div');
       const row = document.createElement('div'); row.className = 'folder-row';
       row.innerHTML = `
-    <span class="folder-chevron ${isOpen ? 'open' : ''}">▶</span>
-    <span class="folder-icon">📁</span>
-    <span class="folder-name">${escHtml(folder.name)}</span>
-    <div class="row-acts">
-      <button class="row-act act-open" data-act="add"        data-id="${folder._id}">+</button>
-      <button class="row-act"          data-act="ren-folder" data-id="${folder._id}" data-name="${escAttr(folder.name)}">✎</button>
-      <button class="row-act"          data-act="del-folder" data-id="${folder._id}">✕</button>
-    </div>`;
+        <span class="folder-chevron ${isOpen ? 'open' : ''}">▶</span>
+        <span class="folder-icon">📁</span>
+        <span class="folder-name">${escHtml(folder.name)}</span>
+        <div class="row-acts">
+          <button class="row-act act-open" data-act="add"        data-id="${folder._id}">+</button>
+          <button class="row-act"          data-act="ren-folder" data-id="${folder._id}" data-name="${escAttr(folder.name)}">✎</button>
+          <button class="row-act"          data-act="del-folder" data-id="${folder._id}">✕</button>
+        </div>`;
       const children = document.createElement('div'); children.className = 'folder-children'; children.style.display = isOpen ? 'block' : 'none';
       if (isOpen) {
         fsFolders.filter(f => f.parentId === folder._id).forEach(sf => children.appendChild(buildFolderRow(sf)));
@@ -2117,25 +1163,25 @@
     function buildFileRow(file) {
       const row = document.createElement('div'); row.className = 'file-row' + (file._id === openFileId ? ' active' : '');
       row.innerHTML = `
-    <span class="file-icon">${LANG_ICON[file.language] || '📄'}</span>
-    <span class="file-name">${escHtml(file.name)}</span>
-    <span class="file-lang-tag">${file.language}</span>
-    <div class="row-acts">
-      <button class="row-act act-open" data-act="open"     data-id="${file._id}">Open</button>
-      <button class="row-act act-dl"   data-act="dl"       data-id="${file._id}">↓</button>
-      <button class="row-act"          data-act="ren-file" data-id="${file._id}" data-name="${escAttr(file.name)}">✎</button>
-      <button class="row-act"          data-act="del-file" data-id="${file._id}">✕</button>
-    </div>`;
+        <span class="file-icon">${LANG_ICON[file.language] || '📄'}</span>
+        <span class="file-name">${escHtml(file.name)}</span>
+        <span class="file-lang-tag">${file.language}</span>
+        <div class="row-acts">
+          <button class="row-act act-open" data-act="open"     data-id="${file._id}">Open</button>
+          <button class="row-act act-dl"   data-act="dl"       data-id="${file._id}">↓</button>
+          <button class="row-act"          data-act="ren-file" data-id="${file._id}" data-name="${escAttr(file.name)}">✎</button>
+          <button class="row-act"          data-act="del-file" data-id="${file._id}">✕</button>
+        </div>`;
       row.addEventListener('click', async e => {
         const btn = e.target.closest('[data-act]');
         if (btn) {
           e.stopPropagation();
           const { act, id, name } = btn.dataset;
-          if (act === 'open') { await fsOpenFile(id); if (isMobile()) closeAllMobilePanels(); }
+          if (act === 'open') { await fsOpenFile(id); if (isMobile()) closeLeftPanel(); }
           if (act === 'dl') await fsDownloadFile(id);
           if (act === 'ren-file') openRenameModal('file', id, name);
           if (act === 'del-file') await fsDeleteFile(id, file.name);
-        } else { await fsOpenFile(file._id); if (isMobile()) closeAllMobilePanels(); }
+        } else { await fsOpenFile(file._id); if (isMobile()) closeLeftPanel(); }
       });
       return row;
     }
@@ -2279,8 +1325,32 @@
     }
 
     // ════════════════════════════════════════════════════════
-    //  PANEL / MODE
+    //  PANEL MANAGEMENT (including mobile slide-over logic)
     // ════════════════════════════════════════════════════════
+    function openLeftPanel() {
+      document.getElementById('left-panel').classList.add('visible');
+      if (isMobile()) showBackdrop();
+    }
+    function closeLeftPanel() {
+      if (appMode === 'team') return; // team mode manages its own state
+      document.getElementById('left-panel').classList.remove('visible');
+      filesPanelOpen = false;
+      hideBackdrop();
+    }
+    function openRightPanel() {
+      document.getElementById('right-panel').classList.add('visible');
+      document.getElementById('media-bar').classList.add('visible');
+      if (isMobile()) {
+        showBackdrop();
+        document.getElementById('closeVideoPanel').style.display = 'block';
+      }
+    }
+    function closeRightPanel() {
+      document.getElementById('right-panel').classList.remove('visible');
+      document.getElementById('media-bar').classList.remove('visible');
+      hideBackdrop();
+    }
+
     function toggleFilesPanel() {
       filesPanelOpen = !filesPanelOpen;
       const panel = document.getElementById('left-panel');
@@ -2291,15 +1361,13 @@
           document.getElementById('membersTabContent').classList.remove('active');
           document.getElementById('filesTabContent').classList.add('active');
         }
-        if (isMobile()) {
-          // Close right panel if open
-          document.getElementById('right-panel').classList.remove('visible');
-          showBackdrop();
-        }
         loadFileTree();
+        if (isMobile()) showBackdrop();
       } else {
-        if (appMode !== 'team') panel.classList.remove('visible');
-        if (isMobile()) hideBackdrop();
+        if (appMode !== 'team') {
+          panel.classList.remove('visible');
+          hideBackdrop();
+        }
       }
     }
 
@@ -2307,15 +1375,28 @@
       appMode = mode; const isTeam = mode === 'team';
       document.getElementById('modeTeam').classList.toggle('active', isTeam);
       document.getElementById('modeSolo').classList.toggle('active', !isTeam);
-      if (!isMobile()) {
-        document.getElementById('left-panel').classList.toggle('visible', isTeam || filesPanelOpen);
-        document.getElementById('right-panel').classList.toggle('visible', isTeam);
+
+      if (isTeam) {
+        document.getElementById('left-panel').classList.add('visible');
+        if (!isMobile()) {
+          openRightPanel();
+        }
+        document.getElementById('room-bar').classList.add('visible');
+        document.getElementById('panelTabs').style.display = 'flex';
+        switchPanelTab('members');
+        document.getElementById('lobby').classList.add('visible');
+        if (isMobile()) showBackdrop();
+      } else {
+        if (socket) performLeave();
+        document.getElementById('lobby').classList.remove('visible');
+        document.getElementById('room-bar').classList.remove('visible');
+        closeRightPanel();
+        document.getElementById('panelTabs').style.display = 'none';
+        if (!filesPanelOpen) {
+          document.getElementById('left-panel').classList.remove('visible');
+          hideBackdrop();
+        }
       }
-      document.getElementById('media-bar').classList.toggle('visible', isTeam);
-      document.getElementById('room-bar').classList.toggle('visible', isTeam);
-      const tabs = document.getElementById('panelTabs');
-      if (isTeam) { tabs.style.display = 'flex'; switchPanelTab('members'); document.getElementById('lobby').classList.add('visible'); }
-      else { tabs.style.display = 'none'; if (socket) performLeave(); document.getElementById('lobby').classList.remove('visible'); document.getElementById('room-bar').classList.remove('visible'); if (!filesPanelOpen && !isMobile()) document.getElementById('left-panel').classList.remove('visible'); }
     }
 
     function switchPanelTab(tab) {
@@ -2333,10 +1414,8 @@
       const code = cmEditor ? cmEditor.getValue().trim() : '';
       const out = document.getElementById('output'), btn = document.getElementById('runBtn');
       if (!code) { toast('No code to run'); return; }
-
       const stdinRaw = document.getElementById('stdinInput').value;
       const stdin = stdinRaw ? (stdinRaw.endsWith('\n') ? stdinRaw : stdinRaw + '\n') : '';
-
       btn.disabled = true; btn.textContent = '⏳';
       out.textContent = 'Running…'; out.className = ''; out.style.borderTop = '';
       try {
@@ -2415,7 +1494,10 @@
       socket = io({ auth: { token } });
       bindSocketEvents();
       document.getElementById('lobby').classList.remove('visible');
-      document.getElementById('roomIdBadge').textContent = `Room: ${rid.slice(0, 8)}…`;
+      document.getElementById('roomIdBadge').textContent = `Room: ${rid.slice(0, 6)}…`;
+      // On mobile, open video panel via overflow sheet; on desktop, auto-open
+      if (!isMobile()) openRightPanel();
+      hideBackdrop(); // backdrop was shown for lobby
     }
 
     // ════════════════════════════════════════════════════════
@@ -2458,7 +1540,7 @@
       socket.on('rtc-offer', async ({ from, name, offer }) => {
         if (!peers[from]) await createPeerConnection(from, name, false);
         const pc = peers[from].pc;
-        if (pc.signalingState !== 'stable') { console.warn(`Ignoring offer from ${name} — unexpected state: ${pc.signalingState}`); return; }
+        if (pc.signalingState !== 'stable') { console.warn(`Ignoring offer from ${name}`); return; }
         await pc.setRemoteDescription(new RTCSessionDescription(offer));
         const answer = await pc.createAnswer();
         await pc.setLocalDescription(answer);
@@ -2468,7 +1550,7 @@
       socket.on('rtc-answer', async ({ from, answer }) => {
         if (!peers[from]) return;
         const pc = peers[from].pc;
-        if (pc.signalingState !== 'have-local-offer') { console.warn(`Ignoring answer from ${peers[from].name} — unexpected state: ${pc.signalingState}`); return; }
+        if (pc.signalingState !== 'have-local-offer') { console.warn(`Ignoring answer`); return; }
         try { await pc.setRemoteDescription(new RTCSessionDescription(answer)); }
         catch (e) { console.error('setRemoteDescription (answer) failed:', e); }
       });
@@ -2503,7 +1585,7 @@
       peers[peerId] = { pc, name: peerName };
       if (myStream) myStream.getTracks().forEach(track => pc.addTrack(track, myStream));
       pc.onicecandidate = e => { if (e.candidate) socket.emit('rtc-ice', { to: peerId, candidate: e.candidate }); };
-      pc.oniceconnectionstatechange = () => { if (pc.iceConnectionState === 'failed') { console.warn(`ICE failed for ${peerName} — restarting`); pc.restartIce(); } };
+      pc.oniceconnectionstatechange = () => { if (pc.iceConnectionState === 'failed') { console.warn(`ICE failed for ${peerName}`); pc.restartIce(); } };
       pc.ontrack = e => { if (e.streams && e.streams[0]) { peers[peerId].stream = e.streams[0]; attachRemoteStream(peerId, e.streams[0]); } };
       addTile(peerId, peerName);
       if (isInitiator) {
@@ -2551,13 +1633,15 @@
       const o = tile.querySelector('.cam-off'); if (o) o.remove();
       let v = tile.querySelector('video');
       if (!v) {
-        v = document.createElement('video'); v.autoplay = true; v.playsInline = true; v.muted = false;
+        v = document.createElement('video');
+        v.autoplay = true; v.playsInline = true; v.muted = false;
         v.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;background:#000;';
         tile.insertBefore(v, tile.querySelector('.tile-label'));
       }
       v.srcObject = stream;
       const tryPlay = () => v.play().catch(err => console.warn('play() failed:', err.message));
-      if (v.readyState >= 2) tryPlay(); else v.onloadedmetadata = tryPlay;
+      if (v.readyState >= 2) tryPlay();
+      else v.onloadedmetadata = tryPlay;
     }
 
     function removeTile(socketId) { const t = document.getElementById('tile-' + socketId); if (t) t.remove(); }
@@ -2616,10 +1700,10 @@
       cmEditor.setOption('readOnly', isMine ? false : 'nocursor');
       document.getElementById('lockOverlay').classList.toggle('visible', !isMine);
       const st = document.getElementById('editor-status');
-      if (isMine) { st.textContent = '✏️ You are editing'; st.style.color = 'var(--accent3)'; }
+      if (isMine) { st.textContent = '✏️ Editing'; st.style.color = 'var(--accent3)'; }
       else {
         const o = roomUsers.find(u => u.socketId === editorOwner);
-        st.textContent = o ? `🔒 ${o.name} is editing` : '🔒 Locked'; st.style.color = 'var(--text-muted)';
+        st.textContent = o ? `🔒 ${o.name}` : '🔒 Locked'; st.style.color = 'var(--text-muted)';
         document.getElementById('lockMsg').textContent = o ? `🔒 ${o.name} is editing` : '🔒 Editor locked';
       }
       const sec = document.getElementById('requestSection'); sec.innerHTML = '';
@@ -2627,7 +1711,7 @@
         if (!isMine) { const b = document.createElement('button'); b.className = 'btn-action btn-reclaim'; b.textContent = '↩ Take Back Editor'; b.onclick = () => socket.emit('reclaim-editor'); sec.appendChild(b); }
       } else {
         if (isMine) { const b = document.createElement('button'); b.className = 'btn-action btn-handback'; b.textContent = '↩ Hand Back Editor'; b.onclick = () => { const h = roomUsers.find(u => u.isHost); if (h) socket.emit('return-editor', { toSocketId: h.socketId }); }; sec.appendChild(b); }
-        else { const b = document.createElement('button'); b.className = 'btn-action btn-request'; b.id = 'requestBtn'; b.textContent = '🙋 Request Editor Access'; b.onclick = () => { socket.emit('request-editor'); b.textContent = '⏳ Sent…'; b.disabled = true; }; sec.appendChild(b); }
+        else { const b = document.createElement('button'); b.className = 'btn-action btn-request'; b.id = 'requestBtn'; b.textContent = '🙋 Request Editor'; b.onclick = () => { socket.emit('request-editor'); b.textContent = '⏳ Sent…'; b.disabled = true; }; sec.appendChild(b); }
       }
     }
 
@@ -2668,13 +1752,14 @@
       appMode = 'solo';
       document.getElementById('modeTeam').classList.remove('active');
       document.getElementById('modeSolo').classList.add('active');
-      document.getElementById('right-panel').classList.remove('visible');
-      document.getElementById('media-bar').classList.remove('visible');
+      closeRightPanel();
       document.getElementById('room-bar').classList.remove('visible');
       document.getElementById('lobby').classList.remove('visible');
       document.getElementById('panelTabs').style.display = 'none';
-      if (!filesPanelOpen && !isMobile()) document.getElementById('left-panel').classList.remove('visible');
-      if (isMobile()) closeAllMobilePanels();
+      if (!filesPanelOpen) {
+        document.getElementById('left-panel').classList.remove('visible');
+        hideBackdrop();
+      }
     }
 
     function respondRequest(grant) {
@@ -2691,9 +1776,14 @@
       initEditor();
       await initFirebase();
 
+      // Mode
       document.getElementById('modeSolo').addEventListener('click', () => { if (appMode === 'team') performLeave(); else setMode('solo'); });
       document.getElementById('modeTeam').addEventListener('click', () => setMode('team'));
+
+      // Language
       document.querySelectorAll('.lang-pill').forEach(b => b.addEventListener('click', () => { if (b.dataset.lang) setLanguage(b.dataset.lang); }));
+
+      // Run
       document.getElementById('runBtn').addEventListener('click', runCode);
       document.getElementById('clearOutputBtn').addEventListener('click', () => { const o = document.getElementById('output'); o.textContent = '// Run your code to see output here'; o.className = ''; o.style.borderTop = ''; });
       document.addEventListener('keydown', e => {
@@ -2701,18 +1791,56 @@
         if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); fsSaveCurrentFile(); }
       });
 
+      // Desktop topbar actions
       document.getElementById('topbarSaveBtn').addEventListener('click', fsSaveCurrentFile);
       document.getElementById('topbarExportBtn').addEventListener('click', exportCurrentToPC);
       document.getElementById('topbarFilesBtn').addEventListener('click', toggleFilesPanel);
       document.getElementById('inlineCloseFileBtn').addEventListener('click', closeCurrentFile);
+
+      // Auth (desktop)
       document.getElementById('signInBtn').addEventListener('click', signInWithGoogle);
       document.getElementById('signOutBtn').addEventListener('click', signOutUser);
+
+      // Mobile overflow sheet
+      document.getElementById('topbarOverflowBtn').addEventListener('click', (e) => { e.stopPropagation(); toggleOverflowSheet(); });
+      document.getElementById('overflowSaveBtn').addEventListener('click', () => { closeOverflowSheet(); fsSaveCurrentFile(); });
+      document.getElementById('overflowExportBtn').addEventListener('click', () => { closeOverflowSheet(); exportCurrentToPC(); });
+      document.getElementById('overflowFilesBtn').addEventListener('click', () => { closeOverflowSheet(); toggleFilesPanel(); });
+      document.getElementById('overflowVideoBtn').addEventListener('click', () => { closeOverflowSheet(); openRightPanel(); });
+      document.getElementById('overflowSignInBtn').addEventListener('click', () => { closeOverflowSheet(); signInWithGoogle(); });
+      document.getElementById('overflowSignOutBtn').addEventListener('click', () => { closeOverflowSheet(); signOutUser(); });
+
+      // Close overflow sheet on outside click
+      document.addEventListener('click', (e) => {
+        if (overflowSheetOpen && !document.getElementById('overflow-sheet').contains(e.target) && e.target.id !== 'topbarOverflowBtn') {
+          closeOverflowSheet();
+        }
+      });
+
+      // Panel backdrop (close panels on mobile)
+      document.getElementById('panel-backdrop').addEventListener('click', () => {
+        if (isMobile()) {
+          if (document.getElementById('lobby').classList.contains('visible')) return; // don't dismiss lobby
+          closeLeftPanel();
+          closeRightPanel();
+          hideBackdrop();
+        }
+      });
+
+      // Video panel close button (mobile)
+      document.getElementById('closeVideoPanel').addEventListener('click', closeRightPanel);
+
+      // Panel tabs
       document.getElementById('tabMembers').addEventListener('click', () => switchPanelTab('members'));
       document.getElementById('tabFiles').addEventListener('click', () => switchPanelTab('files'));
+
+      // File actions
       document.getElementById('newFileBtn').addEventListener('click', () => { if (!currentUser) { toast('Sign in to save', 'var(--accent2)'); return; } openNewFileModal(); });
       document.getElementById('newFolderBtn').addEventListener('click', () => { if (!currentUser) { toast('Sign in to save', 'var(--accent2)'); return; } document.getElementById('newFolderModal').classList.add('visible'); document.getElementById('newFolderName').focus(); });
       document.getElementById('exportAllBtn').addEventListener('click', exportAllFiles);
       document.getElementById('refreshFilesBtn').addEventListener('click', loadFileTree);
+
+      // File modals
       document.getElementById('newFileConfirm').addEventListener('click', fsCreateFile);
       document.getElementById('newFileCancel').addEventListener('click', () => document.getElementById('newFileModal').classList.remove('visible'));
       document.getElementById('newFileName').addEventListener('keydown', e => { if (e.key === 'Enter') fsCreateFile(); });
@@ -2725,6 +1853,8 @@
       ['newFileModal', 'newFolderModal', 'renameModal'].forEach(id => {
         document.getElementById(id).addEventListener('click', e => { if (e.target.id === id) document.getElementById(id).classList.remove('visible'); });
       });
+
+      // Lobby
       document.getElementById('tabBtnCreate').addEventListener('click', () => switchLobbyTab('create'));
       document.getElementById('tabBtnJoin').addEventListener('click', () => switchLobbyTab('join'));
       document.getElementById('createRoomBtn').addEventListener('click', createRoom);
@@ -2733,94 +1863,40 @@
       document.getElementById('shareUrl').addEventListener('click', () => navigator.clipboard.writeText(document.getElementById('shareUrl').textContent).then(() => toast('Link copied!')));
       document.getElementById('roomIdBadge').addEventListener('click', () => navigator.clipboard.writeText(roomId).then(() => toast('Room ID copied!')));
       document.getElementById('leaveBtn').addEventListener('click', performLeave);
+
+      // Room / editor
       document.getElementById('grantBtn').addEventListener('click', () => respondRequest(true));
       document.getElementById('denyBtn').addEventListener('click', () => respondRequest(false));
       document.getElementById('micBtn').addEventListener('click', toggleMic);
       document.getElementById('camBtn').addEventListener('click', toggleCam);
 
-      // ── MOBILE NAV ──
-      document.getElementById('mnavEditor').addEventListener('click', () => {
-        closeAllMobilePanels();
-      });
-
-      document.getElementById('mnavFiles').addEventListener('click', () => {
-        const leftPanel = document.getElementById('left-panel');
-        const alreadyOpen = leftPanel.classList.contains('visible');
-        closeAllMobilePanels();
-        if (!alreadyOpen) {
-          // Show files tab
-          document.getElementById('panelTabs').style.display = appMode === 'team' ? 'flex' : 'none';
-          document.getElementById('membersTabContent').classList.remove('active');
-          document.getElementById('filesTabContent').classList.add('active');
-          document.getElementById('tabFiles').classList.add('active');
-          document.getElementById('tabMembers').classList.remove('active');
-          leftPanel.classList.add('visible');
-          showBackdrop();
-          loadFileTree();
-          document.getElementById('mnavFiles').classList.add('active');
-          document.getElementById('mnavEditor').classList.remove('active');
-        }
-      });
-
-      document.getElementById('mnavRun').addEventListener('click', () => {
-        closeAllMobilePanels();
-        runCode();
-      });
-
-      document.getElementById('mnavTeam').addEventListener('click', () => {
-        if (appMode !== 'team') { setMode('team'); return; }
-        const leftPanel = document.getElementById('left-panel');
-        const alreadyOpen = leftPanel.classList.contains('visible');
-        const showingMembers = document.getElementById('membersTabContent').classList.contains('active');
-        closeAllMobilePanels();
-        if (!alreadyOpen || !showingMembers) {
-          document.getElementById('panelTabs').style.display = 'flex';
-          switchPanelTab('members');
-          leftPanel.classList.add('visible');
-          showBackdrop();
-          document.getElementById('mnavTeam').classList.add('active');
-          document.getElementById('mnavEditor').classList.remove('active');
-        }
-      });
-
-      document.getElementById('mnavVideo').addEventListener('click', () => {
-        if (appMode !== 'team') { toast('Join a team room first'); return; }
-        const rightPanel = document.getElementById('right-panel');
-        const alreadyOpen = rightPanel.classList.contains('visible');
-        closeAllMobilePanels();
-        if (!alreadyOpen) {
-          rightPanel.classList.add('visible');
-          showBackdrop();
-          document.getElementById('mnavVideo').classList.add('active');
-          document.getElementById('mnavEditor').classList.remove('active');
-        }
-      });
-
-      // Backdrop closes panels
-      document.getElementById('panel-backdrop').addEventListener('click', closeAllMobilePanels);
-
+      // URL deep-link
       const urlRoom = new URLSearchParams(window.location.search).get('room');
       if (urlRoom) { document.getElementById('joinRoomId').value = urlRoom; switchLobbyTab('join'); setMode('team'); }
+
+      // Refresh CM on resize (handles virtual keyboard dismissal on mobile)
+      window.addEventListener('resize', () => {
+        if (cmEditor) cmEditor.refresh();
+        // Reset panel state on orientation change
+        if (window.innerWidth > 768) {
+          // Desktop: remove slide-over positioning overrides
+          document.getElementById('panel-backdrop').classList.remove('visible');
+          document.getElementById('closeVideoPanel').style.display = 'none';
+          if (appMode === 'team') {
+            document.getElementById('left-panel').classList.add('visible');
+            document.getElementById('right-panel').classList.add('visible');
+            document.getElementById('media-bar').classList.add('visible');
+          }
+        }
+      });
     });
   </script>
 
   <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"SoftwareApplication","name":"CodeForge","url":"https://coding-vibes.onrender.com","description":"Real-time collaborative coding platform with live video, instant code execution, and team rooms.","applicationCategory":"DeveloperApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"author":{"@type":"Person","name":"M. Rabi. K."}}
 </script>
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3159193304868741"
-    crossorigin="anonymous"></script>
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3159193304868741"
-     crossorigin="anonymous"></script>
-<!-- block -->
-<ins class="adsbygoogle"
-     style="display:block"
-     data-ad-client="ca-pub-3159193304868741"
-     data-ad-slot="5390122735"
-     data-ad-format="auto"
-     data-full-width-responsive="true"></ins>
-<script>
-     (adsbygoogle = window.adsbygoogle || []).push({});
-</script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3159193304868741" crossorigin="anonymous"></script>
+  <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-3159193304868741" data-ad-slot="5390122735" data-ad-format="auto" data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
 </body>
-
 </html>
