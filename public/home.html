@@ -58,155 +58,38 @@
       --right-w: 210px;
     }
 
-    html, body {
-      height: 100%;
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Segoe UI', system-ui, sans-serif;
-      font-size: 14px;
-      overflow: hidden;
-    }
+    html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 14px; overflow: hidden; }
+    #app-shell { display: flex; flex-direction: column; height: 100vh; height: 100dvh; }
 
-    #app-shell {
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      height: 100dvh;
-    }
-
-    /* ════════════ TOPBAR ════════════ */
-    #topbar {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 0 10px;
-      height: var(--topbar-h);
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      flex-shrink: 0;
-      z-index: 50;
-      overflow-x: auto;
-      overflow-y: hidden;
-      -webkit-overflow-scrolling: touch;
-    }
+    /* TOPBAR */
+    #topbar { display: flex; align-items: center; gap: 6px; padding: 0 10px; height: var(--topbar-h); background: var(--surface); border-bottom: 1px solid var(--border); flex-shrink: 0; z-index: 50; overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; }
     #topbar::-webkit-scrollbar { height: 0; }
-
-    .logo-text {
-      font-family: var(--font-mono);
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--accent);
-      letter-spacing: -0.5px;
-      margin-right: 2px;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
+    .logo-text { font-family: var(--font-mono); font-size: 14px; font-weight: 700; color: var(--accent); letter-spacing: -0.5px; margin-right: 2px; white-space: nowrap; flex-shrink: 0; }
     .logo-text span { color: var(--accent2); }
-
-    .mode-toggle {
-      display: flex;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 3px;
-      gap: 2px;
-      flex-shrink: 0;
-    }
-    .mode-btn {
-      padding: 4px 10px;
-      border: none;
-      background: transparent;
-      color: var(--text-muted);
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 11px;
-      font-weight: 600;
-      transition: all 0.15s;
-      white-space: nowrap;
-    }
+    .mode-toggle { display: flex; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 3px; gap: 2px; flex-shrink: 0; }
+    .mode-btn { padding: 4px 10px; border: none; background: transparent; color: var(--text-muted); border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: 600; transition: all 0.15s; white-space: nowrap; }
     .mode-btn.active { background: var(--accent); color: #fff; }
-
     .lang-pills { display: flex; gap: 3px; flex-shrink: 0; }
-    .lang-pill {
-      padding: 3px 8px;
-      border: 1px solid var(--border);
-      background: transparent;
-      color: var(--text-muted);
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 11px;
-      font-family: var(--font-mono);
-      font-weight: 600;
-      transition: all 0.15s;
-      white-space: nowrap;
-    }
+    .lang-pill { padding: 3px 8px; border: 1px solid var(--border); background: transparent; color: var(--text-muted); border-radius: 4px; cursor: pointer; font-size: 11px; font-family: var(--font-mono); font-weight: 600; transition: all 0.15s; white-space: nowrap; }
     .lang-pill:hover { border-color: var(--accent); color: var(--accent); }
     .lang-pill.active { background: var(--accent); border-color: var(--accent); color: #fff; }
-
     .topbar-sep { width: 1px; height: 24px; background: var(--border); flex-shrink: 0; margin: 0 2px; }
-
-    .topbar-btn {
-      padding: 4px 9px;
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--text-muted);
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 11px;
-      font-family: var(--font-mono);
-      transition: all 0.15s;
-      white-space: nowrap;
-      flex-shrink: 0;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-    }
+    .topbar-btn { padding: 4px 9px; background: transparent; border: 1px solid var(--border); color: var(--text-muted); border-radius: 4px; cursor: pointer; font-size: 11px; font-family: var(--font-mono); transition: all 0.15s; white-space: nowrap; flex-shrink: 0; text-decoration: none; display: inline-flex; align-items: center; }
     .topbar-btn:hover { border-color: var(--accent3); color: var(--accent3); }
     .topbar-btn.save { border-color: var(--accent); color: var(--accent); }
     .topbar-btn.save:hover { background: var(--accent); color: #fff; }
-
-    #runBtn {
-      margin-left: auto;
-      padding: 6px 14px;
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      font-weight: 700;
-      font-size: 12px;
-      cursor: pointer;
-      transition: all 0.15s;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
+    #runBtn { margin-left: auto; padding: 6px 14px; background: var(--accent); color: #fff; border: none; border-radius: 6px; font-weight: 700; font-size: 12px; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 5px; white-space: nowrap; flex-shrink: 0; }
     #runBtn:hover:not(:disabled) { background: #4070ee; transform: translateY(-1px); }
     #runBtn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
     #authArea { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
-    #signInBtn {
-      padding: 4px 9px;
-      background: transparent;
-      border: 1px solid var(--accent3);
-      color: var(--accent3);
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 11px;
-      font-weight: 600;
-      white-space: nowrap;
-      transition: all 0.15s;
-    }
+    #signInBtn { padding: 4px 9px; background: transparent; border: 1px solid var(--accent3); color: var(--accent3); border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: 600; white-space: nowrap; transition: all 0.15s; }
     #signInBtn:hover { background: var(--accent3); color: #000; }
-
     #userInfo { display: none; align-items: center; gap: 6px; }
     #userInfo.visible { display: flex; }
     .user-avatar { width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--border); }
     .user-name { font-size: 11px; color: var(--text-muted); font-family: var(--font-mono); max-width: 80px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     #signOutBtn { padding: 2px 6px; background: transparent; border: 1px solid var(--border); color: var(--text-muted); border-radius: 3px; cursor: pointer; font-size: 10px; transition: all 0.15s; }
     #signOutBtn:hover { border-color: var(--accent2); color: var(--accent2); }
-
     #room-bar { display: none; align-items: center; gap: 5px; font-size: 12px; flex-shrink: 0; }
     #room-bar.visible { display: flex; }
     .room-badge { background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; padding: 3px 7px; font-family: var(--font-mono); font-size: 11px; cursor: pointer; white-space: nowrap; }
@@ -214,125 +97,34 @@
     #editor-status { font-size: 11px; color: var(--text-muted); white-space: nowrap; }
     #leaveBtn { padding: 4px 7px; background: transparent; border: 1px solid var(--accent2); color: var(--accent2); border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: 600; transition: all 0.15s; white-space: nowrap; }
     #leaveBtn:hover { background: var(--accent2); color: #fff; }
+    #topbarOverflowBtn { display: none; flex-shrink: 0; padding: 4px 8px; background: var(--surface2); border: 1px solid var(--border); color: var(--text-muted); border-radius: 4px; cursor: pointer; font-size: 13px; line-height: 1; }
 
-    #topbarOverflowBtn {
-      display: none;
-      flex-shrink: 0;
-      padding: 4px 8px;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      color: var(--text-muted);
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 13px;
-      line-height: 1;
-    }
-
-    /* ════════════ FILE BAR ════════════ */
-    #current-file-bar {
-      display: none;
-      align-items: center;
-      gap: 8px;
-      padding: 3px 12px;
-      background: var(--surface2);
-      border-bottom: 1px solid var(--border);
-      flex-shrink: 0;
-      font-size: 11px;
-      font-family: var(--font-mono);
-    }
+    /* FILE BAR */
+    #current-file-bar { display: none; align-items: center; gap: 8px; padding: 3px 12px; background: var(--surface2); border-bottom: 1px solid var(--border); flex-shrink: 0; font-size: 11px; font-family: var(--font-mono); }
     #current-file-bar.visible { display: flex; }
     #current-file-name { color: var(--accent3); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     #save-indicator { font-size: 10px; color: var(--text-muted); white-space: nowrap; }
     #save-indicator.unsaved { color: var(--gold); }
 
-    /* ════════════ MAIN AREA ════════════ */
-    #main-area {
-      display: flex;
-      flex: 1;
-      overflow: hidden;
-      position: relative;
-    }
+    /* MAIN AREA */
+    #main-area { display: flex; flex: 1; overflow: hidden; position: relative; }
 
-    /* ════════════ LEFT PANEL ════════════ */
-    #left-panel {
-      width: var(--left-w);
-      flex-shrink: 0;
-      background: var(--surface);
-      border-right: 1px solid var(--border);
-      display: none;
-      flex-direction: column;
-      overflow: hidden;
-      transition: transform 0.25s ease;
-    }
+    /* LEFT PANEL */
+    #left-panel { width: var(--left-w); flex-shrink: 0; background: var(--surface); border-right: 1px solid var(--border); display: none; flex-direction: column; overflow: hidden; transition: transform 0.25s ease; }
     #left-panel.visible { display: flex; }
-
-    .panel-tabs {
-      display: flex;
-      align-items: center;
-      border-bottom: 1px solid var(--border);
-      flex-shrink: 0;
-    }
-    .panel-tab {
-      flex: 1;
-      padding: 8px 4px;
-      border: none;
-      background: transparent;
-      color: var(--text-muted);
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      cursor: pointer;
-      border-bottom: 2px solid transparent;
-      transition: all 0.15s;
-    }
+    .panel-tabs { display: flex; align-items: center; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+    .panel-tab { flex: 1; padding: 8px 4px; border: none; background: transparent; color: var(--text-muted); font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.15s; }
     .panel-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
-
-    #closePanelBtn {
-      flex-shrink: 0;
-      padding: 4px 10px;
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      cursor: pointer;
-      font-size: 15px;
-      line-height: 1;
-      border-radius: 4px;
-      transition: color 0.15s, background 0.15s;
-      -webkit-tap-highlight-color: transparent;
-    }
+    #closePanelBtn { flex-shrink: 0; padding: 4px 10px; background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 15px; line-height: 1; border-radius: 4px; transition: color 0.15s, background 0.15s; -webkit-tap-highlight-color: transparent; }
     #closePanelBtn:hover { color: var(--accent2); background: var(--surface2); }
-
-    #panelSoloHeader {
-      display: none;
-      align-items: center;
-      justify-content: space-between;
-      padding: 8px 12px 8px 14px;
-      border-bottom: 1px solid var(--border);
-      flex-shrink: 0;
-    }
+    #panelSoloHeader { display: none; align-items: center; justify-content: space-between; padding: 8px 12px 8px 14px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
     #panelSoloHeader .panel-title { margin-bottom: 0; font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); }
-    #closePanelSoloBtn {
-      flex-shrink: 0;
-      padding: 4px 8px;
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      cursor: pointer;
-      font-size: 15px;
-      line-height: 1;
-      border-radius: 4px;
-      transition: color 0.15s, background 0.15s;
-      -webkit-tap-highlight-color: transparent;
-    }
+    #closePanelSoloBtn { flex-shrink: 0; padding: 4px 8px; background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 15px; line-height: 1; border-radius: 4px; transition: color 0.15s, background 0.15s; -webkit-tap-highlight-color: transparent; }
     #closePanelSoloBtn:hover { color: var(--accent2); background: var(--surface2); }
-
     .panel-tab-content { display: none; flex-direction: column; flex: 1; overflow: hidden; }
     .panel-tab-content.active { display: flex; }
-
     .panel-section { padding: 10px 12px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
     .panel-title { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; }
-
     .member-item { display: flex; align-items: center; gap: 6px; padding: 5px 0; font-size: 12px; border-bottom: 1px solid var(--border); }
     .member-item:last-child { border-bottom: none; }
     .member-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--success); flex-shrink: 0; }
@@ -341,7 +133,6 @@
     .member-editing { font-size: 10px; color: var(--accent3); }
     .btn-assign { font-size: 10px; padding: 2px 6px; background: transparent; border: 1px solid var(--border); color: var(--text-muted); border-radius: 3px; cursor: pointer; transition: all 0.15s; }
     .btn-assign:hover { border-color: var(--accent3); color: var(--accent3); }
-
     .btn-action { width: 100%; padding: 7px; border: none; border-radius: 5px; font-size: 11px; font-weight: 600; cursor: pointer; margin-top: 6px; transition: all 0.15s; }
     .btn-request { background: var(--surface2); border: 1px solid var(--accent); color: var(--accent); }
     .btn-request:hover { background: var(--accent); color: #fff; }
@@ -349,13 +140,11 @@
     .btn-reclaim:hover { background: var(--accent2); color: #fff; }
     .btn-handback { background: var(--surface2); border: 1px solid var(--accent3); color: var(--accent3); }
     .btn-handback:hover { background: var(--accent3); color: #000; }
-
     #notifBanner { display: none; background: var(--surface2); border: 1px solid var(--accent); border-radius: 6px; padding: 8px; margin-top: 6px; font-size: 11px; }
     #notifBanner .banner-btns { display: flex; gap: 4px; margin-top: 6px; }
     .bbtn { flex: 1; padding: 4px; border: none; border-radius: 4px; font-size: 11px; font-weight: 700; cursor: pointer; }
     .bbtn.yes { background: var(--success); color: #000; }
     .bbtn.no { background: var(--error); color: #fff; }
-
     #files-panel { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
     .files-toolbar { display: flex; gap: 4px; padding: 8px 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
     .files-toolbar button { flex: 1; padding: 5px 4px; border: 1px solid var(--border); background: var(--surface2); color: var(--text-muted); border-radius: 4px; cursor: pointer; font-size: 10px; font-weight: 600; transition: all 0.15s; }
@@ -364,10 +153,8 @@
     .files-toolbar .btn-export:hover { border-color: var(--gold); color: var(--gold); }
     .files-tree { flex: 1; overflow-y: auto; padding: 4px 0; }
     .files-notice { padding: 18px 14px; text-align: center; font-size: 12px; color: var(--text-muted); line-height: 1.8; }
-
     .google-signin-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 9px 12px; margin-bottom: 10px; background: #fff; color: #3c4043; border: 1px solid #dadce0; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; transition: all 0.15s; }
     .google-signin-btn:hover { background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
-
     .folder-row { display: flex; align-items: center; gap: 5px; padding: 5px 10px; cursor: pointer; transition: background 0.12s; user-select: none; }
     .folder-row:hover { background: var(--surface2); }
     .folder-chevron { font-size: 9px; color: var(--text-muted); transition: transform 0.15s; flex-shrink: 0; width: 10px; }
@@ -388,55 +175,20 @@
     .row-act.act-open:hover { border-color: var(--accent); color: var(--accent); }
     .row-act.act-dl:hover { border-color: var(--gold); color: var(--gold); }
 
-    /* ════════════ EDITOR ════════════ */
+    /* EDITOR */
     #editor-panel { display: flex; flex-direction: column; flex: 1; overflow: hidden; min-width: 0; }
-
-    #stdin-bar {
-      display: flex;
-      align-items: flex-start;
-      gap: 8px;
-      padding: 5px 10px;
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      flex-shrink: 0;
-    }
+    #stdin-bar { display: flex; align-items: flex-start; gap: 8px; padding: 5px 10px; background: var(--surface); border-bottom: 1px solid var(--border); flex-shrink: 0; }
     #stdin-bar label { font-size: 11px; color: var(--text-muted); white-space: nowrap; font-family: var(--font-mono); padding-top: 5px; flex-shrink: 0; }
     #stdin-wrap { flex: 1; display: flex; flex-direction: column; gap: 2px; }
-    #stdinInput {
-      width: 100%;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      color: var(--text);
-      font-family: var(--font-mono);
-      font-size: 11px;
-      padding: 4px 8px;
-      outline: none;
-      transition: border-color 0.15s;
-      resize: vertical;
-      min-height: 28px;
-      max-height: 80px;
-      line-height: 1.5;
-    }
+    #stdinInput { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 4px; color: var(--text); font-family: var(--font-mono); font-size: 11px; padding: 4px 8px; outline: none; transition: border-color 0.15s; resize: vertical; min-height: 28px; max-height: 80px; line-height: 1.5; }
     #stdinInput:focus { border-color: var(--accent); }
     #stdin-hint { font-size: 10px; color: var(--text-muted); }
-
     #lockOverlay { display: none; position: absolute; inset: 0; background: rgba(15,17,23,0.7); z-index: 5; align-items: center; justify-content: center; font-size: 13px; color: var(--text-muted); pointer-events: none; }
     #lockOverlay.visible { display: flex; }
-
     .cm-wrapper { position: relative; flex: 1; overflow: hidden; }
     .CodeMirror { height: 100% !important; font-family: var(--font-mono) !important; font-size: 13px !important; background: var(--bg) !important; }
     .CodeMirror-scroll { padding-bottom: 0 !important; }
-
-    #output-panel {
-      height: var(--output-h);
-      flex-shrink: 0;
-      background: var(--surface);
-      border-top: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
+    #output-panel { height: var(--output-h); flex-shrink: 0; background: var(--surface); border-top: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
     .output-header { display: flex; align-items: center; justify-content: space-between; padding: 6px 12px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
     .output-label { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); font-family: var(--font-mono); }
     #clearOutputBtn { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 11px; padding: 2px 6px; border-radius: 3px; transition: color 0.15s; }
@@ -444,16 +196,8 @@
     #output { flex: 1; overflow-y: auto; padding: 10px 14px; font-family: var(--font-mono); font-size: 12px; white-space: pre-wrap; word-break: break-all; color: var(--text); line-height: 1.6; }
     #output.has-error { color: var(--error); }
 
-    /* ════════════ RIGHT PANEL — VIDEO ════════════ */
-    #right-panel {
-      width: var(--right-w);
-      flex-shrink: 0;
-      background: var(--surface);
-      border-left: 1px solid var(--border);
-      display: none;
-      flex-direction: column;
-      overflow: hidden;
-    }
+    /* RIGHT PANEL — VIDEO */
+    #right-panel { width: var(--right-w); flex-shrink: 0; background: var(--surface); border-left: 1px solid var(--border); display: none; flex-direction: column; overflow: hidden; }
     #right-panel.visible { display: flex; }
     .rp-header { padding: 8px 12px; border-bottom: 1px solid var(--border); flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; }
     .rp-title { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); }
@@ -463,26 +207,13 @@
     .cam-off { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-muted); font-size: 11px; gap: 6px; background: var(--surface2); }
     .cam-off-icon { font-size: 24px; }
     .tile-label { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.75)); color: #fff; font-size: 10px; padding: 8px 6px 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: var(--font-mono); }
-
-    /* Mic indicator on tile */
-    .tile-mic-icon {
-      position: absolute;
-      top: 6px;
-      right: 6px;
-      font-size: 13px;
-      background: rgba(0,0,0,0.55);
-      border-radius: 50%;
-      padding: 3px 4px;
-      line-height: 1;
-    }
-
     #media-bar { display: none; align-items: center; gap: 6px; padding: 8px 12px; background: var(--surface); border-top: 1px solid var(--border); flex-shrink: 0; }
     #media-bar.visible { display: flex; }
     .tool-btn { flex: 1; padding: 7px 4px; background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: 5px; cursor: pointer; font-size: 11px; font-weight: 600; transition: all 0.15s; text-align: center; }
     .tool-btn.on { background: rgba(74,222,128,0.08); border-color: var(--success); color: var(--success); }
     .tool-btn.off { background: rgba(248,113,113,0.08); border-color: var(--error); color: var(--error); }
 
-    /* ════════════ LOBBY ════════════ */
+    /* LOBBY */
     #lobby { position: fixed; inset: 0; background: rgba(10,12,18,0.92); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 100; padding: 16px; }
     #lobby.visible { display: flex; }
     .lobby-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px 28px; width: 100%; max-width: 380px; box-shadow: var(--shadow); max-height: 90vh; overflow-y: auto; }
@@ -506,7 +237,7 @@
     .share-url:hover { text-decoration: underline; }
     .lobby-error { color: var(--error); font-size: 12px; margin-top: 8px; min-height: 16px; }
 
-    /* ════════════ MODALS ════════════ */
+    /* MODALS */
     .modal-overlay { position: fixed; inset: 0; background: rgba(10,12,18,0.85); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 300; padding: 16px; }
     .modal-overlay.visible { display: flex; }
     .modal-box { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px 22px; width: 100%; max-width: 340px; box-shadow: var(--shadow); }
@@ -522,18 +253,10 @@
     .modal-cancel { background: var(--surface2); color: var(--text-muted); border: 1px solid var(--border); }
     .modal-cancel:hover { color: var(--text); }
 
-    /* ════════════ TOAST ════════════ */
+    /* TOAST */
     #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 8px 18px; border-radius: 20px; font-size: 12px; opacity: 0; transition: all 0.25s; z-index: 500; pointer-events: none; white-space: nowrap; max-width: calc(100vw - 32px); text-align: center; }
     #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-    #panel-backdrop {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.5);
-      z-index: 39;
-      -webkit-tap-highlight-color: transparent;
-    }
+    #panel-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 39; -webkit-tap-highlight-color: transparent; }
     #panel-backdrop.visible { display: block; }
 
     ::-webkit-scrollbar { width: 4px; }
@@ -544,7 +267,6 @@
       :root { --left-w: 220px; --right-w: 190px; --output-h: 150px; }
       .CodeMirror { font-size: 12px !important; }
     }
-
     @media (max-width: 768px) {
       :root { --topbar-h: 48px; --output-h: 130px; }
       html, body { overflow: hidden; }
@@ -555,19 +277,9 @@
       #runBtn { padding: 5px 12px; font-size: 11px; }
       #topbarOverflowBtn { display: inline-flex; align-items: center; }
       .topbar-secondary { display: none !important; }
-      #left-panel {
-        position: fixed; top: var(--topbar-h); left: 0; bottom: 0;
-        width: min(280px, 82vw); z-index: 40;
-        transform: translateX(-100%); transition: transform 0.25s ease;
-        border-right: 1px solid var(--border); box-shadow: 4px 0 24px rgba(0,0,0,0.5);
-      }
+      #left-panel { position: fixed; top: var(--topbar-h); left: 0; bottom: 0; width: min(280px, 82vw); z-index: 40; transform: translateX(-100%); transition: transform 0.25s ease; border-right: 1px solid var(--border); box-shadow: 4px 0 24px rgba(0,0,0,0.5); }
       #left-panel.visible { display: flex; transform: translateX(0); }
-      #right-panel {
-        position: fixed; top: var(--topbar-h); right: 0; bottom: 0;
-        width: min(260px, 82vw); z-index: 40;
-        transform: translateX(100%); transition: transform 0.25s ease;
-        border-left: 1px solid var(--border); box-shadow: -4px 0 24px rgba(0,0,0,0.5);
-      }
+      #right-panel { position: fixed; top: var(--topbar-h); right: 0; bottom: 0; width: min(260px, 82vw); z-index: 40; transform: translateX(100%); transition: transform 0.25s ease; border-left: 1px solid var(--border); box-shadow: -4px 0 24px rgba(0,0,0,0.5); }
       #right-panel.visible { display: flex; transform: translateX(0); }
       #media-bar { position: fixed; bottom: 0; right: 0; width: min(260px, 82vw); z-index: 41; }
       #media-bar.visible { display: flex; }
@@ -582,7 +294,6 @@
       .room-badge { font-size: 10px; padding: 2px 6px; }
       .row-acts { display: flex; }
     }
-
     @media (max-width: 480px) {
       :root { --output-h: 110px; }
       .logo-text { font-size: 12px; }
@@ -594,23 +305,9 @@
       .lobby-card { padding: 18px 16px; }
       .lobby-card h2 { font-size: 14px; }
     }
-
-    #overflow-sheet {
-      display: none;
-      position: fixed;
-      top: var(--topbar-h); left: 0; right: 0;
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      padding: 10px 12px;
-      z-index: 49;
-      gap: 6px;
-      flex-wrap: wrap;
-      align-items: center;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-    }
+    #overflow-sheet { display: none; position: fixed; top: var(--topbar-h); left: 0; right: 0; background: var(--surface); border-bottom: 1px solid var(--border); padding: 10px 12px; z-index: 49; gap: 6px; flex-wrap: wrap; align-items: center; box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
     #overflow-sheet.open { display: flex; }
-    #overflow-sheet .topbar-btn, #overflow-sheet #signInBtn,
-    #overflow-sheet #userInfo, #overflow-sheet #authArea { flex-shrink: 0; }
+    #overflow-sheet .topbar-btn, #overflow-sheet #signInBtn, #overflow-sheet #userInfo, #overflow-sheet #authArea { flex-shrink: 0; }
     #overflow-sheet #userInfo { display: none; }
     #overflow-sheet #userInfo.visible { display: flex; }
   </style>
@@ -618,7 +315,6 @@
 
 <body>
   <div id="app-shell">
-
     <div id="topbar">
       <span class="logo-text">Code<span>Forge</span></span>
       <div class="mode-toggle">
@@ -683,7 +379,6 @@
 
     <div id="main-area">
       <div id="panel-backdrop"></div>
-
       <div id="left-panel">
         <div id="panelSoloHeader">
           <span class="panel-title">Files</span>
@@ -718,9 +413,7 @@
               <button class="btn-export" id="exportAllBtn">↓ All</button>
               <button id="refreshFilesBtn">↺</button>
             </div>
-            <div class="files-tree" id="filesTree">
-              <div class="files-notice">Loading…</div>
-            </div>
+            <div class="files-tree" id="filesTree"><div class="files-notice">Loading…</div></div>
           </div>
         </div>
       </div>
@@ -799,7 +492,7 @@
     </div>
   </div>
 
-  <!-- NEW FILE MODAL -->
+  <!-- MODALS -->
   <div class="modal-overlay" id="newFileModal">
     <div class="modal-box">
       <h3>📄 New File</h3>
@@ -809,36 +502,23 @@
       <select id="newFileLang"><option value="python">Python</option><option value="cpp">C++</option><option value="c">C</option><option value="java">Java</option></select>
       <label class="modal-label">Folder <span style="font-weight:normal;color:var(--text-muted)">(optional)</span></label>
       <select id="newFileFolder"><option value="">— Root —</option></select>
-      <div class="modal-btns">
-        <button class="modal-cancel" id="newFileCancel">Cancel</button>
-        <button class="modal-confirm" id="newFileConfirm">Create</button>
-      </div>
+      <div class="modal-btns"><button class="modal-cancel" id="newFileCancel">Cancel</button><button class="modal-confirm" id="newFileConfirm">Create</button></div>
     </div>
   </div>
-
-  <!-- NEW FOLDER MODAL -->
   <div class="modal-overlay" id="newFolderModal">
     <div class="modal-box">
       <h3>📁 New Folder</h3>
       <label class="modal-label">Folder name</label>
       <input id="newFolderName" type="text" placeholder="e.g. Projects" autocomplete="off" />
-      <div class="modal-btns">
-        <button class="modal-cancel" id="newFolderCancel">Cancel</button>
-        <button class="modal-confirm" id="newFolderConfirm">Create</button>
-      </div>
+      <div class="modal-btns"><button class="modal-cancel" id="newFolderCancel">Cancel</button><button class="modal-confirm" id="newFolderConfirm">Create</button></div>
     </div>
   </div>
-
-  <!-- RENAME MODAL -->
   <div class="modal-overlay" id="renameModal">
     <div class="modal-box">
       <h3 id="renameTitle">Rename</h3>
       <label class="modal-label">New name</label>
       <input id="renameInput" type="text" autocomplete="off" />
-      <div class="modal-btns">
-        <button class="modal-cancel" id="renameCancel">Cancel</button>
-        <button class="modal-confirm" id="renameConfirm">Rename</button>
-      </div>
+      <div class="modal-btns"><button class="modal-cancel" id="renameCancel">Cancel</button><button class="modal-confirm" id="renameConfirm">Rename</button></div>
     </div>
   </div>
 
@@ -848,18 +528,18 @@
     // ════════════════════════════════════════════════════════
     //  CONSTANTS
     // ════════════════════════════════════════════════════════
-    const LANG_MODE = { python: 'python', cpp: 'text/x-c++src', c: 'text/x-csrc', java: 'text/x-java' };
-    const LANG_EXT  = { python: '.py', cpp: '.cpp', c: '.c', java: '.java' };
-    const LANG_ICON = { python: '🐍', cpp: '⚙️', c: '🔧', java: '☕' };
-    const STARTER = {
+    const LANG_MODE = { python:'python', cpp:'text/x-c++src', c:'text/x-csrc', java:'text/x-java' };
+    const LANG_EXT  = { python:'.py', cpp:'.cpp', c:'.c', java:'.java' };
+    const LANG_ICON = { python:'🐍', cpp:'⚙️', c:'🔧', java:'☕' };
+    const STARTER   = {
       python: '# Python\nprint("Hello, World!")\n',
-      cpp: '#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "Hello, World!" << endl;\n    return 0;\n}\n',
-      c: '#include <stdio.h>\n\nint main() {\n    printf("Hello, World!\\n");\n    return 0;\n}\n',
-      java: 'public class Main {\n    public static void main(String[] args) {\n        System.out.println("Hello, World!");\n    }\n}\n',
+      cpp:    '#include <iostream>\nusing namespace std;\n\nint main() {\n    cout << "Hello, World!" << endl;\n    return 0;\n}\n',
+      c:      '#include <stdio.h>\n\nint main() {\n    printf("Hello, World!\\n");\n    return 0;\n}\n',
+      java:   'public class Main {\n    public static void main(String[] args) {\n        System.out.println("Hello, World!");\n    }\n}\n',
     };
 
     // ════════════════════════════════════════════════════════
-    //  ICE CONFIG  — add free TURN servers for NAT traversal
+    //  ICE CONFIG — STUN + free TURN relays for NAT traversal
     // ════════════════════════════════════════════════════════
     const ICE_CFG = {
       iceServers: [
@@ -867,24 +547,12 @@
         { urls: 'stun:stun1.l.google.com:19302' },
         { urls: 'stun:stun2.l.google.com:19302' },
         { urls: 'stun:stun3.l.google.com:19302' },
-        // Free open TURN relays — essential when both peers are behind symmetric NAT
-        {
-          urls: 'turn:openrelay.metered.ca:80',
-          username: 'openrelayproject',
-          credential: 'openrelayproject'
-        },
-        {
-          urls: 'turn:openrelay.metered.ca:443',
-          username: 'openrelayproject',
-          credential: 'openrelayproject'
-        },
-        {
-          urls: 'turn:openrelay.metered.ca:443?transport=tcp',
-          username: 'openrelayproject',
-          credential: 'openrelayproject'
-        }
+        // Free TURN servers — essential for peers behind symmetric NAT
+        { urls:'turn:openrelay.metered.ca:80',          username:'openrelayproject', credential:'openrelayproject' },
+        { urls:'turn:openrelay.metered.ca:443',         username:'openrelayproject', credential:'openrelayproject' },
+        { urls:'turn:openrelay.metered.ca:443?transport=tcp', username:'openrelayproject', credential:'openrelayproject' },
       ],
-      iceCandidatePoolSize: 10
+      iceCandidatePoolSize: 10,
     };
 
     // ════════════════════════════════════════════════════════
@@ -897,7 +565,7 @@
         const cfg = await fetch('/api/firebase-config').then(r => r.json());
         if (!firebase.apps.length) firebase.initializeApp(cfg);
         fbAuth = firebase.auth();
-        db = firebase.firestore();
+        db     = firebase.firestore();
         fbAuth.onAuthStateChanged(user => { currentUser = user; updateAuthUI(user); loadFileTree(); });
       } catch (e) { console.warn('Firebase init failed:', e.message); }
     }
@@ -916,21 +584,21 @@
       const oSignIn = document.getElementById('overflowSignInBtn');
       const oInfo   = document.getElementById('overflowUserInfo');
       const oName   = document.getElementById('overflowUserName');
-      if (user) { oSignIn.style.display = 'none'; oInfo.style.display = 'flex'; oName.textContent = user.displayName || user.email || 'User'; }
-      else       { oSignIn.style.display = '';    oInfo.style.display = 'none'; }
+      if (user) { oSignIn.style.display='none'; oInfo.style.display='flex'; oName.textContent=user.displayName||user.email||'User'; }
+      else       { oSignIn.style.display='';    oInfo.style.display='none'; }
     }
 
     async function signInWithGoogle() {
-      if (!fbAuth) { toast('Firebase not ready', 'var(--error)'); return; }
-      try { await fbAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); toast('✓ Signed in!', 'var(--success)'); }
-      catch (e) { toast('Sign-in failed: ' + e.message, 'var(--error)'); }
+      if (!fbAuth) { toast('Firebase not ready','var(--error)'); return; }
+      try { await fbAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); toast('✓ Signed in!','var(--success)'); }
+      catch (e) { toast('Sign-in failed: '+e.message,'var(--error)'); }
     }
 
     async function signOutUser() {
       if (!fbAuth) return;
       await fbAuth.signOut();
-      fsFolders = []; fsFiles = [];
-      openFileId = null; openFileName = null; filesDirty = false;
+      fsFolders=[]; fsFiles=[];
+      openFileId=null; openFileName=null; filesDirty=false;
       hideCurrentFileBar(); toast('Signed out');
     }
 
@@ -942,7 +610,7 @@
     let roomId = '', editorOwner = null;
     let micOn = true, camOn = true;
     let myStream = null;
-    let peers = {};          // peerId → { pc, name, senders: {audio, video} }
+    let peers = {};        // peerId → { pc, name, pendingCandidates }
     let roomUsers = [];
     let pendingRequest = null, pendingHostToken = null, pendingRoomId = null;
     let fsFolders = [], fsFiles = [], openFileId = null, openFileName = null, filesDirty = false;
@@ -966,18 +634,9 @@
     // ════════════════════════════════════════════════════════
     //  OVERFLOW SHEET
     // ════════════════════════════════════════════════════════
-    function toggleOverflowSheet() {
-      overflowSheetOpen = !overflowSheetOpen;
-      document.getElementById('overflow-sheet').classList.toggle('open', overflowSheetOpen);
-    }
-    function closeOverflowSheet() {
-      overflowSheetOpen = false;
-      document.getElementById('overflow-sheet').classList.remove('open');
-    }
+    function toggleOverflowSheet() { overflowSheetOpen=!overflowSheetOpen; document.getElementById('overflow-sheet').classList.toggle('open',overflowSheetOpen); }
+    function closeOverflowSheet()  { overflowSheetOpen=false; document.getElementById('overflow-sheet').classList.remove('open'); }
 
-    // ════════════════════════════════════════════════════════
-    //  PANEL BACKDROP
-    // ════════════════════════════════════════════════════════
     function showBackdrop() { document.getElementById('panel-backdrop').classList.add('visible'); }
     function hideBackdrop() { document.getElementById('panel-backdrop').classList.remove('visible'); }
 
@@ -993,25 +652,25 @@
     function destroyEditor() {
       if (!cmEditor) return;
       const wrap = cmEditor.getWrapperElement();
-      const fresh = document.createElement('textarea'); fresh.id = 'editor';
-      wrap.parentNode.replaceChild(fresh, wrap); cmEditor = null;
+      const fresh = document.createElement('textarea'); fresh.id='editor';
+      wrap.parentNode.replaceChild(fresh, wrap); cmEditor=null;
     }
 
     function initEditor(initialCode) {
       destroyEditor();
       cmEditor = CodeMirror.fromTextArea(document.getElementById('editor'), {
-        lineNumbers: true, mode: LANG_MODE[currentLang] || 'python',
-        theme: 'dracula', indentUnit: 4, tabSize: 4, indentWithTabs: false,
-        lineWrapping: true, extraKeys: { 'Tab': 'indentMore', 'Shift-Tab': 'indentLess' }
+        lineNumbers:true, mode:LANG_MODE[currentLang]||'python',
+        theme:'dracula', indentUnit:4, tabSize:4, indentWithTabs:false,
+        lineWrapping:true, extraKeys:{'Tab':'indentMore','Shift-Tab':'indentLess'}
       });
       suppressSync = true;
       cmEditor.setValue(initialCode !== undefined ? initialCode : STARTER[currentLang]);
       suppressSync = false;
-      cmEditor.setSize('100%', '100%');
+      cmEditor.setSize('100%','100%');
       cmEditor.on('change', () => {
         if (suppressSync) return;
-        if (appMode === 'team' && editorOwner !== mySocketId) return;
-        if (appMode === 'team' && socket) socket.emit('code-change', { code: cmEditor.getValue() });
+        if (appMode==='team' && editorOwner!==mySocketId) return;
+        if (appMode==='team' && socket) socket.emit('code-change', {code:cmEditor.getValue()});
         if (openFileId) markDirty(true);
       });
     }
@@ -1019,33 +678,28 @@
     function setLanguage(lang) {
       const prev = currentLang; currentLang = lang;
       if (cmEditor) {
-        cmEditor.setOption('mode', LANG_MODE[lang] || 'python');
+        cmEditor.setOption('mode', LANG_MODE[lang]||'python');
         const cur = cmEditor.getValue();
-        if (!cur.trim() || cur === STARTER[prev]) {
-          suppressSync = true; cmEditor.setValue(STARTER[lang]); suppressSync = false;
-        }
+        if (!cur.trim() || cur===STARTER[prev]) { suppressSync=true; cmEditor.setValue(STARTER[lang]); suppressSync=false; }
       }
-      document.querySelectorAll('.lang-pill').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
+      document.querySelectorAll('.lang-pill').forEach(b => b.classList.toggle('active', b.dataset.lang===lang));
       const s = document.getElementById('newFileLang'); if (s) s.value = lang;
     }
 
     function applyRemoteCode(code) {
       if (!cmEditor) return;
       suppressSync = true;
-      const cur = cmEditor.getCursor(), sc = cmEditor.getScrollInfo();
+      const cur=cmEditor.getCursor(), sc=cmEditor.getScrollInfo();
       cmEditor.setValue(code); cmEditor.setCursor(cur); cmEditor.scrollTo(sc.left, sc.top);
       suppressSync = false;
     }
 
-    // ════════════════════════════════════════════════════════
-    //  DIRTY / FILE BAR
-    // ════════════════════════════════════════════════════════
     function markDirty(d) {
       filesDirty = d;
       const el = document.getElementById('save-indicator');
-      if (el) { el.textContent = d ? '● Unsaved' : '✓ Saved'; el.className = d ? 'unsaved' : ''; }
+      if (el) { el.textContent=d?'● Unsaved':'✓ Saved'; el.className=d?'unsaved':''; }
     }
-    function showCurrentFileBar(name) { document.getElementById('current-file-name').textContent = name; document.getElementById('current-file-bar').classList.add('visible'); }
+    function showCurrentFileBar(name) { document.getElementById('current-file-name').textContent=name; document.getElementById('current-file-bar').classList.add('visible'); }
     function hideCurrentFileBar() { document.getElementById('current-file-bar').classList.remove('visible'); }
 
     // ════════════════════════════════════════════════════════
@@ -1061,243 +715,205 @@
     async function loadFileTree() {
       const tree = document.getElementById('filesTree');
       if (!currentUser) {
-        tree.innerHTML = `<div class="files-notice">
-          <button class="google-signin-btn" onclick="signInWithGoogle()">
-            <svg width="16" height="16" viewBox="0 0 48 48"><path fill="#4285F4" d="M43.6 20H24v8h11.3C33.6 33.1 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3 0 5.7 1.1 7.8 2.9l5.7-5.7C33.9 6.5 29.2 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20c11 0 19.6-7.9 19.6-20 0-1.3-.1-2.7-.3-4h.3z"/></svg>
-            Sign in with Google
-          </button>
-          <div style="font-size:11px">Files stored privately in the cloud.</div>
-        </div>`; return;
+        tree.innerHTML = `<div class="files-notice"><button class="google-signin-btn" onclick="signInWithGoogle()"><svg width="16" height="16" viewBox="0 0 48 48"><path fill="#4285F4" d="M43.6 20H24v8h11.3C33.6 33.1 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3 0 5.7 1.1 7.8 2.9l5.7-5.7C33.9 6.5 29.2 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20c11 0 19.6-7.9 19.6-20 0-1.3-.1-2.7-.3-4h.3z"/></svg>Sign in with Google</button><div style="font-size:11px">Files stored privately in the cloud.</div></div>`;
+        return;
       }
       tree.innerHTML = '<div class="files-notice">Loading…</div>';
       try {
-        const [fSnap, dSnap] = await Promise.all([
-          foldersRef().orderBy('createdAt').get(),
-          filesRef().orderBy('createdAt').get()
-        ]);
-        fsFolders = fSnap.docs.map(d => ({ _id: d.id, ...d.data() }));
-        fsFiles   = dSnap.docs.map(d => ({ _id: d.id, ...d.data() }));
+        const [fSnap, dSnap] = await Promise.all([foldersRef().orderBy('createdAt').get(), filesRef().orderBy('createdAt').get()]);
+        fsFolders = fSnap.docs.map(d => ({_id:d.id,...d.data()}));
+        fsFiles   = dSnap.docs.map(d => ({_id:d.id,...d.data()}));
         renderFileTree(); populateFolderDropdowns();
-      } catch (e) { tree.innerHTML = `<div class="files-notice" style="color:var(--error)">Load failed.<br><small>${escHtml(e.message)}</small></div>`; }
+      } catch (e) { tree.innerHTML=`<div class="files-notice" style="color:var(--error)">Load failed.<br><small>${escHtml(e.message)}</small></div>`; }
     }
 
     function renderFileTree() {
-      const tree = document.getElementById('filesTree'); tree.innerHTML = '';
-      const rf  = fsFolders.filter(f => !f.parentId);
-      const rfl = fsFiles.filter(f => !f.folderId);
-      if (!rf.length && !rfl.length) { tree.innerHTML = '<div class="files-notice">No files yet.<br>Click <strong>+ File</strong> to start.</div>'; return; }
-      rf.forEach(f => tree.appendChild(buildFolderRow(f)));
-      rfl.forEach(f => tree.appendChild(buildFileRow(f)));
+      const tree = document.getElementById('filesTree'); tree.innerHTML='';
+      const rf  = fsFolders.filter(f=>!f.parentId);
+      const rfl = fsFiles.filter(f=>!f.folderId);
+      if (!rf.length && !rfl.length) { tree.innerHTML='<div class="files-notice">No files yet.<br>Click <strong>+ File</strong> to start.</div>'; return; }
+      rf.forEach(f=>tree.appendChild(buildFolderRow(f)));
+      rfl.forEach(f=>tree.appendChild(buildFileRow(f)));
     }
 
     function buildFolderRow(folder) {
       const isOpen = expandedFolderIds.has(folder._id);
       const wrap = document.createElement('div');
-      const row  = document.createElement('div'); row.className = 'folder-row';
-      row.innerHTML = `
-        <span class="folder-chevron ${isOpen ? 'open' : ''}">▶</span>
-        <span class="folder-icon">📁</span>
-        <span class="folder-name">${escHtml(folder.name)}</span>
-        <div class="row-acts">
-          <button class="row-act act-open" data-act="add"        data-id="${folder._id}">+</button>
-          <button class="row-act"          data-act="ren-folder" data-id="${folder._id}" data-name="${escAttr(folder.name)}">✎</button>
-          <button class="row-act"          data-act="del-folder" data-id="${folder._id}">✕</button>
-        </div>`;
-      const children = document.createElement('div'); children.className = 'folder-children'; children.style.display = isOpen ? 'block' : 'none';
+      const row  = document.createElement('div'); row.className='folder-row';
+      row.innerHTML=`<span class="folder-chevron ${isOpen?'open':''}">▶</span><span class="folder-icon">📁</span><span class="folder-name">${escHtml(folder.name)}</span><div class="row-acts"><button class="row-act act-open" data-act="add" data-id="${folder._id}">+</button><button class="row-act" data-act="ren-folder" data-id="${folder._id}" data-name="${escAttr(folder.name)}">✎</button><button class="row-act" data-act="del-folder" data-id="${folder._id}">✕</button></div>`;
+      const children = document.createElement('div'); children.className='folder-children'; children.style.display=isOpen?'block':'none';
       if (isOpen) {
-        fsFolders.filter(f => f.parentId === folder._id).forEach(sf => children.appendChild(buildFolderRow(sf)));
-        fsFiles.filter(f => f.folderId === folder._id).forEach(f => children.appendChild(buildFileRow(f)));
+        fsFolders.filter(f=>f.parentId===folder._id).forEach(sf=>children.appendChild(buildFolderRow(sf)));
+        fsFiles.filter(f=>f.folderId===folder._id).forEach(f=>children.appendChild(buildFileRow(f)));
       }
-      row.addEventListener('click', async e => {
-        const btn = e.target.closest('[data-act]');
-        if (btn) {
-          e.stopPropagation();
-          const { act, id, name } = btn.dataset;
-          if (act === 'add')        openNewFileModal(id);
-          if (act === 'ren-folder') openRenameModal('folder', id, name);
-          if (act === 'del-folder') await fsDeleteFolder(id, folder.name);
-          return;
-        }
-        expandedFolderIds.has(folder._id) ? expandedFolderIds.delete(folder._id) : expandedFolderIds.add(folder._id);
+      row.addEventListener('click', async e=>{
+        const btn=e.target.closest('[data-act]');
+        if (btn) { e.stopPropagation(); const {act,id,name}=btn.dataset; if(act==='add')openNewFileModal(id); if(act==='ren-folder')openRenameModal('folder',id,name); if(act==='del-folder')await fsDeleteFolder(id,folder.name); return; }
+        expandedFolderIds.has(folder._id)?expandedFolderIds.delete(folder._id):expandedFolderIds.add(folder._id);
         renderFileTree();
       });
       wrap.appendChild(row); wrap.appendChild(children); return wrap;
     }
 
     function buildFileRow(file) {
-      const row = document.createElement('div'); row.className = 'file-row' + (file._id === openFileId ? ' active' : '');
-      row.innerHTML = `
-        <span class="file-icon">${LANG_ICON[file.language] || '📄'}</span>
-        <span class="file-name">${escHtml(file.name)}</span>
-        <span class="file-lang-tag">${file.language}</span>
-        <div class="row-acts">
-          <button class="row-act act-open" data-act="open"     data-id="${file._id}">Open</button>
-          <button class="row-act act-dl"   data-act="dl"       data-id="${file._id}">↓</button>
-          <button class="row-act"          data-act="ren-file" data-id="${file._id}" data-name="${escAttr(file.name)}">✎</button>
-          <button class="row-act"          data-act="del-file" data-id="${file._id}">✕</button>
-        </div>`;
-      row.addEventListener('click', async e => {
-        const btn = e.target.closest('[data-act]');
-        if (btn) {
-          e.stopPropagation();
-          const { act, id, name } = btn.dataset;
-          if (act === 'open')     { await fsOpenFile(id); if (isMobile()) closeSidePanel(); }
-          if (act === 'dl')       await fsDownloadFile(id);
-          if (act === 'ren-file') openRenameModal('file', id, name);
-          if (act === 'del-file') await fsDeleteFile(id, file.name);
-        } else { await fsOpenFile(file._id); if (isMobile()) closeSidePanel(); }
+      const row = document.createElement('div'); row.className='file-row'+(file._id===openFileId?' active':'');
+      row.innerHTML=`<span class="file-icon">${LANG_ICON[file.language]||'📄'}</span><span class="file-name">${escHtml(file.name)}</span><span class="file-lang-tag">${file.language}</span><div class="row-acts"><button class="row-act act-open" data-act="open" data-id="${file._id}">Open</button><button class="row-act act-dl" data-act="dl" data-id="${file._id}">↓</button><button class="row-act" data-act="ren-file" data-id="${file._id}" data-name="${escAttr(file.name)}">✎</button><button class="row-act" data-act="del-file" data-id="${file._id}">✕</button></div>`;
+      row.addEventListener('click', async e=>{
+        const btn=e.target.closest('[data-act]');
+        if (btn) { e.stopPropagation(); const {act,id,name}=btn.dataset; if(act==='open'){await fsOpenFile(id); if(isMobile())closeSidePanel();} if(act==='dl')await fsDownloadFile(id); if(act==='ren-file')openRenameModal('file',id,name); if(act==='del-file')await fsDeleteFile(id,file.name); }
+        else { await fsOpenFile(file._id); if(isMobile())closeSidePanel(); }
       });
       return row;
     }
 
     // ════════════════════════════════════════════════════════
-    //  FILE OPERATIONS  (unchanged from original)
+    //  FILE OPERATIONS
     // ════════════════════════════════════════════════════════
     async function fsOpenFile(fileId) {
       if (filesDirty && openFileId && !confirm('Unsaved changes. Discard and open?')) return;
       try {
         const doc = await filesRef().doc(fileId).get();
-        if (!doc.exists) { toast('File not found', 'var(--error)'); return; }
-        const file = { _id: doc.id, ...doc.data() };
-        openFileId = file._id; openFileName = file.name; currentLang = file.language;
-        document.querySelectorAll('.lang-pill').forEach(b => b.classList.toggle('active', b.dataset.lang === currentLang));
+        if (!doc.exists) { toast('File not found','var(--error)'); return; }
+        const file = {_id:doc.id,...doc.data()};
+        openFileId=file._id; openFileName=file.name; currentLang=file.language;
+        document.querySelectorAll('.lang-pill').forEach(b=>b.classList.toggle('active',b.dataset.lang===currentLang));
         if (cmEditor) cmEditor.setOption('mode', LANG_MODE[currentLang]);
-        suppressSync = true; if (cmEditor) cmEditor.setValue(file.content || STARTER[currentLang]); suppressSync = false;
+        suppressSync=true; if(cmEditor)cmEditor.setValue(file.content||STARTER[currentLang]); suppressSync=false;
         markDirty(false); showCurrentFileBar(file.name); renderFileTree();
-        toast(`📄 Opened: ${file.name}`, 'var(--accent3)');
-      } catch (e) { toast('Open failed: ' + e.message, 'var(--error)'); }
+        toast(`📄 Opened: ${file.name}`,'var(--accent3)');
+      } catch (e) { toast('Open failed: '+e.message,'var(--error)'); }
     }
 
     async function fsSaveCurrentFile() {
-      if (!currentUser) { toast('Sign in to save', 'var(--accent2)'); return; }
-      if (!openFileId) { openNewFileModal(null, true); return; }
+      if (!currentUser) { toast('Sign in to save','var(--accent2)'); return; }
+      if (!openFileId) { openNewFileModal(null,true); return; }
       try {
-        await filesRef().doc(openFileId).update({ content: cmEditor ? cmEditor.getValue() : '', language: currentLang, updatedAt: tsNow() });
-        markDirty(false); toast('✓ Saved', 'var(--success)');
-      } catch (e) { toast('Save failed: ' + e.message, 'var(--error)'); }
+        await filesRef().doc(openFileId).update({content:cmEditor?cmEditor.getValue():'',language:currentLang,updatedAt:tsNow()});
+        markDirty(false); toast('✓ Saved','var(--success)');
+      } catch (e) { toast('Save failed: '+e.message,'var(--error)'); }
     }
 
     function exportCurrentToPC() {
-      const code = cmEditor ? cmEditor.getValue() : '', name = openFileName || ('code' + LANG_EXT[currentLang]);
-      const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([code], { type: 'text/plain' })), download: name });
-      a.click(); URL.revokeObjectURL(a.href); toast(`⬇ Downloaded: ${name}`, 'var(--gold)');
+      const code=cmEditor?cmEditor.getValue():'', name=openFileName||('code'+LANG_EXT[currentLang]);
+      const a=Object.assign(document.createElement('a'),{href:URL.createObjectURL(new Blob([code],{type:'text/plain'})),download:name});
+      a.click(); URL.revokeObjectURL(a.href); toast(`⬇ Downloaded: ${name}`,'var(--gold)');
     }
 
     async function fsDownloadFile(fileId) {
       try {
-        const doc = await filesRef().doc(fileId).get(); if (!doc.exists) return; const f = doc.data();
-        const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([f.content || ''], { type: 'text/plain' })), download: f.name });
-        a.click(); URL.revokeObjectURL(a.href); toast(`⬇ ${f.name}`, 'var(--gold)');
-      } catch (e) { toast('Download failed', 'var(--error)'); }
+        const doc=await filesRef().doc(fileId).get(); if(!doc.exists)return; const f=doc.data();
+        const a=Object.assign(document.createElement('a'),{href:URL.createObjectURL(new Blob([f.content||''],{type:'text/plain'})),download:f.name});
+        a.click(); URL.revokeObjectURL(a.href); toast(`⬇ ${f.name}`,'var(--gold)');
+      } catch(e){ toast('Download failed','var(--error)'); }
     }
 
     async function exportAllFiles() {
-      if (!currentUser || !fsFiles.length) { toast('No files to export', 'var(--accent2)'); return; }
+      if (!currentUser||!fsFiles.length) { toast('No files to export','var(--accent2)'); return; }
       for (const file of fsFiles) {
         try {
-          const doc = await filesRef().doc(file._id).get(); if (!doc.exists) continue; const f = doc.data();
-          const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([f.content || ''], { type: 'text/plain' })), download: f.name });
-          a.click(); URL.revokeObjectURL(a.href); await new Promise(r => setTimeout(r, 200));
-        } catch { }
+          const doc=await filesRef().doc(file._id).get(); if(!doc.exists)continue; const f=doc.data();
+          const a=Object.assign(document.createElement('a'),{href:URL.createObjectURL(new Blob([f.content||''],{type:'text/plain'})),download:f.name});
+          a.click(); URL.revokeObjectURL(a.href); await new Promise(r=>setTimeout(r,200));
+        } catch{}
       }
     }
 
     function closeCurrentFile() {
       if (filesDirty && !confirm('Unsaved changes. Close anyway?')) return;
-      openFileId = null; openFileName = null; filesDirty = false; hideCurrentFileBar(); renderFileTree();
-      suppressSync = true; if (cmEditor) cmEditor.setValue(STARTER[currentLang]); suppressSync = false;
+      openFileId=null; openFileName=null; filesDirty=false; hideCurrentFileBar(); renderFileTree();
+      suppressSync=true; if(cmEditor)cmEditor.setValue(STARTER[currentLang]); suppressSync=false;
     }
 
     function populateFolderDropdowns() {
-      const sel = document.getElementById('newFileFolder'); if (!sel) return;
-      sel.innerHTML = '<option value="">— Root —</option>';
-      fsFolders.filter(f => !f.parentId).forEach(f => { const o = document.createElement('option'); o.value = f._id; o.textContent = f.name; sel.appendChild(o); });
+      const sel=document.getElementById('newFileFolder'); if(!sel)return;
+      sel.innerHTML='<option value="">— Root —</option>';
+      fsFolders.filter(f=>!f.parentId).forEach(f=>{const o=document.createElement('option');o.value=f._id;o.textContent=f.name;sel.appendChild(o);});
     }
 
-    function openNewFileModal(folderId = null, fromSave = false) {
-      document.getElementById('newFileName').value = '';
-      document.getElementById('newFileLang').value = currentLang;
-      document.getElementById('newFileFolder').value = folderId || '';
-      document.getElementById('newFileModal')._fromSave = fromSave;
+    function openNewFileModal(folderId=null, fromSave=false) {
+      document.getElementById('newFileName').value='';
+      document.getElementById('newFileLang').value=currentLang;
+      document.getElementById('newFileFolder').value=folderId||'';
+      document.getElementById('newFileModal')._fromSave=fromSave;
       document.getElementById('newFileModal').classList.add('visible');
       document.getElementById('newFileName').focus();
     }
 
     async function fsCreateFile() {
-      if (!currentUser) { toast('Sign in first', 'var(--accent2)'); return; }
-      const name = document.getElementById('newFileName').value.trim();
-      const language = document.getElementById('newFileLang').value;
-      const folderId = document.getElementById('newFileFolder').value || null;
-      const fromSave = document.getElementById('newFileModal')._fromSave;
-      if (!name) { toast('Enter a file name', 'var(--accent2)'); return; }
-      const content = fromSave && cmEditor ? cmEditor.getValue() : STARTER[language];
+      if (!currentUser) { toast('Sign in first','var(--accent2)'); return; }
+      const name=document.getElementById('newFileName').value.trim();
+      const language=document.getElementById('newFileLang').value;
+      const folderId=document.getElementById('newFileFolder').value||null;
+      const fromSave=document.getElementById('newFileModal')._fromSave;
+      if (!name) { toast('Enter a file name','var(--accent2)'); return; }
+      const content=fromSave&&cmEditor?cmEditor.getValue():STARTER[language];
       try {
-        const ref = await filesRef().add({ name, language, content, folderId: folderId || null, createdAt: tsNow(), updatedAt: tsNow() });
+        const ref=await filesRef().add({name,language,content,folderId:folderId||null,createdAt:tsNow(),updatedAt:tsNow()});
         document.getElementById('newFileModal').classList.remove('visible');
-        toast(`📄 Created: ${name}`, 'var(--success)'); await loadFileTree();
-        if (fromSave || !openFileId) await fsOpenFile(ref.id);
-      } catch (e) { toast('Create failed: ' + e.message, 'var(--error)'); }
+        toast(`📄 Created: ${name}`,'var(--success)'); await loadFileTree();
+        if (fromSave||!openFileId) await fsOpenFile(ref.id);
+      } catch(e){ toast('Create failed: '+e.message,'var(--error)'); }
     }
 
     async function fsCreateFolder() {
-      if (!currentUser) { toast('Sign in first', 'var(--accent2)'); return; }
-      const name = document.getElementById('newFolderName').value.trim();
-      if (!name) { toast('Enter a folder name', 'var(--accent2)'); return; }
+      if (!currentUser) { toast('Sign in first','var(--accent2)'); return; }
+      const name=document.getElementById('newFolderName').value.trim();
+      if (!name) { toast('Enter a folder name','var(--accent2)'); return; }
       try {
-        await foldersRef().add({ name, parentId: null, createdAt: tsNow() });
+        await foldersRef().add({name,parentId:null,createdAt:tsNow()});
         document.getElementById('newFolderModal').classList.remove('visible');
-        document.getElementById('newFolderName').value = '';
-        toast(`📁 Created: ${name}`, 'var(--success)'); await loadFileTree();
-      } catch (e) { toast('Create failed: ' + e.message, 'var(--error)'); }
+        document.getElementById('newFolderName').value='';
+        toast(`📁 Created: ${name}`,'var(--success)'); await loadFileTree();
+      } catch(e){ toast('Create failed: '+e.message,'var(--error)'); }
     }
 
     function openRenameModal(type, id, currentName) {
-      const m = document.getElementById('renameModal');
-      document.getElementById('renameTitle').textContent = type === 'folder' ? '📁 Rename Folder' : '📄 Rename File';
-      document.getElementById('renameInput').value = currentName;
-      m._type = type; m._id = id; m.classList.add('visible'); document.getElementById('renameInput').focus();
+      const m=document.getElementById('renameModal');
+      document.getElementById('renameTitle').textContent=type==='folder'?'📁 Rename Folder':'📄 Rename File';
+      document.getElementById('renameInput').value=currentName;
+      m._type=type; m._id=id; m.classList.add('visible'); document.getElementById('renameInput').focus();
     }
 
     async function fsDoRename() {
-      const m = document.getElementById('renameModal');
-      const name = document.getElementById('renameInput').value.trim();
-      if (!name) { toast('Enter a name', 'var(--accent2)'); return; }
+      const m=document.getElementById('renameModal');
+      const name=document.getElementById('renameInput').value.trim();
+      if (!name) { toast('Enter a name','var(--accent2)'); return; }
       try {
-        if (m._type === 'folder') await foldersRef().doc(m._id).update({ name });
-        else await filesRef().doc(m._id).update({ name, updatedAt: tsNow() });
-        if (m._type === 'file' && m._id === openFileId) { openFileName = name; document.getElementById('current-file-name').textContent = name; }
-        m.classList.remove('visible'); toast(`Renamed to: ${name}`, 'var(--success)'); await loadFileTree();
-      } catch (e) { toast('Rename failed: ' + e.message, 'var(--error)'); }
+        if (m._type==='folder') await foldersRef().doc(m._id).update({name});
+        else await filesRef().doc(m._id).update({name,updatedAt:tsNow()});
+        if (m._type==='file'&&m._id===openFileId) { openFileName=name; document.getElementById('current-file-name').textContent=name; }
+        m.classList.remove('visible'); toast(`Renamed to: ${name}`,'var(--success)'); await loadFileTree();
+      } catch(e){ toast('Rename failed: '+e.message,'var(--error)'); }
     }
 
     async function fsDeleteFile(fileId, fileName) {
       if (!confirm(`Delete "${fileName}"?`)) return;
       try {
         await filesRef().doc(fileId).delete();
-        if (fileId === openFileId) closeCurrentFile();
-        toast(`🗑 ${fileName}`, 'var(--accent2)'); await loadFileTree();
-      } catch (e) { toast('Delete failed: ' + e.message, 'var(--error)'); }
+        if (fileId===openFileId) closeCurrentFile();
+        toast(`🗑 ${fileName}`,'var(--accent2)'); await loadFileTree();
+      } catch(e){ toast('Delete failed: '+e.message,'var(--error)'); }
     }
 
     async function fsDeleteFolder(folderId, folderName) {
       if (!confirm(`Delete folder "${folderName}" and ALL its files?`)) return;
       try {
-        const snap = await filesRef().where('folderId', '==', folderId).get();
-        const batch = db.batch(); snap.docs.forEach(d => batch.delete(d.ref)); batch.delete(foldersRef().doc(folderId));
-        await batch.commit(); toast(`🗑 ${folderName}`, 'var(--accent2)'); await loadFileTree();
-      } catch (e) { toast('Delete failed: ' + e.message, 'var(--error)'); }
+        const snap=await filesRef().where('folderId','==',folderId).get();
+        const batch=db.batch(); snap.docs.forEach(d=>batch.delete(d.ref)); batch.delete(foldersRef().doc(folderId));
+        await batch.commit(); toast(`🗑 ${folderName}`,'var(--accent2)'); await loadFileTree();
+      } catch(e){ toast('Delete failed: '+e.message,'var(--error)'); }
     }
 
     // ════════════════════════════════════════════════════════
     //  PANEL MANAGEMENT
     // ════════════════════════════════════════════════════════
-    function openLeftPanel()  { document.getElementById('left-panel').classList.add('visible'); if (isMobile()) showBackdrop(); }
-    function closeLeftPanel() { if (appMode === 'team') return; closeSidePanel(); }
+    function openLeftPanel()  { document.getElementById('left-panel').classList.add('visible'); if(isMobile())showBackdrop(); }
+    function closeLeftPanel() { if(appMode==='team')return; closeSidePanel(); }
 
     function openRightPanel() {
       document.getElementById('right-panel').classList.add('visible');
       document.getElementById('media-bar').classList.add('visible');
-      if (isMobile()) { showBackdrop(); document.getElementById('closeVideoPanel').style.display = 'block'; }
+      if (isMobile()) { showBackdrop(); document.getElementById('closeVideoPanel').style.display='block'; }
     }
     function closeRightPanel() {
       document.getElementById('right-panel').classList.remove('visible');
@@ -1308,9 +924,9 @@
     function toggleFilesPanel() {
       filesPanelOpen = !filesPanelOpen;
       if (filesPanelOpen) {
-        document.getElementById('panelSoloHeader').style.display = appMode !== 'team' ? 'flex' : 'none';
-        if (appMode !== 'team') {
-          document.getElementById('panelTabs').style.display = 'none';
+        document.getElementById('panelSoloHeader').style.display = appMode!=='team'?'flex':'none';
+        if (appMode!=='team') {
+          document.getElementById('panelTabs').style.display='none';
           document.getElementById('membersTabContent').classList.remove('active');
           document.getElementById('filesTabContent').classList.add('active');
         }
@@ -1318,20 +934,20 @@
         loadFileTree();
         if (isMobile()) showBackdrop();
       } else {
-        if (appMode !== 'team') { document.getElementById('left-panel').classList.remove('visible'); hideBackdrop(); }
+        if (appMode!=='team') { document.getElementById('left-panel').classList.remove('visible'); hideBackdrop(); }
       }
     }
 
     function setMode(mode) {
-      appMode = mode; const isTeam = mode === 'team';
-      document.getElementById('modeTeam').classList.toggle('active', isTeam);
-      document.getElementById('modeSolo').classList.toggle('active', !isTeam);
+      appMode=mode; const isTeam=mode==='team';
+      document.getElementById('modeTeam').classList.toggle('active',isTeam);
+      document.getElementById('modeSolo').classList.toggle('active',!isTeam);
       if (isTeam) {
         document.getElementById('left-panel').classList.add('visible');
-        document.getElementById('panelSoloHeader').style.display = 'none';
+        document.getElementById('panelSoloHeader').style.display='none';
         if (!isMobile()) openRightPanel();
         document.getElementById('room-bar').classList.add('visible');
-        document.getElementById('panelTabs').style.display = 'flex';
+        document.getElementById('panelTabs').style.display='flex';
         switchPanelTab('members');
         document.getElementById('lobby').classList.add('visible');
         if (isMobile()) showBackdrop();
@@ -1340,143 +956,149 @@
         document.getElementById('lobby').classList.remove('visible');
         document.getElementById('room-bar').classList.remove('visible');
         closeRightPanel();
-        document.getElementById('panelTabs').style.display = 'none';
-        document.getElementById('panelSoloHeader').style.display = 'none';
+        document.getElementById('panelTabs').style.display='none';
+        document.getElementById('panelSoloHeader').style.display='none';
         if (!filesPanelOpen) { document.getElementById('left-panel').classList.remove('visible'); hideBackdrop(); }
       }
     }
 
     function switchPanelTab(tab) {
-      document.getElementById('tabMembers').classList.toggle('active', tab === 'members');
-      document.getElementById('tabFiles').classList.toggle('active', tab === 'files');
-      document.getElementById('membersTabContent').classList.toggle('active', tab === 'members');
-      document.getElementById('filesTabContent').classList.toggle('active', tab === 'files');
-      if (tab === 'files') loadFileTree();
+      document.getElementById('tabMembers').classList.toggle('active',tab==='members');
+      document.getElementById('tabFiles').classList.toggle('active',tab==='files');
+      document.getElementById('membersTabContent').classList.toggle('active',tab==='members');
+      document.getElementById('filesTabContent').classList.toggle('active',tab==='files');
+      if (tab==='files') loadFileTree();
     }
 
     // ════════════════════════════════════════════════════════
     //  RUN CODE
     // ════════════════════════════════════════════════════════
     async function runCode() {
-      const code = cmEditor ? cmEditor.getValue().trim() : '';
-      const out = document.getElementById('output'), btn = document.getElementById('runBtn');
+      const code=cmEditor?cmEditor.getValue().trim():'';
+      const out=document.getElementById('output'), btn=document.getElementById('runBtn');
       if (!code) { toast('No code to run'); return; }
-      const stdinRaw = document.getElementById('stdinInput').value;
-      const stdin = stdinRaw ? (stdinRaw.endsWith('\n') ? stdinRaw : stdinRaw + '\n') : '';
-      btn.disabled = true; btn.textContent = '⏳';
-      out.textContent = 'Running…'; out.className = ''; out.style.borderTop = '';
+      const stdinRaw=document.getElementById('stdinInput').value;
+      const stdin=stdinRaw?(stdinRaw.endsWith('\n')?stdinRaw:stdinRaw+'\n'):'';
+      btn.disabled=true; btn.textContent='⏳';
+      out.textContent='Running…'; out.className=''; out.style.borderTop='';
       try {
-        const res = await fetch('/api/run', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code, language: currentLang, stdin }) });
-        const text = await res.text();
-        out.innerHTML = escHtml(text || '(No output)');
-        out.className = res.ok ? '' : 'has-error';
-        out.style.borderTop = `2px solid var(--${res.ok ? 'success' : 'error'})`;
-      } catch (e) { out.innerHTML = escHtml('❌ Could not reach the server.'); out.className = 'has-error'; out.style.borderTop = '2px solid var(--error)'; }
-      finally { btn.disabled = false; btn.textContent = '▶ Run'; }
+        const res=await fetch('/api/run',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code,language:currentLang,stdin})});
+        const text=await res.text();
+        out.innerHTML=escHtml(text||'(No output)');
+        out.className=res.ok?'':'has-error';
+        out.style.borderTop=`2px solid var(--${res.ok?'success':'error'})`;
+      } catch(e){ out.innerHTML=escHtml('❌ Could not reach the server.'); out.className='has-error'; out.style.borderTop='2px solid var(--error)'; }
+      finally { btn.disabled=false; btn.textContent='▶ Run'; }
     }
 
     // ════════════════════════════════════════════════════════
     //  LOBBY
     // ════════════════════════════════════════════════════════
     function switchLobbyTab(tab) {
-      const c = tab === 'create';
-      document.getElementById('tabBtnCreate').classList.toggle('active', c);
-      document.getElementById('tabBtnJoin').classList.toggle('active', !c);
-      document.getElementById('tab-create').classList.toggle('active', c);
-      document.getElementById('tab-join').classList.toggle('active', !c);
+      const c=tab==='create';
+      document.getElementById('tabBtnCreate').classList.toggle('active',c);
+      document.getElementById('tabBtnJoin').classList.toggle('active',!c);
+      document.getElementById('tab-create').classList.toggle('active',c);
+      document.getElementById('tab-join').classList.toggle('active',!c);
     }
 
     async function createRoom() {
-      const name = document.getElementById('createName').value.trim();
-      const pw   = document.getElementById('createPassword').value;
-      const errEl = document.getElementById('createError'); errEl.textContent = '';
-      if (!name) { errEl.textContent = 'Enter your name.'; return; }
-      const btn = document.getElementById('createRoomBtn'); btn.disabled = true; btn.textContent = 'Creating…';
+      const name=document.getElementById('createName').value.trim();
+      const pw=document.getElementById('createPassword').value;
+      const errEl=document.getElementById('createError'); errEl.textContent='';
+      if (!name) { errEl.textContent='Enter your name.'; return; }
+      const btn=document.getElementById('createRoomBtn'); btn.disabled=true; btn.textContent='Creating…';
       try {
-        const res = await fetch('/api/create-room', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, password: pw || undefined }) });
-        const data = await res.json();
-        if (!res.ok) { errEl.textContent = data.error || 'Server error.'; return; }
-        pendingHostToken = data.token; pendingRoomId = data.roomId;
-        document.getElementById('shareUrl').textContent = data.shareUrl;
-        document.getElementById('shareBox').style.display = 'block'; btn.style.display = 'none';
-      } catch (e) { errEl.textContent = 'Could not reach server.'; }
-      finally { btn.disabled = false; btn.textContent = 'Create Room'; }
+        const res=await fetch('/api/create-room',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,password:pw||undefined})});
+        const data=await res.json();
+        if (!res.ok) { errEl.textContent=data.error||'Server error.'; return; }
+        pendingHostToken=data.token; pendingRoomId=data.roomId;
+
+        // ── FIX 3: Always build the share URL pointing to home.html on THIS origin.
+        // The server may return a URL pointing to the root (index.html / landing page).
+        // We override it to always use home.html?room=ROOMID so shared links land
+        // directly on the editor with the join form pre-filled.
+        const shareLink = `${window.location.origin}/home.html?room=${data.roomId}`;
+        document.getElementById('shareUrl').textContent = shareLink;
+
+        document.getElementById('shareBox').style.display='block'; btn.style.display='none';
+      } catch(e){ errEl.textContent='Could not reach server.'; }
+      finally { btn.disabled=false; btn.textContent='Create Room'; }
     }
 
     async function enterAsHost() { await startSession(pendingRoomId, document.getElementById('createName').value.trim(), pendingHostToken, true); }
 
     async function joinRoom() {
-      const name = document.getElementById('joinName').value.trim();
-      const rid  = document.getElementById('joinRoomId').value.trim();
-      const pw   = document.getElementById('joinPassword').value;
-      const errEl = document.getElementById('joinError'); errEl.textContent = '';
-      if (!name) { errEl.textContent = 'Enter your name.'; return; }
-      if (!rid)  { errEl.textContent = 'Enter a room ID.'; return; }
-      const btn = document.getElementById('joinRoomBtn'); btn.disabled = true; btn.textContent = 'Joining…';
+      const name=document.getElementById('joinName').value.trim();
+      const rid=document.getElementById('joinRoomId').value.trim();
+      const pw=document.getElementById('joinPassword').value;
+      const errEl=document.getElementById('joinError'); errEl.textContent='';
+      if (!name) { errEl.textContent='Enter your name.'; return; }
+      if (!rid)  { errEl.textContent='Enter a room ID.'; return; }
+      const btn=document.getElementById('joinRoomBtn'); btn.disabled=true; btn.textContent='Joining…';
       try {
-        const res = await fetch('/api/join-room', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ roomId: rid, name, password: pw || undefined }) });
-        const data = await res.json();
-        if (!res.ok) { errEl.textContent = data.error || 'Could not join.'; return; }
-        await startSession(rid, name, data.token, false);
-      } catch (e) { errEl.textContent = 'Could not reach server.'; }
-      finally { btn.disabled = false; btn.textContent = 'Join Room'; }
+        const res=await fetch('/api/join-room',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({roomId:rid,name,password:pw||undefined})});
+        const data=await res.json();
+        if (!res.ok) { errEl.textContent=data.error||'Could not join.'; return; }
+        await startSession(rid,name,data.token,false);
+      } catch(e){ errEl.textContent='Could not reach server.'; }
+      finally { btn.disabled=false; btn.textContent='Join Room'; }
     }
 
     // ════════════════════════════════════════════════════════
-    //  MEDIA — request with proper constraints
+    //  MEDIA — FIX 2: request audio and video independently
+    //  so a camera failure does NOT block the microphone.
+    //  Simple constraints avoid mobile browser rejections.
     // ════════════════════════════════════════════════════════
     async function requestMedia() {
-      micOn = true; camOn = true;
+      micOn = false; camOn = false;
+      let audioTrack = null, videoTrack = null;
 
-      // Try audio+video first
+      // Request mic separately — simple constraints work on all browsers
       try {
-        myStream = await navigator.mediaDevices.getUserMedia({
-          video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: 'user' },
-          audio: {
-            echoCancellation: true,
-            noiseSuppression: true,
-            autoGainControl:  true,
-            sampleRate:       48000
-          }
-        });
-        console.log('[media] audio+video ok, tracks:', myStream.getTracks().map(t => `${t.kind}:${t.label}`));
-        return;
-      } catch (e) { console.warn('[media] audio+video failed:', e.message); }
+        const aStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+        audioTrack = aStream.getAudioTracks()[0];
+        micOn = true;
+        console.log('[media] mic ok:', audioTrack.label);
+      } catch (e) {
+        console.warn('[media] mic failed:', e.name, e.message);
+        toast('⚠️ Mic unavailable — check permissions');
+      }
 
-      // Audio only
+      // Request camera separately
       try {
-        myStream = await navigator.mediaDevices.getUserMedia({
-          video: false,
-          audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
-        });
-        camOn = false;
-        toast('No camera — audio only');
-        console.log('[media] audio-only ok');
-        return;
-      } catch (e) { console.warn('[media] audio-only failed:', e.message); }
+        const vStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+        videoTrack = vStream.getVideoTracks()[0];
+        camOn = true;
+        console.log('[media] cam ok:', videoTrack.label);
+      } catch (e) {
+        console.warn('[media] cam failed:', e.name, e.message);
+        toast('⚠️ Camera unavailable — check permissions');
+      }
 
-      // Video only
-      try {
-        myStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-        micOn = false;
-        toast('No mic — video only');
-        console.log('[media] video-only ok');
+      if (!audioTrack && !videoTrack) {
+        myStream = null;
+        toast('No camera or mic available — check browser permissions');
         return;
-      } catch (e) { console.warn('[media] video-only failed:', e.message); }
+      }
 
-      myStream = null; micOn = false; camOn = false;
-      toast('Camera & mic unavailable — check browser permissions');
+      // Combine into one MediaStream
+      const tracks = [];
+      if (audioTrack) tracks.push(audioTrack);
+      if (videoTrack) tracks.push(videoTrack);
+      myStream = new MediaStream(tracks);
+      console.log('[media] combined stream tracks:', myStream.getTracks().map(t=>`${t.kind}:${t.label}`));
     }
 
     async function startSession(rid, name, token, isHost) {
-      myName = name; myIsHost = isHost; roomId = rid;
+      myName=name; myIsHost=isHost; roomId=rid;
       await requestMedia();
       updateMediaBtnUI();
       buildMyTile();
-      socket = io({ auth: { token } });
+      socket = io({ auth:{ token } });
       bindSocketEvents();
       document.getElementById('lobby').classList.remove('visible');
-      document.getElementById('roomIdBadge').textContent = `Room: ${rid.slice(0, 6)}…`;
+      document.getElementById('roomIdBadge').textContent=`Room: ${rid.slice(0,6)}…`;
       if (!isMobile()) openRightPanel();
       hideBackdrop();
     }
@@ -1485,138 +1107,174 @@
     //  SOCKET EVENTS
     // ════════════════════════════════════════════════════════
     function bindSocketEvents() {
-      socket.on('connect', () => { mySocketId = socket.id; });
-      socket.on('connect_error', err => toast('Connection error: ' + err.message));
+      socket.on('connect', () => {
+        // socket.id is available here but may differ from yourSocketId in room-state
+        console.log('[socket] connected, id:', socket.id);
+      });
+      socket.on('connect_error', err => toast('Connection error: '+err.message));
 
-      socket.on('room-state', ({ users, editorOwner: eo, code, yourSocketId }) => {
+      // ── room-state: we are the newcomer joining an existing room ──
+      socket.on('room-state', ({ users, editorOwner:eo, code, yourSocketId }) => {
+        // FIX 1A: Always use server-confirmed ID (avoids race with socket.on('connect'))
         mySocketId = yourSocketId;
-        roomUsers = users; editorOwner = eo;
+        console.log('[socket] room-state, mySocketId:', mySocketId, 'users:', users.map(u=>u.socketId));
+        roomUsers=users; editorOwner=eo;
         initEditor(code); buildMyTile(); renderMembers(); updateEditorLock();
-        // Existing members: polite offer/answer based on ID ordering
+
+        // FIX 1B: As the newcomer, WE always send offers to every existing member.
+        // This is the correct WebRTC convention: the arriving party initiates.
         users.forEach(u => {
           if (u.socketId !== mySocketId) {
-            createPeerConnection(u.socketId, u.name, mySocketId < u.socketId);
+            console.log('[rtc] newcomer → sending offer to', u.name, u.socketId);
+            createPeerConnection(u.socketId, u.name, true /* we initiate */);
           }
         });
       });
 
+      // ── user-joined: someone ELSE arrived after us ──
       socket.on('user-joined', ({ socketId, name }) => {
         toast(`${name} joined`);
-        if (!roomUsers.find(u => u.socketId === socketId)) roomUsers.push({ socketId, name });
+        if (!roomUsers.find(u=>u.socketId===socketId)) roomUsers.push({socketId,name});
         renderMembers();
-        // New joiner sends offers to everyone; we are an existing member,
-        // so create a non-initiator PC ready to receive the offer.
-        createPeerConnection(socketId, name, false);
+        // FIX 1C: We are the existing member. The newcomer will send US an offer.
+        // Just create the PC in non-initiator mode so it's ready to accept the offer.
+        console.log('[rtc] existing member — pre-creating PC for', name, '(waiting for their offer)');
+        createPeerConnection(socketId, name, false /* they will initiate */);
       });
 
       socket.on('user-left', ({ socketId, name }) => {
         toast(`${name} left`);
-        if (peers[socketId]) { peers[socketId].pc.close(); delete peers[socketId]; }
+        if (peers[socketId]) { try{peers[socketId].pc.close();}catch(_){} delete peers[socketId]; }
         removeTile(socketId);
-        roomUsers = roomUsers.filter(u => u.socketId !== socketId);
+        roomUsers=roomUsers.filter(u=>u.socketId!==socketId);
         renderMembers();
       });
 
-      // ── Offer received ──
+      // ── Incoming offer — we are the answerer ──
       socket.on('rtc-offer', async ({ from, name, offer }) => {
-        // Ensure PC exists (we may already have created one in user-joined)
+        // Ensure PC exists in non-initiator mode
         if (!peers[from]) createPeerConnection(from, name, false);
         const { pc } = peers[from];
 
-        // Glare handling: if we already sent an offer and ours has the lower ID, ignore theirs
+        // Glare resolution (both sides sent offers simultaneously)
         if (pc.signalingState !== 'stable') {
-          if (mySocketId < from) {
-            console.warn('[rtc] glare — rolling back our local description');
-            await pc.setLocalDescription({ type: 'rollback' });
-          } else {
-            console.warn('[rtc] glare — ignoring their offer');
+          if (mySocketId > from) {
+            // We have the higher ID — we are "impolite", ignore their offer
+            console.warn('[rtc] glare: ignoring offer from', name, '(we have higher ID)');
             return;
           }
+          // We are "polite" (lower ID) — roll back our local description and accept theirs
+          console.warn('[rtc] glare: rolling back to accept offer from', name);
+          try { await pc.setLocalDescription({ type:'rollback' }); } catch(_){}
         }
 
-        await pc.setRemoteDescription(new RTCSessionDescription(offer));
-        const answer = await pc.createAnswer();
-        await pc.setLocalDescription(answer);
-        socket.emit('rtc-answer', { to: from, answer });
+        try {
+          await pc.setRemoteDescription(new RTCSessionDescription(offer));
+          // Drain any ICE candidates that arrived before the offer
+          if (peers[from].pendingCandidates) {
+            for (const c of peers[from].pendingCandidates) {
+              try { await pc.addIceCandidate(new RTCIceCandidate(c)); } catch(_){}
+            }
+            peers[from].pendingCandidates = [];
+          }
+          const answer = await pc.createAnswer();
+          await pc.setLocalDescription(answer);
+          socket.emit('rtc-answer', { to:from, answer });
+          console.log('[rtc] answer sent →', name);
+        } catch(e) { console.error('[rtc] error handling offer from', name, e); }
       });
 
       socket.on('rtc-answer', async ({ from, answer }) => {
         if (!peers[from]) return;
         const { pc } = peers[from];
         if (pc.signalingState !== 'have-local-offer') {
-          console.warn('[rtc] unexpected answer in state', pc.signalingState); return;
+          console.warn('[rtc] unexpected answer in state', pc.signalingState, 'from', peers[from].name);
+          return;
         }
-        try { await pc.setRemoteDescription(new RTCSessionDescription(answer)); }
-        catch (e) { console.error('[rtc] setRemoteDescription(answer) failed:', e); }
+        try {
+          await pc.setRemoteDescription(new RTCSessionDescription(answer));
+          console.log('[rtc] answer applied from', peers[from].name);
+        } catch(e) { console.error('[rtc] setRemoteDescription(answer) failed:', e); }
       });
 
+      // ICE candidates — buffer them if remote description isn't set yet
       socket.on('rtc-ice', async ({ from, candidate }) => {
         if (!peers[from]) return;
-        try { await peers[from].pc.addIceCandidate(new RTCIceCandidate(candidate)); }
-        catch (e) { console.warn('[rtc] addIceCandidate failed:', e.message); }
+        const { pc } = peers[from];
+        if (pc.remoteDescription && pc.remoteDescription.type) {
+          try { await pc.addIceCandidate(new RTCIceCandidate(candidate)); }
+          catch(e) { console.warn('[ice] addIceCandidate failed:', e.message); }
+        } else {
+          // Buffer until remote description is applied
+          peers[from].pendingCandidates = peers[from].pendingCandidates || [];
+          peers[from].pendingCandidates.push(candidate);
+          console.log('[ice] buffered candidate for', peers[from].name);
+        }
       });
 
-      socket.on('editor-assigned', ({ editorOwner: eo }) => { editorOwner = eo; updateEditorLock(); renderMembers(); });
-      socket.on('editor-request', ({ fromSocketId, fromName }) => {
-        pendingRequest = { fromSocketId, fromName };
-        document.getElementById('notifText').textContent = `"${fromName}" wants editor access`;
-        document.getElementById('notifBanner').style.display = 'block';
+      socket.on('editor-assigned', ({editorOwner:eo}) => { editorOwner=eo; updateEditorLock(); renderMembers(); });
+      socket.on('editor-request', ({fromSocketId,fromName}) => {
+        pendingRequest={fromSocketId,fromName};
+        document.getElementById('notifText').textContent=`"${fromName}" wants editor access`;
+        document.getElementById('notifBanner').style.display='block';
       });
       socket.on('editor-request-denied', () => {
         toast('Your editor request was denied.');
-        const b = document.getElementById('requestBtn');
-        if (b) { b.textContent = '🙋 Request Editor'; b.disabled = false; }
+        const b=document.getElementById('requestBtn');
+        if (b) { b.textContent='🙋 Request Editor'; b.disabled=false; }
       });
-      socket.on('code-update', ({ code }) => { if (editorOwner !== mySocketId) applyRemoteCode(code); });
+      socket.on('code-update', ({code}) => { if(editorOwner!==mySocketId)applyRemoteCode(code); });
     }
 
     // ════════════════════════════════════════════════════════
-    //  WebRTC — FIXED peer connection
+    //  WebRTC PEER CONNECTION — FIX 1
     //
-    //  Key changes vs original:
-    //  1. Add ALL local tracks BEFORE creating the offer.
-    //  2. Store RTCRtpSender references so we can replace tracks
-    //     when mic/cam is toggled (replaceTrack is non-renegotiating).
-    //  3. Use onnegotiationneeded for automatic renegotiation when
-    //     tracks are added after connection is established.
-    //  4. Better ICE failure recovery.
+    //  Critical rules:
+    //  1. Add local tracks BEFORE creating the offer — otherwise the
+    //     remote SDP won't include audio/video m= sections.
+    //  2. Buffer ICE candidates received before setRemoteDescription.
+    //  3. Proper glare handling.
     // ════════════════════════════════════════════════════════
-    async function createPeerConnection(peerId, peerName, isInitiator) {
-      if (peers[peerId]) return; // already exists
-
-      const pc = new RTCPeerConnection(ICE_CFG);
-      // senders: keep refs so we can replaceTrack later without renegotiating
-      const senders = { audio: null, video: null };
-      peers[peerId] = { pc, name: peerName, senders };
-
-      // ── Add local tracks BEFORE offer/answer ──
-      // This is essential: the offer must contain our audio/video sections
-      // so the remote side knows to send back audio/video too.
-      if (myStream) {
-        myStream.getTracks().forEach(track => {
-          const sender = pc.addTrack(track, myStream);
-          senders[track.kind] = sender;
-        });
-      } else {
-        // No media at all — add a dummy audio transceiver so the remote side
-        // still includes an audio section in the SDP (avoids m= line mismatch).
-        pc.addTransceiver('audio', { direction: 'recvonly' });
-        pc.addTransceiver('video', { direction: 'recvonly' });
+    function createPeerConnection(peerId, peerName, isInitiator) {
+      if (peers[peerId]) {
+        console.log('[rtc] PC already exists for', peerName);
+        return;
       }
 
-      // ── ICE candidates ──
+      console.log('[rtc] creating PC for', peerName, isInitiator?'(initiator)':'(answerer)');
+      const pc = new RTCPeerConnection(ICE_CFG);
+      peers[peerId] = { pc, name:peerName, pendingCandidates:[] };
+
+      // ── Add local tracks FIRST ──────────────────────────────
+      // This MUST happen before createOffer() so the SDP contains
+      // audio/video m= sections and the remote peer sends their tracks back.
+      if (myStream) {
+        myStream.getTracks().forEach(track => {
+          pc.addTrack(track, myStream);
+          console.log('[rtc] added local track', track.kind, 'to PC for', peerName);
+        });
+      } else {
+        // No local media — add recvonly transceivers so the remote side
+        // still includes media sections in the SDP (avoids m= line count mismatch).
+        pc.addTransceiver('audio', { direction:'recvonly' });
+        pc.addTransceiver('video', { direction:'recvonly' });
+        console.log('[rtc] no local stream — added recvonly transceivers for', peerName);
+      }
+
+      // ICE events
       pc.onicecandidate = ({ candidate }) => {
-        if (candidate) socket.emit('rtc-ice', { to: peerId, candidate });
+        if (candidate) {
+          socket.emit('rtc-ice', { to:peerId, candidate });
+        }
       };
 
       pc.oniceconnectionstatechange = () => {
         console.log(`[ice:${peerName}]`, pc.iceConnectionState);
         if (pc.iceConnectionState === 'failed') {
-          console.warn('[ice] failed — restarting ICE');
+          console.warn('[ice] failed — restarting');
           pc.restartIce();
         }
         if (pc.iceConnectionState === 'disconnected') {
-          // Give it 4 s to reconnect before restarting
           setTimeout(() => {
             if (peers[peerId] && pc.iceConnectionState === 'disconnected') pc.restartIce();
           }, 4000);
@@ -1627,25 +1285,35 @@
         console.log(`[conn:${peerName}]`, pc.connectionState);
       };
 
-      // ── Remote tracks ──
+      // ── Incoming remote tracks ──────────────────────────────
+      // Build a per-peer remote stream progressively as tracks arrive.
       pc.ontrack = ({ track, streams }) => {
-        console.log(`[track:${peerName}]`, track.kind, streams.length);
-        const stream = streams[0] || new MediaStream([track]);
-        if (!peers[peerId].remoteStream) peers[peerId].remoteStream = stream;
-        else peers[peerId].remoteStream.addTrack(track);
-        attachRemoteStream(peerId, peers[peerId].remoteStream);
+        console.log(`[track:${peerName}]`, track.kind, '— streams:', streams.length);
+
+        // Prefer the stream object provided by the browser (more reliable)
+        const stream = streams && streams[0];
+        if (stream) {
+          peers[peerId].remoteStream = stream;
+          attachRemoteStream(peerId, stream);
+        } else {
+          // Fallback: manually build a stream from individual tracks
+          if (!peers[peerId].remoteStream) peers[peerId].remoteStream = new MediaStream();
+          peers[peerId].remoteStream.addTrack(track);
+          attachRemoteStream(peerId, peers[peerId].remoteStream);
+        }
       };
 
       addTile(peerId, peerName);
 
-      // ── Initiator creates offer ──
+      // Create offer if we're the initiator
       if (isInitiator) {
-        try {
-          const offer = await pc.createOffer();
-          await pc.setLocalDescription(offer);
-          socket.emit('rtc-offer', { to: peerId, offer });
-          console.log(`[rtc] offer sent → ${peerName}`);
-        } catch (e) { console.error('[rtc] createOffer failed:', e); }
+        pc.createOffer({ offerToReceiveAudio:true, offerToReceiveVideo:true })
+          .then(offer => pc.setLocalDescription(offer))
+          .then(() => {
+            socket.emit('rtc-offer', { to:peerId, offer:pc.localDescription });
+            console.log('[rtc] offer sent →', peerName);
+          })
+          .catch(e => console.error('[rtc] createOffer failed for', peerName, e));
       }
     }
 
@@ -1653,188 +1321,171 @@
     //  VIDEO TILES
     // ════════════════════════════════════════════════════════
     function buildMyTile() {
-      const ex = document.getElementById('tile-me'); if (ex) ex.remove();
-      const tile = document.createElement('div'); tile.className = 'video-tile'; tile.id = 'tile-me';
+      const ex=document.getElementById('tile-me'); if(ex)ex.remove();
+      const tile=document.createElement('div'); tile.className='video-tile'; tile.id='tile-me';
 
       if (myStream && camOn) {
-        const v = document.createElement('video');
-        v.autoplay = true; v.muted = true; v.playsInline = true; // muted = no echo
-        v.srcObject = myStream;
-        v.onloadedmetadata = () => v.play().catch(() => {});
+        const v=document.createElement('video');
+        v.autoplay=true; v.muted=true; v.playsInline=true; // muted on own tile to avoid echo
+        v.srcObject=myStream;
+        v.onloadedmetadata=()=>v.play().catch(()=>{});
         tile.appendChild(v);
       } else {
-        const o = document.createElement('div'); o.className = 'cam-off';
-        o.innerHTML = `<span class="cam-off-icon">🚫</span><span>${myStream ? 'Cam Off' : 'No Camera'}</span>`;
+        const o=document.createElement('div'); o.className='cam-off';
+        o.innerHTML=`<span class="cam-off-icon">🚫</span><span>${myStream?'Cam Off':'No Camera'}</span>`;
         tile.appendChild(o);
       }
 
-      // Mic status indicator on own tile
-      const mic = document.createElement('span'); mic.className = 'tile-mic-icon'; mic.id = 'tile-me-mic';
-      mic.textContent = micOn ? '🎙' : '🔇';
-      tile.appendChild(mic);
-
-      const lbl = document.createElement('div'); lbl.className = 'tile-label';
-      lbl.textContent = myName + (myIsHost ? ' 👑' : '') + ' (you)'; tile.appendChild(lbl);
-
+      const lbl=document.createElement('div'); lbl.className='tile-label';
+      lbl.textContent=myName+(myIsHost?' 👑':'')+'(you)'; tile.appendChild(lbl);
       document.getElementById('videoGrid').insertBefore(tile, document.getElementById('videoGrid').firstChild);
     }
 
     function addTile(socketId, name) {
-      if (document.getElementById('tile-' + socketId)) return;
-      const tile = document.createElement('div'); tile.className = 'video-tile'; tile.id = 'tile-' + socketId;
-      const o = document.createElement('div'); o.className = 'cam-off';
-      o.innerHTML = '<span class="cam-off-icon">⏳</span><span>Connecting…</span>'; tile.appendChild(o);
-      const lbl = document.createElement('div'); lbl.className = 'tile-label'; lbl.textContent = name; tile.appendChild(lbl);
+      if (document.getElementById('tile-'+socketId)) return;
+      const tile=document.createElement('div'); tile.className='video-tile'; tile.id='tile-'+socketId;
+      const o=document.createElement('div'); o.className='cam-off';
+      o.innerHTML='<span class="cam-off-icon">⏳</span><span>Connecting…</span>'; tile.appendChild(o);
+      const lbl=document.createElement('div'); lbl.className='tile-label'; lbl.textContent=name; tile.appendChild(lbl);
       document.getElementById('videoGrid').appendChild(tile);
     }
 
     function attachRemoteStream(socketId, stream) {
-      const tile = document.getElementById('tile-' + socketId); if (!tile) return;
+      const tile=document.getElementById('tile-'+socketId); if(!tile)return;
 
-      // Remove placeholder
-      const o = tile.querySelector('.cam-off'); if (o) o.remove();
-
-      // Check if this stream has a video track
-      const hasVideo = stream.getVideoTracks().length > 0;
+      const hasVideo = stream.getVideoTracks().some(t => t.readyState === 'live');
+      const hasAudio = stream.getAudioTracks().some(t => t.readyState === 'live');
+      console.log(`[attachRemoteStream:${socketId}] hasVideo:${hasVideo} hasAudio:${hasAudio}`);
 
       if (hasVideo) {
-        let v = tile.querySelector('video');
+        // Remove cam-off placeholder
+        const o=tile.querySelector('.cam-off'); if(o)o.remove();
+        // Hide or remove any audio element
+        const ae=tile.querySelector('audio'); if(ae)ae.remove();
+
+        let v=tile.querySelector('video');
         if (!v) {
-          v = document.createElement('video');
-          v.autoplay = true; v.playsInline = true;
-          v.muted = false;   // ← remote audio MUST be unmuted
-          v.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;background:#000;';
+          v=document.createElement('video');
+          v.autoplay=true; v.playsInline=true;
+          v.muted=false;  // ← MUST be unmuted for remote audio to play
+          v.style.cssText='width:100%;height:100%;object-fit:cover;display:block;background:#000;';
           tile.insertBefore(v, tile.querySelector('.tile-label'));
         }
         if (v.srcObject !== stream) {
           v.srcObject = stream;
-          v.onloadedmetadata = () => v.play().catch(e => console.warn('[play]', e.message));
-          if (v.readyState >= 2) v.play().catch(e => console.warn('[play]', e.message));
+          v.onloadedmetadata = () => v.play().catch(e=>console.warn('[play remote]', e.message));
+          if (v.readyState >= 2) v.play().catch(e=>console.warn('[play remote]', e.message));
         }
-      } else {
-        // Audio-only remote peer: show avatar instead of black video
+      } else if (hasAudio) {
+        // Audio-only peer: show a mic icon, play audio through hidden <audio>
         if (!tile.querySelector('.cam-off')) {
-          const ao = document.createElement('div'); ao.className = 'cam-off';
-          ao.innerHTML = '<span class="cam-off-icon">🎙</span><span>Audio only</span>';
-          tile.insertBefore(ao, tile.querySelector('.tile-label'));
+          const o=document.createElement('div'); o.className='cam-off';
+          o.innerHTML='<span class="cam-off-icon">🎙</span><span>Audio only</span>';
+          tile.insertBefore(o, tile.querySelector('.tile-label'));
         }
-        // Still attach audio via a hidden <audio> element
-        let a = tile.querySelector('audio');
+        let a=tile.querySelector('audio');
         if (!a) {
-          a = document.createElement('audio');
-          a.autoplay = true; a.muted = false;
-          a.style.display = 'none';
+          a=document.createElement('audio');
+          a.autoplay=true; a.muted=false;
+          a.style.display='none';
           tile.appendChild(a);
         }
         if (a.srcObject !== stream) {
-          a.srcObject = stream;
-          a.play().catch(e => console.warn('[audio play]', e.message));
+          a.srcObject=stream;
+          a.play().catch(e=>console.warn('[audio play]', e.message));
         }
       }
     }
 
-    function removeTile(socketId) { const t = document.getElementById('tile-' + socketId); if (t) t.remove(); }
+    function removeTile(socketId) { const t=document.getElementById('tile-'+socketId); if(t)t.remove(); }
 
     // ════════════════════════════════════════════════════════
-    //  MIC / CAM TOGGLE
-    //  Use replaceTrack() where possible (no renegotiation needed).
-    //  Fall back to enable/disable if sender isn't available.
+    //  MIC / CAM TOGGLE — FIX 2
+    //  track.enabled = false mutes without stopping or renegotiating.
+    //  This preserves the track in the PC so it can be re-enabled.
     // ════════════════════════════════════════════════════════
     function toggleMic() {
-      if (!myStream) { toast('No microphone available'); return; }
-      const audioTracks = myStream.getAudioTracks();
-      if (!audioTracks.length) { toast('No microphone available'); return; }
-
+      if (!myStream) { toast('No mic — rejoin room'); return; }
+      const tracks = myStream.getAudioTracks();
+      if (!tracks.length) { toast('No microphone track available'); return; }
       micOn = !micOn;
-
-      // Enable/disable the actual track (this mutes without renegotiating)
-      audioTracks.forEach(t => { t.enabled = micOn; });
-
-      // Update the mic icon on our own tile
-      const micIcon = document.getElementById('tile-me-mic');
-      if (micIcon) micIcon.textContent = micOn ? '🎙' : '🔇';
-
+      tracks.forEach(t => { t.enabled = micOn; });
       updateMediaBtnUI();
       toast(micOn ? '🎙 Mic on' : '🔇 Mic muted');
     }
 
     function toggleCam() {
-      if (!myStream) { toast('No camera available'); return; }
-      const videoTracks = myStream.getVideoTracks();
-      if (!videoTracks.length) { toast('No camera available'); return; }
-
+      if (!myStream) { toast('No camera — rejoin room'); return; }
+      const tracks = myStream.getVideoTracks();
+      if (!tracks.length) { toast('No camera track available'); return; }
       camOn = !camOn;
-      videoTracks.forEach(t => { t.enabled = camOn; });
-
+      tracks.forEach(t => { t.enabled = camOn; });
       updateMediaBtnUI();
       refreshMyTileVideo();
       toast(camOn ? '📹 Camera on' : '🚫 Camera off');
     }
 
     function refreshMyTileVideo() {
-      const tile = document.getElementById('tile-me'); if (!tile) return;
+      const tile=document.getElementById('tile-me'); if(!tile)return;
       if (camOn) {
-        let o = tile.querySelector('.cam-off'); if (o) o.remove();
-        let v = tile.querySelector('video');
-        if (!v) {
-          v = document.createElement('video'); v.autoplay = true; v.muted = true; v.playsInline = true;
-          v.srcObject = myStream; tile.insertBefore(v, tile.querySelector('.tile-label'));
-        }
-        v.style.display = 'block';
-        v.onloadedmetadata = () => v.play().catch(() => {});
-        if (v.readyState >= 2) v.play().catch(() => {});
+        let o=tile.querySelector('.cam-off'); if(o)o.remove();
+        let v=tile.querySelector('video');
+        if (!v) { v=document.createElement('video'); v.autoplay=true; v.muted=true; v.playsInline=true; v.srcObject=myStream; tile.insertBefore(v,tile.querySelector('.tile-label')); }
+        v.style.display='block';
+        v.onloadedmetadata=()=>v.play().catch(()=>{});
+        if (v.readyState>=2) v.play().catch(()=>{});
       } else {
-        const v = tile.querySelector('video'); if (v) v.style.display = 'none';
+        const v=tile.querySelector('video'); if(v)v.style.display='none';
         if (!tile.querySelector('.cam-off')) {
-          const o = document.createElement('div'); o.className = 'cam-off';
-          o.innerHTML = '<span class="cam-off-icon">🚫</span><span>Cam Off</span>';
-          tile.insertBefore(o, tile.querySelector('.tile-label'));
+          const o=document.createElement('div'); o.className='cam-off';
+          o.innerHTML='<span class="cam-off-icon">🚫</span><span>Cam Off</span>';
+          tile.insertBefore(o,tile.querySelector('.tile-label'));
         }
       }
     }
 
     function updateMediaBtnUI() {
-      const mic = document.getElementById('micBtn'), cam = document.getElementById('camBtn');
-      mic.textContent = micOn ? '🎙 Mic On' : '🔇 Mic Off'; mic.className = 'tool-btn ' + (micOn ? 'on' : 'off');
-      cam.textContent = camOn ? '📹 Cam On' : '🚫 Cam Off'; cam.className = 'tool-btn ' + (camOn ? 'on' : 'off');
+      const mic=document.getElementById('micBtn'), cam=document.getElementById('camBtn');
+      mic.textContent=micOn?'🎙 Mic On':'🔇 Mic Off'; mic.className='tool-btn '+(micOn?'on':'off');
+      cam.textContent=camOn?'📹 Cam On':'🚫 Cam Off'; cam.className='tool-btn '+(camOn?'on':'off');
     }
 
     // ════════════════════════════════════════════════════════
     //  EDITOR LOCK
     // ════════════════════════════════════════════════════════
     function updateEditorLock() {
-      if (!cmEditor || !mySocketId) return;
-      const isMine = editorOwner === mySocketId;
-      cmEditor.setOption('readOnly', isMine ? false : 'nocursor');
-      document.getElementById('lockOverlay').classList.toggle('visible', !isMine);
-      const st = document.getElementById('editor-status');
-      if (isMine) { st.textContent = '✏️ Editing'; st.style.color = 'var(--accent3)'; }
+      if (!cmEditor||!mySocketId) return;
+      const isMine=editorOwner===mySocketId;
+      cmEditor.setOption('readOnly',isMine?false:'nocursor');
+      document.getElementById('lockOverlay').classList.toggle('visible',!isMine);
+      const st=document.getElementById('editor-status');
+      if (isMine) { st.textContent='✏️ Editing'; st.style.color='var(--accent3)'; }
       else {
-        const o = roomUsers.find(u => u.socketId === editorOwner);
-        st.textContent = o ? `🔒 ${o.name}` : '🔒 Locked'; st.style.color = 'var(--text-muted)';
-        document.getElementById('lockMsg').textContent = o ? `🔒 ${o.name} is editing` : '🔒 Editor locked';
+        const o=roomUsers.find(u=>u.socketId===editorOwner);
+        st.textContent=o?`🔒 ${o.name}`:'🔒 Locked'; st.style.color='var(--text-muted)';
+        document.getElementById('lockMsg').textContent=o?`🔒 ${o.name} is editing`:'🔒 Editor locked';
       }
-      const sec = document.getElementById('requestSection'); sec.innerHTML = '';
+      const sec=document.getElementById('requestSection'); sec.innerHTML='';
       if (myIsHost) {
-        if (!isMine) { const b = document.createElement('button'); b.className = 'btn-action btn-reclaim'; b.textContent = '↩ Take Back Editor'; b.onclick = () => socket.emit('reclaim-editor'); sec.appendChild(b); }
+        if (!isMine) { const b=document.createElement('button'); b.className='btn-action btn-reclaim'; b.textContent='↩ Take Back Editor'; b.onclick=()=>socket.emit('reclaim-editor'); sec.appendChild(b); }
       } else {
-        if (isMine) { const b = document.createElement('button'); b.className = 'btn-action btn-handback'; b.textContent = '↩ Hand Back Editor'; b.onclick = () => { const h = roomUsers.find(u => u.isHost); if (h) socket.emit('return-editor', { toSocketId: h.socketId }); }; sec.appendChild(b); }
-        else { const b = document.createElement('button'); b.className = 'btn-action btn-request'; b.id = 'requestBtn'; b.textContent = '🙋 Request Editor'; b.onclick = () => { socket.emit('request-editor'); b.textContent = '⏳ Sent…'; b.disabled = true; }; sec.appendChild(b); }
+        if (isMine) { const b=document.createElement('button'); b.className='btn-action btn-handback'; b.textContent='↩ Hand Back Editor'; b.onclick=()=>{const h=roomUsers.find(u=>u.isHost); if(h)socket.emit('return-editor',{toSocketId:h.socketId});}; sec.appendChild(b); }
+        else { const b=document.createElement('button'); b.className='btn-action btn-request'; b.id='requestBtn'; b.textContent='🙋 Request Editor'; b.onclick=()=>{socket.emit('request-editor'); b.textContent='⏳ Sent…'; b.disabled=true;}; sec.appendChild(b); }
       }
     }
 
     function renderMembers() {
-      const list = document.getElementById('membersList'); list.innerHTML = '';
-      const all = [...roomUsers];
-      if (!all.find(u => u.socketId === mySocketId)) all.unshift({ socketId: mySocketId, name: myName, isHost: myIsHost });
-      all.forEach(u => {
-        const isMe = u.socketId === mySocketId, isEd = u.socketId === editorOwner;
-        const div = document.createElement('div'); div.className = 'member-item';
-        const dot = document.createElement('div'); dot.className = 'member-dot'; div.appendChild(dot);
-        const nm  = document.createElement('div'); nm.className  = 'member-name'; nm.textContent = u.name + (u.isHost ? ' 👑' : ''); div.appendChild(nm);
-        if (isMe) { const y = document.createElement('span'); y.className = 'member-you'; y.textContent = 'you'; div.appendChild(y); }
-        if (isEd) { const e = document.createElement('span'); e.className = 'member-editing'; e.textContent = '✏️'; div.appendChild(e); }
-        if (myIsHost && !isMe) { const b = document.createElement('button'); b.className = 'btn-assign'; b.textContent = isEd ? 'Take' : 'Give'; b.onclick = () => isEd ? socket.emit('reclaim-editor') : socket.emit('assign-editor', { toSocketId: u.socketId }); div.appendChild(b); }
+      const list=document.getElementById('membersList'); list.innerHTML='';
+      const all=[...roomUsers];
+      if (!all.find(u=>u.socketId===mySocketId)) all.unshift({socketId:mySocketId,name:myName,isHost:myIsHost});
+      all.forEach(u=>{
+        const isMe=u.socketId===mySocketId, isEd=u.socketId===editorOwner;
+        const div=document.createElement('div'); div.className='member-item';
+        const dot=document.createElement('div'); dot.className='member-dot'; div.appendChild(dot);
+        const nm=document.createElement('div');  nm.className='member-name';  nm.textContent=u.name+(u.isHost?' 👑':''); div.appendChild(nm);
+        if (isMe) { const y=document.createElement('span'); y.className='member-you'; y.textContent='you'; div.appendChild(y); }
+        if (isEd) { const e=document.createElement('span'); e.className='member-editing'; e.textContent='✏️'; div.appendChild(e); }
+        if (myIsHost&&!isMe) { const b=document.createElement('button'); b.className='btn-assign'; b.textContent=isEd?'Take':'Give'; b.onclick=()=>isEd?socket.emit('reclaim-editor'):socket.emit('assign-editor',{toSocketId:u.socketId}); div.appendChild(b); }
         list.appendChild(div);
       });
     }
@@ -1843,36 +1494,37 @@
     //  LEAVE
     // ════════════════════════════════════════════════════════
     function performLeave() {
-      if (myStream) { myStream.getTracks().forEach(t => t.stop()); myStream = null; }
-      Object.values(peers).forEach(p => p.pc.close()); peers = {};
-      if (socket) { socket.disconnect(); socket = null; }
-      roomUsers = []; pendingRequest = null; micOn = true; camOn = true;
+      if (myStream) { myStream.getTracks().forEach(t=>t.stop()); myStream=null; }
+      Object.values(peers).forEach(p=>{try{p.pc.close();}catch(_){}});
+      peers={};
+      if (socket) { socket.disconnect(); socket=null; }
+      roomUsers=[]; pendingRequest=null; micOn=true; camOn=true;
       updateMediaBtnUI();
-      document.getElementById('videoGrid').innerHTML = '';
-      document.getElementById('membersList').innerHTML = '';
-      document.getElementById('shareBox').style.display = 'none';
-      document.getElementById('createRoomBtn').style.display = 'block';
-      document.getElementById('notifBanner').style.display = 'none';
-      const out = document.getElementById('output'); out.textContent = '// Run your code to see output here'; out.style.borderTop = ''; out.className = '';
-      document.getElementById('editor-status').textContent = '';
-      document.getElementById('roomIdBadge').textContent = 'Room: —';
+      document.getElementById('videoGrid').innerHTML='';
+      document.getElementById('membersList').innerHTML='';
+      document.getElementById('shareBox').style.display='none';
+      document.getElementById('createRoomBtn').style.display='block';
+      document.getElementById('notifBanner').style.display='none';
+      const out=document.getElementById('output'); out.textContent='// Run your code to see output here'; out.style.borderTop=''; out.className='';
+      document.getElementById('editor-status').textContent='';
+      document.getElementById('roomIdBadge').textContent='Room: —';
       initEditor(STARTER[currentLang]);
-      appMode = 'solo';
+      appMode='solo';
       document.getElementById('modeTeam').classList.remove('active');
       document.getElementById('modeSolo').classList.add('active');
       closeRightPanel();
       document.getElementById('room-bar').classList.remove('visible');
       document.getElementById('lobby').classList.remove('visible');
-      document.getElementById('panelTabs').style.display = 'none';
-      document.getElementById('panelSoloHeader').style.display = 'none';
+      document.getElementById('panelTabs').style.display='none';
+      document.getElementById('panelSoloHeader').style.display='none';
       if (!filesPanelOpen) { document.getElementById('left-panel').classList.remove('visible'); hideBackdrop(); }
     }
 
     function respondRequest(grant) {
-      document.getElementById('notifBanner').style.display = 'none';
-      if (grant && pendingRequest) { socket.emit('assign-editor', { toSocketId: pendingRequest.fromSocketId }); toast(`Editor given to ${pendingRequest.fromName}`); }
-      else if (pendingRequest) { socket.emit('deny-editor-request', { toSocketId: pendingRequest.fromSocketId }); toast('Request denied'); }
-      pendingRequest = null;
+      document.getElementById('notifBanner').style.display='none';
+      if (grant&&pendingRequest) { socket.emit('assign-editor',{toSocketId:pendingRequest.fromSocketId}); toast(`Editor given to ${pendingRequest.fromName}`); }
+      else if (pendingRequest)   { socket.emit('deny-editor-request',{toSocketId:pendingRequest.fromSocketId}); toast('Request denied'); }
+      pendingRequest=null;
     }
 
     // ════════════════════════════════════════════════════════
@@ -1882,14 +1534,24 @@
       initEditor();
       await initFirebase();
 
-      document.getElementById('modeSolo').addEventListener('click', () => { if (appMode === 'team') performLeave(); else setMode('solo'); });
-      document.getElementById('modeTeam').addEventListener('click', () => setMode('team'));
-      document.querySelectorAll('.lang-pill').forEach(b => b.addEventListener('click', () => { if (b.dataset.lang) setLanguage(b.dataset.lang); }));
+      // ── FIX 3: If this page loaded with ?room=ROOMID (from a shared link),
+      // auto-switch to Team mode and pre-fill the room ID so the user just
+      // needs to enter their name and click Join.
+      const urlRoom = new URLSearchParams(window.location.search).get('room');
+      if (urlRoom) {
+        document.getElementById('joinRoomId').value = urlRoom;
+        switchLobbyTab('join');
+        setMode('team');   // opens lobby automatically
+      }
+
+      document.getElementById('modeSolo').addEventListener('click', ()=>{ if(appMode==='team')performLeave(); else setMode('solo'); });
+      document.getElementById('modeTeam').addEventListener('click', ()=>setMode('team'));
+      document.querySelectorAll('.lang-pill').forEach(b=>b.addEventListener('click',()=>{ if(b.dataset.lang)setLanguage(b.dataset.lang); }));
       document.getElementById('runBtn').addEventListener('click', runCode);
-      document.getElementById('clearOutputBtn').addEventListener('click', () => { const o = document.getElementById('output'); o.textContent = '// Run your code to see output here'; o.className = ''; o.style.borderTop = ''; });
-      document.addEventListener('keydown', e => {
-        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); runCode(); }
-        if ((e.ctrlKey || e.metaKey) && e.key === 's')     { e.preventDefault(); fsSaveCurrentFile(); }
+      document.getElementById('clearOutputBtn').addEventListener('click', ()=>{ const o=document.getElementById('output'); o.textContent='// Run your code to see output here'; o.className=''; o.style.borderTop=''; });
+      document.addEventListener('keydown', e=>{
+        if ((e.ctrlKey||e.metaKey)&&e.key==='Enter') { e.preventDefault(); runCode(); }
+        if ((e.ctrlKey||e.metaKey)&&e.key==='s')     { e.preventDefault(); fsSaveCurrentFile(); }
       });
 
       document.getElementById('topbarSaveBtn').addEventListener('click', fsSaveCurrentFile);
@@ -1898,24 +1560,23 @@
       document.getElementById('inlineCloseFileBtn').addEventListener('click', closeCurrentFile);
       document.getElementById('signInBtn').addEventListener('click', signInWithGoogle);
       document.getElementById('signOutBtn').addEventListener('click', signOutUser);
-
       document.getElementById('closePanelBtn').addEventListener('click', closeSidePanel);
       document.getElementById('closePanelSoloBtn').addEventListener('click', closeSidePanel);
 
-      document.getElementById('topbarOverflowBtn').addEventListener('click', e => { e.stopPropagation(); toggleOverflowSheet(); });
-      document.getElementById('overflowSaveBtn').addEventListener('click',   () => { closeOverflowSheet(); fsSaveCurrentFile(); });
-      document.getElementById('overflowExportBtn').addEventListener('click', () => { closeOverflowSheet(); exportCurrentToPC(); });
-      document.getElementById('overflowFilesBtn').addEventListener('click',  () => { closeOverflowSheet(); toggleFilesPanel(); });
-      document.getElementById('overflowVideoBtn').addEventListener('click',  () => { closeOverflowSheet(); openRightPanel(); });
-      document.getElementById('overflowSignInBtn').addEventListener('click', () => { closeOverflowSheet(); signInWithGoogle(); });
-      document.getElementById('overflowSignOutBtn').addEventListener('click',() => { closeOverflowSheet(); signOutUser(); });
+      document.getElementById('topbarOverflowBtn').addEventListener('click', e=>{ e.stopPropagation(); toggleOverflowSheet(); });
+      document.getElementById('overflowSaveBtn').addEventListener('click',   ()=>{ closeOverflowSheet(); fsSaveCurrentFile(); });
+      document.getElementById('overflowExportBtn').addEventListener('click', ()=>{ closeOverflowSheet(); exportCurrentToPC(); });
+      document.getElementById('overflowFilesBtn').addEventListener('click',  ()=>{ closeOverflowSheet(); toggleFilesPanel(); });
+      document.getElementById('overflowVideoBtn').addEventListener('click',  ()=>{ closeOverflowSheet(); openRightPanel(); });
+      document.getElementById('overflowSignInBtn').addEventListener('click', ()=>{ closeOverflowSheet(); signInWithGoogle(); });
+      document.getElementById('overflowSignOutBtn').addEventListener('click',()=>{ closeOverflowSheet(); signOutUser(); });
 
-      document.addEventListener('click', e => {
-        if (overflowSheetOpen && !document.getElementById('overflow-sheet').contains(e.target) && e.target.id !== 'topbarOverflowBtn')
+      document.addEventListener('click', e=>{
+        if (overflowSheetOpen && !document.getElementById('overflow-sheet').contains(e.target) && e.target.id!=='topbarOverflowBtn')
           closeOverflowSheet();
       });
 
-      document.getElementById('panel-backdrop').addEventListener('click', () => {
+      document.getElementById('panel-backdrop').addEventListener('click', ()=>{
         if (isMobile()) {
           if (document.getElementById('lobby').classList.contains('visible')) return;
           closeSidePanel(); closeRightPanel();
@@ -1923,49 +1584,46 @@
       });
 
       document.getElementById('closeVideoPanel').addEventListener('click', closeRightPanel);
-      document.getElementById('tabMembers').addEventListener('click', () => switchPanelTab('members'));
-      document.getElementById('tabFiles').addEventListener('click',   () => switchPanelTab('files'));
+      document.getElementById('tabMembers').addEventListener('click', ()=>switchPanelTab('members'));
+      document.getElementById('tabFiles').addEventListener('click',   ()=>switchPanelTab('files'));
 
-      document.getElementById('newFileBtn').addEventListener('click', () => { if (!currentUser) { toast('Sign in to save', 'var(--accent2)'); return; } openNewFileModal(); });
-      document.getElementById('newFolderBtn').addEventListener('click', () => { if (!currentUser) { toast('Sign in to save', 'var(--accent2)'); return; } document.getElementById('newFolderModal').classList.add('visible'); document.getElementById('newFolderName').focus(); });
+      document.getElementById('newFileBtn').addEventListener('click', ()=>{ if(!currentUser){toast('Sign in to save','var(--accent2)');return;} openNewFileModal(); });
+      document.getElementById('newFolderBtn').addEventListener('click', ()=>{ if(!currentUser){toast('Sign in to save','var(--accent2)');return;} document.getElementById('newFolderModal').classList.add('visible'); document.getElementById('newFolderName').focus(); });
       document.getElementById('exportAllBtn').addEventListener('click', exportAllFiles);
       document.getElementById('refreshFilesBtn').addEventListener('click', loadFileTree);
 
       document.getElementById('newFileConfirm').addEventListener('click', fsCreateFile);
-      document.getElementById('newFileCancel').addEventListener('click',  () => document.getElementById('newFileModal').classList.remove('visible'));
-      document.getElementById('newFileName').addEventListener('keydown', e => { if (e.key === 'Enter') fsCreateFile(); });
+      document.getElementById('newFileCancel').addEventListener('click',  ()=>document.getElementById('newFileModal').classList.remove('visible'));
+      document.getElementById('newFileName').addEventListener('keydown',  e=>{ if(e.key==='Enter')fsCreateFile(); });
       document.getElementById('newFolderConfirm').addEventListener('click', fsCreateFolder);
-      document.getElementById('newFolderCancel').addEventListener('click',  () => document.getElementById('newFolderModal').classList.remove('visible'));
-      document.getElementById('newFolderName').addEventListener('keydown', e => { if (e.key === 'Enter') fsCreateFolder(); });
+      document.getElementById('newFolderCancel').addEventListener('click',  ()=>document.getElementById('newFolderModal').classList.remove('visible'));
+      document.getElementById('newFolderName').addEventListener('keydown',  e=>{ if(e.key==='Enter')fsCreateFolder(); });
       document.getElementById('renameConfirm').addEventListener('click', fsDoRename);
-      document.getElementById('renameCancel').addEventListener('click',  () => document.getElementById('renameModal').classList.remove('visible'));
-      document.getElementById('renameInput').addEventListener('keydown', e => { if (e.key === 'Enter') fsDoRename(); });
-      ['newFileModal', 'newFolderModal', 'renameModal'].forEach(id => {
-        document.getElementById(id).addEventListener('click', e => { if (e.target.id === id) document.getElementById(id).classList.remove('visible'); });
+      document.getElementById('renameCancel').addEventListener('click',  ()=>document.getElementById('renameModal').classList.remove('visible'));
+      document.getElementById('renameInput').addEventListener('keydown', e=>{ if(e.key==='Enter')fsDoRename(); });
+      ['newFileModal','newFolderModal','renameModal'].forEach(id=>{
+        document.getElementById(id).addEventListener('click', e=>{ if(e.target.id===id)document.getElementById(id).classList.remove('visible'); });
       });
 
-      document.getElementById('tabBtnCreate').addEventListener('click', () => switchLobbyTab('create'));
-      document.getElementById('tabBtnJoin').addEventListener('click',   () => switchLobbyTab('join'));
+      document.getElementById('tabBtnCreate').addEventListener('click', ()=>switchLobbyTab('create'));
+      document.getElementById('tabBtnJoin').addEventListener('click',   ()=>switchLobbyTab('join'));
       document.getElementById('createRoomBtn').addEventListener('click', createRoom);
       document.getElementById('enterRoomBtn').addEventListener('click',  enterAsHost);
       document.getElementById('joinRoomBtn').addEventListener('click',   joinRoom);
-      document.getElementById('shareUrl').addEventListener('click', () => navigator.clipboard.writeText(document.getElementById('shareUrl').textContent).then(() => toast('Link copied!')));
-      document.getElementById('roomIdBadge').addEventListener('click',  () => navigator.clipboard.writeText(roomId).then(() => toast('Room ID copied!')));
+      document.getElementById('shareUrl').addEventListener('click', ()=>navigator.clipboard.writeText(document.getElementById('shareUrl').textContent).then(()=>toast('Link copied!')));
+      document.getElementById('roomIdBadge').addEventListener('click',  ()=>navigator.clipboard.writeText(roomId).then(()=>toast('Room ID copied!')));
       document.getElementById('leaveBtn').addEventListener('click', performLeave);
-      document.getElementById('grantBtn').addEventListener('click', () => respondRequest(true));
-      document.getElementById('denyBtn').addEventListener('click',  () => respondRequest(false));
+      document.getElementById('grantBtn').addEventListener('click', ()=>respondRequest(true));
+      document.getElementById('denyBtn').addEventListener('click',  ()=>respondRequest(false));
       document.getElementById('micBtn').addEventListener('click', toggleMic);
       document.getElementById('camBtn').addEventListener('click', toggleCam);
 
-      const urlRoom = new URLSearchParams(window.location.search).get('room');
-      if (urlRoom) { document.getElementById('joinRoomId').value = urlRoom; switchLobbyTab('join'); setMode('team'); }
-
-      window.addEventListener('resize', () => {
+      window.addEventListener('resize', ()=>{
         if (cmEditor) cmEditor.refresh();
         if (window.innerWidth > 768) {
           document.getElementById('panel-backdrop').classList.remove('visible');
-          document.getElementById('closeVideoPanel').style.display = 'none';
-          if (appMode === 'team') {
+          document.getElementById('closeVideoPanel').style.display='none';
+          if (appMode==='team') {
             document.getElementById('left-panel').classList.add('visible');
             document.getElementById('right-panel').classList.add('visible');
             document.getElementById('media-bar').classList.add('visible');
