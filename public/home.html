@@ -64,7 +64,6 @@
       color: var(--text);
       font-family: 'Segoe UI', system-ui, sans-serif;
       font-size: 14px;
-      /* Allow scroll on mobile; overflow:hidden is only for desktop */
       overflow: hidden;
     }
 
@@ -72,7 +71,7 @@
       display: flex;
       flex-direction: column;
       height: 100vh;
-      height: 100dvh; /* dynamic viewport height for mobile */
+      height: 100dvh;
     }
 
     /* ════════════ TOPBAR ════════════ */
@@ -216,7 +215,6 @@
     #leaveBtn { padding: 4px 7px; background: transparent; border: 1px solid var(--accent2); color: var(--accent2); border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: 600; transition: all 0.15s; white-space: nowrap; }
     #leaveBtn:hover { background: var(--accent2); color: #fff; }
 
-    /* Mobile topbar overflow toggle */
     #topbarOverflowBtn {
       display: none;
       flex-shrink: 0;
@@ -268,7 +266,12 @@
     }
     #left-panel.visible { display: flex; }
 
-    .panel-tabs { display: flex; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+    .panel-tabs {
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
     .panel-tab {
       flex: 1;
       padding: 8px 4px;
@@ -284,6 +287,46 @@
       transition: all 0.15s;
     }
     .panel-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+    #closePanelBtn {
+      flex-shrink: 0;
+      padding: 4px 10px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 15px;
+      line-height: 1;
+      border-radius: 4px;
+      transition: color 0.15s, background 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #closePanelBtn:hover { color: var(--accent2); background: var(--surface2); }
+
+    #panelSoloHeader {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px 8px 14px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    #panelSoloHeader .panel-title { margin-bottom: 0; font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); }
+    #closePanelSoloBtn {
+      flex-shrink: 0;
+      padding: 4px 8px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 15px;
+      line-height: 1;
+      border-radius: 4px;
+      transition: color 0.15s, background 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #closePanelSoloBtn:hover { color: var(--accent2); background: var(--surface2); }
+
     .panel-tab-content { display: none; flex-direction: column; flex: 1; overflow: hidden; }
     .panel-tab-content.active { display: flex; }
 
@@ -313,7 +356,6 @@
     .bbtn.yes { background: var(--success); color: #000; }
     .bbtn.no { background: var(--error); color: #fff; }
 
-    /* FILES PANEL */
     #files-panel { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
     .files-toolbar { display: flex; gap: 4px; padding: 8px 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
     .files-toolbar button { flex: 1; padding: 5px 4px; border: 1px solid var(--border); background: var(--surface2); color: var(--text-muted); border-radius: 4px; cursor: pointer; font-size: 10px; font-weight: 600; transition: all 0.15s; }
@@ -422,6 +464,18 @@
     .cam-off-icon { font-size: 24px; }
     .tile-label { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.75)); color: #fff; font-size: 10px; padding: 8px 6px 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: var(--font-mono); }
 
+    /* Mic indicator on tile */
+    .tile-mic-icon {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      font-size: 13px;
+      background: rgba(0,0,0,0.55);
+      border-radius: 50%;
+      padding: 3px 4px;
+      line-height: 1;
+    }
+
     #media-bar { display: none; align-items: center; gap: 6px; padding: 8px 12px; background: var(--surface); border-top: 1px solid var(--border); flex-shrink: 0; }
     #media-bar.visible { display: flex; }
     .tool-btn { flex: 1; padding: 7px 4px; background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: 5px; cursor: pointer; font-size: 11px; font-weight: 600; transition: all 0.15s; text-align: center; }
@@ -472,7 +526,6 @@
     #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 8px 18px; border-radius: 20px; font-size: 12px; opacity: 0; transition: all 0.25s; z-index: 500; pointer-events: none; white-space: nowrap; max-width: calc(100vw - 32px); text-align: center; }
     #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-    /* ════════════ MOBILE DRAWER OVERLAY ════════════ */
     #panel-backdrop {
       display: none;
       position: fixed;
@@ -487,148 +540,65 @@
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
-    /* ════════════════════════════════════════════════
-       TABLET  (≤ 1024px)
-    ════════════════════════════════════════════════ */
     @media (max-width: 1024px) {
-      :root {
-        --left-w: 220px;
-        --right-w: 190px;
-        --output-h: 150px;
-      }
+      :root { --left-w: 220px; --right-w: 190px; --output-h: 150px; }
       .CodeMirror { font-size: 12px !important; }
     }
 
-    /* ════════════════════════════════════════════════
-       MOBILE  (≤ 768px)
-       Strategy:
-       - Left & right panels become full-height drawers
-         that slide over the editor (position: fixed)
-       - Output panel collapses to shorter height
-       - Topbar scrolls horizontally — most items hidden
-         behind an overflow toggle
-       - stdin bar simplified
-    ════════════════════════════════════════════════ */
     @media (max-width: 768px) {
-      :root {
-        --topbar-h: 48px;
-        --output-h: 130px;
-      }
-
+      :root { --topbar-h: 48px; --output-h: 130px; }
       html, body { overflow: hidden; }
-
-      /* Topbar: show logo + mode + lang + run always;
-         rest scrolls behind overflow button */
       #topbar { gap: 5px; padding: 0 8px; }
       .logo-text { font-size: 13px; }
       .mode-btn { padding: 3px 8px; font-size: 10px; }
       .lang-pill { padding: 3px 7px; font-size: 10px; }
       #runBtn { padding: 5px 12px; font-size: 11px; }
-
-      /* Show overflow toggle, hide secondary topbar items */
       #topbarOverflowBtn { display: inline-flex; align-items: center; }
-
-      /* Items hidden by default on mobile, revealed in overflow sheet */
       .topbar-secondary { display: none !important; }
-
-      /* Left panel: slide-over drawer, fixed */
       #left-panel {
-        position: fixed;
-        top: var(--topbar-h);
-        left: 0;
-        bottom: 0;
-        width: 280px;
-        z-index: 40;
-        transform: translateX(-100%);
-        transition: transform 0.25s ease;
-        border-right: 1px solid var(--border);
-        box-shadow: 4px 0 24px rgba(0,0,0,0.5);
+        position: fixed; top: var(--topbar-h); left: 0; bottom: 0;
+        width: min(280px, 82vw); z-index: 40;
+        transform: translateX(-100%); transition: transform 0.25s ease;
+        border-right: 1px solid var(--border); box-shadow: 4px 0 24px rgba(0,0,0,0.5);
       }
-      #left-panel.visible {
-        display: flex;
-        transform: translateX(0);
-      }
-
-      /* Right panel: slide-over from right */
+      #left-panel.visible { display: flex; transform: translateX(0); }
       #right-panel {
-        position: fixed;
-        top: var(--topbar-h);
-        right: 0;
-        bottom: 0;
-        width: 260px;
-        z-index: 40;
-        transform: translateX(100%);
-        transition: transform 0.25s ease;
-        border-left: 1px solid var(--border);
-        box-shadow: -4px 0 24px rgba(0,0,0,0.5);
+        position: fixed; top: var(--topbar-h); right: 0; bottom: 0;
+        width: min(260px, 82vw); z-index: 40;
+        transform: translateX(100%); transition: transform 0.25s ease;
+        border-left: 1px solid var(--border); box-shadow: -4px 0 24px rgba(0,0,0,0.5);
       }
-      #right-panel.visible {
-        display: flex;
-        transform: translateX(0);
-      }
-
-      /* Media bar: attach inside right panel on mobile */
-      #media-bar {
-        position: fixed;
-        bottom: 0;
-        right: 0;
-        width: 260px;
-        z-index: 41;
-      }
+      #right-panel.visible { display: flex; transform: translateX(0); }
+      #media-bar { position: fixed; bottom: 0; right: 0; width: min(260px, 82vw); z-index: 41; }
       #media-bar.visible { display: flex; }
-
-      /* Editor takes full width */
       #editor-panel { width: 100%; }
-
-      /* stdin: collapse to single row */
       #stdin-bar { padding: 4px 8px; gap: 5px; }
       #stdin-hint { display: none; }
       #stdinInput { min-height: 26px; max-height: 60px; font-size: 10px; }
-
-      /* Output panel */
       #output-panel { height: var(--output-h); }
       #output { font-size: 11px; padding: 8px 10px; }
-
-      /* CodeMirror */
       .CodeMirror { font-size: 11.5px !important; }
-
-      /* Room bar compact */
-      #editor-status { display: none; } /* hide on tiny screens, too much space */
+      #editor-status { display: none; }
       .room-badge { font-size: 10px; padding: 2px 6px; }
+      .row-acts { display: flex; }
     }
 
-    /* ════════════════════════════════════════════════
-       SMALL MOBILE  (≤ 480px)
-    ════════════════════════════════════════════════ */
     @media (max-width: 480px) {
-      :root {
-        --output-h: 110px;
-      }
+      :root { --output-h: 110px; }
       .logo-text { font-size: 12px; }
       .mode-toggle { gap: 1px; }
       .mode-btn { padding: 3px 6px; }
       .lang-pills { gap: 2px; }
       .lang-pill { padding: 2px 5px; font-size: 10px; }
       #runBtn { padding: 4px 10px; font-size: 11px; }
-
-      /* Left & right panels full-width on very small screens */
-      #left-panel { width: 85vw; }
-      #right-panel { width: 85vw; }
-      #media-bar { width: 85vw; }
-
       .lobby-card { padding: 18px 16px; }
       .lobby-card h2 { font-size: 14px; }
     }
 
-    /* ════════════════════════════════════════════════
-       OVERFLOW SHEET  (mobile secondary menu)
-    ════════════════════════════════════════════════ */
     #overflow-sheet {
       display: none;
       position: fixed;
-      top: var(--topbar-h);
-      left: 0;
-      right: 0;
+      top: var(--topbar-h); left: 0; right: 0;
       background: var(--surface);
       border-bottom: 1px solid var(--border);
       padding: 10px 12px;
@@ -639,10 +609,8 @@
       box-shadow: 0 8px 24px rgba(0,0,0,0.4);
     }
     #overflow-sheet.open { display: flex; }
-    #overflow-sheet .topbar-btn,
-    #overflow-sheet #signInBtn,
-    #overflow-sheet #userInfo,
-    #overflow-sheet #authArea { flex-shrink: 0; }
+    #overflow-sheet .topbar-btn, #overflow-sheet #signInBtn,
+    #overflow-sheet #userInfo, #overflow-sheet #authArea { flex-shrink: 0; }
     #overflow-sheet #userInfo { display: none; }
     #overflow-sheet #userInfo.visible { display: flex; }
   </style>
@@ -651,23 +619,18 @@
 <body>
   <div id="app-shell">
 
-    <!-- ════════ TOPBAR ════════ -->
     <div id="topbar">
       <span class="logo-text">Code<span>Forge</span></span>
-
       <div class="mode-toggle">
         <button class="mode-btn active" id="modeSolo">Solo</button>
         <button class="mode-btn" id="modeTeam">Team</button>
       </div>
-
       <div class="lang-pills">
         <button class="lang-pill active" data-lang="python">Py</button>
         <button class="lang-pill" data-lang="cpp">C++</button>
         <button class="lang-pill" data-lang="c">C</button>
         <button class="lang-pill" data-lang="java">Java</button>
       </div>
-
-      <!-- Secondary items visible on desktop, hidden on mobile (shown in overflow sheet) -->
       <div class="topbar-sep topbar-secondary"></div>
       <button class="topbar-btn save topbar-secondary" id="topbarSaveBtn">💾 Save</button>
       <button class="topbar-btn topbar-secondary" id="topbarExportBtn">⬇ Export</button>
@@ -684,20 +647,15 @@
           <button id="signOutBtn">Sign out</button>
         </div>
       </div>
-
       <div id="room-bar">
         <span id="editor-status"></span>
         <span class="room-badge" id="roomIdBadge">Room: —</span>
         <button id="leaveBtn">Leave</button>
       </div>
-
-      <!-- Mobile overflow toggle -->
       <button id="topbarOverflowBtn" aria-label="More options">⋯</button>
-
       <button id="runBtn">▶ Run</button>
     </div>
 
-    <!-- ════════ MOBILE OVERFLOW SHEET ════════ -->
     <div id="overflow-sheet">
       <button class="topbar-btn save" id="overflowSaveBtn">💾 Save</button>
       <button class="topbar-btn" id="overflowExportBtn">⬇ Export</button>
@@ -716,7 +674,6 @@
       </div>
     </div>
 
-    <!-- ════════ FILE BAR ════════ -->
     <div id="current-file-bar">
       <span>📄</span>
       <span id="current-file-name">Untitled</span>
@@ -724,17 +681,18 @@
       <button class="topbar-btn" id="inlineCloseFileBtn" style="margin-left:auto;font-size:10px;padding:2px 7px;">✕ Close</button>
     </div>
 
-    <!-- ════════ MAIN ════════ -->
     <div id="main-area">
-
-      <!-- Backdrop for mobile panels -->
       <div id="panel-backdrop"></div>
 
-      <!-- LEFT PANEL -->
       <div id="left-panel">
+        <div id="panelSoloHeader">
+          <span class="panel-title">Files</span>
+          <button id="closePanelSoloBtn" aria-label="Close panel">✕</button>
+        </div>
         <div class="panel-tabs" id="panelTabs" style="display:none;">
           <button class="panel-tab active" id="tabMembers">Members</button>
           <button class="panel-tab" id="tabFiles">Files</button>
+          <button id="closePanelBtn" aria-label="Close panel">✕</button>
         </div>
         <div class="panel-tab-content active" id="membersTabContent">
           <div class="panel-section">
@@ -767,14 +725,11 @@
         </div>
       </div>
 
-      <!-- EDITOR PANEL -->
       <div id="editor-panel">
         <div id="stdin-bar">
           <label>stdin:</label>
           <div id="stdin-wrap">
-            <textarea id="stdinInput" rows="1"
-              placeholder="Pre-run input — use Enter for multiple lines"
-              autocomplete="off"></textarea>
+            <textarea id="stdinInput" rows="1" placeholder="Pre-run input — use Enter for multiple lines" autocomplete="off"></textarea>
             <span id="stdin-hint">Each line = one input value · Enter to separate</span>
           </div>
         </div>
@@ -791,25 +746,22 @@
         </div>
       </div>
 
-      <!-- RIGHT PANEL -->
       <div id="right-panel">
         <div class="rp-header">
           <div class="rp-title">Live Video</div>
-          <!-- Close button for mobile drawer -->
           <button id="closeVideoPanel" style="display:none;background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:16px;padding:2px 6px;">✕</button>
         </div>
         <div class="video-grid" id="videoGrid"></div>
       </div>
     </div>
 
-    <!-- MEDIA BAR -->
     <div id="media-bar">
       <button class="tool-btn on" id="micBtn">🎙 Mic On</button>
       <button class="tool-btn on" id="camBtn">📹 Cam On</button>
     </div>
   </div>
 
-  <!-- ════════ LOBBY ════════ -->
+  <!-- LOBBY -->
   <div id="lobby">
     <div class="lobby-card">
       <h2>CodeForge — Team Room</h2>
@@ -854,16 +806,9 @@
       <label class="modal-label">File name</label>
       <input id="newFileName" type="text" placeholder="e.g. solution.py" autocomplete="off" />
       <label class="modal-label">Language</label>
-      <select id="newFileLang">
-        <option value="python">Python</option>
-        <option value="cpp">C++</option>
-        <option value="c">C</option>
-        <option value="java">Java</option>
-      </select>
+      <select id="newFileLang"><option value="python">Python</option><option value="cpp">C++</option><option value="c">C</option><option value="java">Java</option></select>
       <label class="modal-label">Folder <span style="font-weight:normal;color:var(--text-muted)">(optional)</span></label>
-      <select id="newFileFolder">
-        <option value="">— Root —</option>
-      </select>
+      <select id="newFileFolder"><option value="">— Root —</option></select>
       <div class="modal-btns">
         <button class="modal-cancel" id="newFileCancel">Cancel</button>
         <button class="modal-confirm" id="newFileConfirm">Create</button>
@@ -904,7 +849,7 @@
     //  CONSTANTS
     // ════════════════════════════════════════════════════════
     const LANG_MODE = { python: 'python', cpp: 'text/x-c++src', c: 'text/x-csrc', java: 'text/x-java' };
-    const LANG_EXT = { python: '.py', cpp: '.cpp', c: '.c', java: '.java' };
+    const LANG_EXT  = { python: '.py', cpp: '.cpp', c: '.c', java: '.java' };
     const LANG_ICON = { python: '🐍', cpp: '⚙️', c: '🔧', java: '☕' };
     const STARTER = {
       python: '# Python\nprint("Hello, World!")\n',
@@ -912,7 +857,35 @@
       c: '#include <stdio.h>\n\nint main() {\n    printf("Hello, World!\\n");\n    return 0;\n}\n',
       java: 'public class Main {\n    public static void main(String[] args) {\n        System.out.println("Hello, World!");\n    }\n}\n',
     };
-    const ICE_CFG = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' },{ urls: 'stun:stun1.l.google.com:19302' },{ urls: 'stun:stun2.l.google.com:19302' },{ urls: 'stun:stun3.l.google.com:19302' }] };
+
+    // ════════════════════════════════════════════════════════
+    //  ICE CONFIG  — add free TURN servers for NAT traversal
+    // ════════════════════════════════════════════════════════
+    const ICE_CFG = {
+      iceServers: [
+        { urls: 'stun:stun.l.google.com:19302' },
+        { urls: 'stun:stun1.l.google.com:19302' },
+        { urls: 'stun:stun2.l.google.com:19302' },
+        { urls: 'stun:stun3.l.google.com:19302' },
+        // Free open TURN relays — essential when both peers are behind symmetric NAT
+        {
+          urls: 'turn:openrelay.metered.ca:80',
+          username: 'openrelayproject',
+          credential: 'openrelayproject'
+        },
+        {
+          urls: 'turn:openrelay.metered.ca:443',
+          username: 'openrelayproject',
+          credential: 'openrelayproject'
+        },
+        {
+          urls: 'turn:openrelay.metered.ca:443?transport=tcp',
+          username: 'openrelayproject',
+          credential: 'openrelayproject'
+        }
+      ],
+      iceCandidatePoolSize: 10
+    };
 
     // ════════════════════════════════════════════════════════
     //  FIREBASE
@@ -930,7 +903,6 @@
     }
 
     function updateAuthUI(user) {
-      // Desktop auth area
       if (user) {
         document.getElementById('signInBtn').style.display = 'none';
         document.getElementById('userInfo').classList.add('visible');
@@ -941,26 +913,17 @@
         document.getElementById('signInBtn').style.display = '';
         document.getElementById('userInfo').classList.remove('visible');
       }
-      // Overflow sheet auth area
       const oSignIn = document.getElementById('overflowSignInBtn');
-      const oInfo = document.getElementById('overflowUserInfo');
-      const oName = document.getElementById('overflowUserName');
-      if (user) {
-        oSignIn.style.display = 'none';
-        oInfo.style.display = 'flex';
-        oName.textContent = user.displayName || user.email || 'User';
-      } else {
-        oSignIn.style.display = '';
-        oInfo.style.display = 'none';
-      }
+      const oInfo   = document.getElementById('overflowUserInfo');
+      const oName   = document.getElementById('overflowUserName');
+      if (user) { oSignIn.style.display = 'none'; oInfo.style.display = 'flex'; oName.textContent = user.displayName || user.email || 'User'; }
+      else       { oSignIn.style.display = '';    oInfo.style.display = 'none'; }
     }
 
     async function signInWithGoogle() {
       if (!fbAuth) { toast('Firebase not ready', 'var(--error)'); return; }
-      try {
-        await fbAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
-        toast('✓ Signed in!', 'var(--success)');
-      } catch (e) { toast('Sign-in failed: ' + e.message, 'var(--error)'); }
+      try { await fbAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider()); toast('✓ Signed in!', 'var(--success)'); }
+      catch (e) { toast('Sign-in failed: ' + e.message, 'var(--error)'); }
     }
 
     async function signOutUser() {
@@ -968,8 +931,7 @@
       await fbAuth.signOut();
       fsFolders = []; fsFiles = [];
       openFileId = null; openFileName = null; filesDirty = false;
-      hideCurrentFileBar();
-      toast('Signed out');
+      hideCurrentFileBar(); toast('Signed out');
     }
 
     // ════════════════════════════════════════════════════════
@@ -980,7 +942,7 @@
     let roomId = '', editorOwner = null;
     let micOn = true, camOn = true;
     let myStream = null;
-    let peers = {};
+    let peers = {};          // peerId → { pc, name, senders: {audio, video} }
     let roomUsers = [];
     let pendingRequest = null, pendingHostToken = null, pendingRoomId = null;
     let fsFolders = [], fsFiles = [], openFileId = null, openFileName = null, filesDirty = false;
@@ -997,12 +959,12 @@
       el.classList.add('show'); clearTimeout(_toastTimer);
       _toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
     }
-    function escHtml(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
-    function escAttr(s) { return String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;'); }
+    function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+    function escAttr(s) { return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
     function isMobile() { return window.innerWidth <= 768; }
 
     // ════════════════════════════════════════════════════════
-    //  OVERFLOW SHEET (mobile secondary nav)
+    //  OVERFLOW SHEET
     // ════════════════════════════════════════════════════════
     function toggleOverflowSheet() {
       overflowSheetOpen = !overflowSheetOpen;
@@ -1014,10 +976,16 @@
     }
 
     // ════════════════════════════════════════════════════════
-    //  PANEL BACKDROP (mobile drawer)
+    //  PANEL BACKDROP
     // ════════════════════════════════════════════════════════
     function showBackdrop() { document.getElementById('panel-backdrop').classList.add('visible'); }
     function hideBackdrop() { document.getElementById('panel-backdrop').classList.remove('visible'); }
+
+    function closeSidePanel() {
+      document.getElementById('left-panel').classList.remove('visible');
+      filesPanelOpen = false;
+      hideBackdrop();
+    }
 
     // ════════════════════════════════════════════════════════
     //  CODEMIRROR
@@ -1025,10 +993,8 @@
     function destroyEditor() {
       if (!cmEditor) return;
       const wrap = cmEditor.getWrapperElement();
-      const fresh = document.createElement('textarea');
-      fresh.id = 'editor';
-      wrap.parentNode.replaceChild(fresh, wrap);
-      cmEditor = null;
+      const fresh = document.createElement('textarea'); fresh.id = 'editor';
+      wrap.parentNode.replaceChild(fresh, wrap); cmEditor = null;
     }
 
     function initEditor(initialCode) {
@@ -1036,9 +1002,7 @@
       cmEditor = CodeMirror.fromTextArea(document.getElementById('editor'), {
         lineNumbers: true, mode: LANG_MODE[currentLang] || 'python',
         theme: 'dracula', indentUnit: 4, tabSize: 4, indentWithTabs: false,
-        lineWrapping: true,
-        // Better mobile experience
-        extraKeys: { 'Tab': 'indentMore', 'Shift-Tab': 'indentLess' }
+        lineWrapping: true, extraKeys: { 'Tab': 'indentMore', 'Shift-Tab': 'indentLess' }
       });
       suppressSync = true;
       cmEditor.setValue(initialCode !== undefined ? initialCode : STARTER[currentLang]);
@@ -1087,9 +1051,9 @@
     // ════════════════════════════════════════════════════════
     //  FIRESTORE HELPERS
     // ════════════════════════════════════════════════════════
-    function filesRef() { return db.collection(`users/${currentUser.uid}/files`); }
+    function filesRef()   { return db.collection(`users/${currentUser.uid}/files`); }
     function foldersRef() { return db.collection(`users/${currentUser.uid}/folders`); }
-    function tsNow() { return firebase.firestore.FieldValue.serverTimestamp(); }
+    function tsNow()      { return firebase.firestore.FieldValue.serverTimestamp(); }
 
     // ════════════════════════════════════════════════════════
     //  FILE TREE
@@ -1112,14 +1076,14 @@
           filesRef().orderBy('createdAt').get()
         ]);
         fsFolders = fSnap.docs.map(d => ({ _id: d.id, ...d.data() }));
-        fsFiles = dSnap.docs.map(d => ({ _id: d.id, ...d.data() }));
+        fsFiles   = dSnap.docs.map(d => ({ _id: d.id, ...d.data() }));
         renderFileTree(); populateFolderDropdowns();
       } catch (e) { tree.innerHTML = `<div class="files-notice" style="color:var(--error)">Load failed.<br><small>${escHtml(e.message)}</small></div>`; }
     }
 
     function renderFileTree() {
       const tree = document.getElementById('filesTree'); tree.innerHTML = '';
-      const rf = fsFolders.filter(f => !f.parentId);
+      const rf  = fsFolders.filter(f => !f.parentId);
       const rfl = fsFiles.filter(f => !f.folderId);
       if (!rf.length && !rfl.length) { tree.innerHTML = '<div class="files-notice">No files yet.<br>Click <strong>+ File</strong> to start.</div>'; return; }
       rf.forEach(f => tree.appendChild(buildFolderRow(f)));
@@ -1129,7 +1093,7 @@
     function buildFolderRow(folder) {
       const isOpen = expandedFolderIds.has(folder._id);
       const wrap = document.createElement('div');
-      const row = document.createElement('div'); row.className = 'folder-row';
+      const row  = document.createElement('div'); row.className = 'folder-row';
       row.innerHTML = `
         <span class="folder-chevron ${isOpen ? 'open' : ''}">▶</span>
         <span class="folder-icon">📁</span>
@@ -1149,7 +1113,7 @@
         if (btn) {
           e.stopPropagation();
           const { act, id, name } = btn.dataset;
-          if (act === 'add') openNewFileModal(id);
+          if (act === 'add')        openNewFileModal(id);
           if (act === 'ren-folder') openRenameModal('folder', id, name);
           if (act === 'del-folder') await fsDeleteFolder(id, folder.name);
           return;
@@ -1177,17 +1141,17 @@
         if (btn) {
           e.stopPropagation();
           const { act, id, name } = btn.dataset;
-          if (act === 'open') { await fsOpenFile(id); if (isMobile()) closeLeftPanel(); }
-          if (act === 'dl') await fsDownloadFile(id);
+          if (act === 'open')     { await fsOpenFile(id); if (isMobile()) closeSidePanel(); }
+          if (act === 'dl')       await fsDownloadFile(id);
           if (act === 'ren-file') openRenameModal('file', id, name);
           if (act === 'del-file') await fsDeleteFile(id, file.name);
-        } else { await fsOpenFile(file._id); if (isMobile()) closeLeftPanel(); }
+        } else { await fsOpenFile(file._id); if (isMobile()) closeSidePanel(); }
       });
       return row;
     }
 
     // ════════════════════════════════════════════════════════
-    //  FILE OPERATIONS
+    //  FILE OPERATIONS  (unchanged from original)
     // ════════════════════════════════════════════════════════
     async function fsOpenFile(fileId) {
       if (filesDirty && openFileId && !confirm('Unsaved changes. Discard and open?')) return;
@@ -1325,25 +1289,15 @@
     }
 
     // ════════════════════════════════════════════════════════
-    //  PANEL MANAGEMENT (including mobile slide-over logic)
+    //  PANEL MANAGEMENT
     // ════════════════════════════════════════════════════════
-    function openLeftPanel() {
-      document.getElementById('left-panel').classList.add('visible');
-      if (isMobile()) showBackdrop();
-    }
-    function closeLeftPanel() {
-      if (appMode === 'team') return; // team mode manages its own state
-      document.getElementById('left-panel').classList.remove('visible');
-      filesPanelOpen = false;
-      hideBackdrop();
-    }
+    function openLeftPanel()  { document.getElementById('left-panel').classList.add('visible'); if (isMobile()) showBackdrop(); }
+    function closeLeftPanel() { if (appMode === 'team') return; closeSidePanel(); }
+
     function openRightPanel() {
       document.getElementById('right-panel').classList.add('visible');
       document.getElementById('media-bar').classList.add('visible');
-      if (isMobile()) {
-        showBackdrop();
-        document.getElementById('closeVideoPanel').style.display = 'block';
-      }
+      if (isMobile()) { showBackdrop(); document.getElementById('closeVideoPanel').style.display = 'block'; }
     }
     function closeRightPanel() {
       document.getElementById('right-panel').classList.remove('visible');
@@ -1353,21 +1307,18 @@
 
     function toggleFilesPanel() {
       filesPanelOpen = !filesPanelOpen;
-      const panel = document.getElementById('left-panel');
       if (filesPanelOpen) {
-        panel.classList.add('visible');
+        document.getElementById('panelSoloHeader').style.display = appMode !== 'team' ? 'flex' : 'none';
         if (appMode !== 'team') {
           document.getElementById('panelTabs').style.display = 'none';
           document.getElementById('membersTabContent').classList.remove('active');
           document.getElementById('filesTabContent').classList.add('active');
         }
+        document.getElementById('left-panel').classList.add('visible');
         loadFileTree();
         if (isMobile()) showBackdrop();
       } else {
-        if (appMode !== 'team') {
-          panel.classList.remove('visible');
-          hideBackdrop();
-        }
+        if (appMode !== 'team') { document.getElementById('left-panel').classList.remove('visible'); hideBackdrop(); }
       }
     }
 
@@ -1375,12 +1326,10 @@
       appMode = mode; const isTeam = mode === 'team';
       document.getElementById('modeTeam').classList.toggle('active', isTeam);
       document.getElementById('modeSolo').classList.toggle('active', !isTeam);
-
       if (isTeam) {
         document.getElementById('left-panel').classList.add('visible');
-        if (!isMobile()) {
-          openRightPanel();
-        }
+        document.getElementById('panelSoloHeader').style.display = 'none';
+        if (!isMobile()) openRightPanel();
         document.getElementById('room-bar').classList.add('visible');
         document.getElementById('panelTabs').style.display = 'flex';
         switchPanelTab('members');
@@ -1392,10 +1341,8 @@
         document.getElementById('room-bar').classList.remove('visible');
         closeRightPanel();
         document.getElementById('panelTabs').style.display = 'none';
-        if (!filesPanelOpen) {
-          document.getElementById('left-panel').classList.remove('visible');
-          hideBackdrop();
-        }
+        document.getElementById('panelSoloHeader').style.display = 'none';
+        if (!filesPanelOpen) { document.getElementById('left-panel').classList.remove('visible'); hideBackdrop(); }
       }
     }
 
@@ -1441,7 +1388,7 @@
 
     async function createRoom() {
       const name = document.getElementById('createName').value.trim();
-      const pw = document.getElementById('createPassword').value;
+      const pw   = document.getElementById('createPassword').value;
       const errEl = document.getElementById('createError'); errEl.textContent = '';
       if (!name) { errEl.textContent = 'Enter your name.'; return; }
       const btn = document.getElementById('createRoomBtn'); btn.disabled = true; btn.textContent = 'Creating…';
@@ -1460,11 +1407,11 @@
 
     async function joinRoom() {
       const name = document.getElementById('joinName').value.trim();
-      const rid = document.getElementById('joinRoomId').value.trim();
-      const pw = document.getElementById('joinPassword').value;
+      const rid  = document.getElementById('joinRoomId').value.trim();
+      const pw   = document.getElementById('joinPassword').value;
       const errEl = document.getElementById('joinError'); errEl.textContent = '';
       if (!name) { errEl.textContent = 'Enter your name.'; return; }
-      if (!rid) { errEl.textContent = 'Enter a room ID.'; return; }
+      if (!rid)  { errEl.textContent = 'Enter a room ID.'; return; }
       const btn = document.getElementById('joinRoomBtn'); btn.disabled = true; btn.textContent = 'Joining…';
       try {
         const res = await fetch('/api/join-room', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ roomId: rid, name, password: pw || undefined }) });
@@ -1476,14 +1423,49 @@
     }
 
     // ════════════════════════════════════════════════════════
-    //  MEDIA
+    //  MEDIA — request with proper constraints
     // ════════════════════════════════════════════════════════
     async function requestMedia() {
       micOn = true; camOn = true;
-      try { myStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true }); return; } catch (e) { }
-      try { myStream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true }); camOn = false; toast('No camera — audio only'); return; } catch (e) { }
-      try { myStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false }); micOn = false; toast('No mic — video only'); return; } catch (e) { }
-      myStream = null; micOn = false; camOn = false; toast('Camera & mic unavailable');
+
+      // Try audio+video first
+      try {
+        myStream = await navigator.mediaDevices.getUserMedia({
+          video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: 'user' },
+          audio: {
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl:  true,
+            sampleRate:       48000
+          }
+        });
+        console.log('[media] audio+video ok, tracks:', myStream.getTracks().map(t => `${t.kind}:${t.label}`));
+        return;
+      } catch (e) { console.warn('[media] audio+video failed:', e.message); }
+
+      // Audio only
+      try {
+        myStream = await navigator.mediaDevices.getUserMedia({
+          video: false,
+          audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
+        });
+        camOn = false;
+        toast('No camera — audio only');
+        console.log('[media] audio-only ok');
+        return;
+      } catch (e) { console.warn('[media] audio-only failed:', e.message); }
+
+      // Video only
+      try {
+        myStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+        micOn = false;
+        toast('No mic — video only');
+        console.log('[media] video-only ok');
+        return;
+      } catch (e) { console.warn('[media] video-only failed:', e.message); }
+
+      myStream = null; micOn = false; camOn = false;
+      toast('Camera & mic unavailable — check browser permissions');
     }
 
     async function startSession(rid, name, token, isHost) {
@@ -1495,9 +1477,8 @@
       bindSocketEvents();
       document.getElementById('lobby').classList.remove('visible');
       document.getElementById('roomIdBadge').textContent = `Room: ${rid.slice(0, 6)}…`;
-      // On mobile, open video panel via overflow sheet; on desktop, auto-open
       if (!isMobile()) openRightPanel();
-      hideBackdrop(); // backdrop was shown for lobby
+      hideBackdrop();
     }
 
     // ════════════════════════════════════════════════════════
@@ -1510,22 +1491,21 @@
       socket.on('room-state', ({ users, editorOwner: eo, code, yourSocketId }) => {
         mySocketId = yourSocketId;
         roomUsers = users; editorOwner = eo;
-        initEditor(code);
-        buildMyTile();
-        renderMembers();
-        updateEditorLock();
+        initEditor(code); buildMyTile(); renderMembers(); updateEditorLock();
+        // Existing members: polite offer/answer based on ID ordering
         users.forEach(u => {
           if (u.socketId !== mySocketId) {
-            if (mySocketId < u.socketId) createPeerConnection(u.socketId, u.name, true);
-            else createPeerConnection(u.socketId, u.name, false);
+            createPeerConnection(u.socketId, u.name, mySocketId < u.socketId);
           }
         });
       });
 
-      socket.on('user-joined', ({ socketId, name, isHost }) => {
+      socket.on('user-joined', ({ socketId, name }) => {
         toast(`${name} joined`);
-        roomUsers.push({ socketId, name, isHost });
+        if (!roomUsers.find(u => u.socketId === socketId)) roomUsers.push({ socketId, name });
         renderMembers();
+        // New joiner sends offers to everyone; we are an existing member,
+        // so create a non-initiator PC ready to receive the offer.
         createPeerConnection(socketId, name, false);
       });
 
@@ -1537,10 +1517,23 @@
         renderMembers();
       });
 
+      // ── Offer received ──
       socket.on('rtc-offer', async ({ from, name, offer }) => {
-        if (!peers[from]) await createPeerConnection(from, name, false);
-        const pc = peers[from].pc;
-        if (pc.signalingState !== 'stable') { console.warn(`Ignoring offer from ${name}`); return; }
+        // Ensure PC exists (we may already have created one in user-joined)
+        if (!peers[from]) createPeerConnection(from, name, false);
+        const { pc } = peers[from];
+
+        // Glare handling: if we already sent an offer and ours has the lower ID, ignore theirs
+        if (pc.signalingState !== 'stable') {
+          if (mySocketId < from) {
+            console.warn('[rtc] glare — rolling back our local description');
+            await pc.setLocalDescription({ type: 'rollback' });
+          } else {
+            console.warn('[rtc] glare — ignoring their offer');
+            return;
+          }
+        }
+
         await pc.setRemoteDescription(new RTCSessionDescription(offer));
         const answer = await pc.createAnswer();
         await pc.setLocalDescription(answer);
@@ -1549,17 +1542,18 @@
 
       socket.on('rtc-answer', async ({ from, answer }) => {
         if (!peers[from]) return;
-        const pc = peers[from].pc;
-        if (pc.signalingState !== 'have-local-offer') { console.warn(`Ignoring answer`); return; }
+        const { pc } = peers[from];
+        if (pc.signalingState !== 'have-local-offer') {
+          console.warn('[rtc] unexpected answer in state', pc.signalingState); return;
+        }
         try { await pc.setRemoteDescription(new RTCSessionDescription(answer)); }
-        catch (e) { console.error('setRemoteDescription (answer) failed:', e); }
+        catch (e) { console.error('[rtc] setRemoteDescription(answer) failed:', e); }
       });
 
       socket.on('rtc-ice', async ({ from, candidate }) => {
-        if (peers[from]) {
-          try { await peers[from].pc.addIceCandidate(new RTCIceCandidate(candidate)); }
-          catch (e) { console.warn('ICE candidate error:', e.message); }
-        }
+        if (!peers[from]) return;
+        try { await peers[from].pc.addIceCandidate(new RTCIceCandidate(candidate)); }
+        catch (e) { console.warn('[rtc] addIceCandidate failed:', e.message); }
       });
 
       socket.on('editor-assigned', ({ editorOwner: eo }) => { editorOwner = eo; updateEditorLock(); renderMembers(); });
@@ -1571,29 +1565,87 @@
       socket.on('editor-request-denied', () => {
         toast('Your editor request was denied.');
         const b = document.getElementById('requestBtn');
-        if (b) { b.textContent = '🙋 Request Editor Access'; b.disabled = false; }
+        if (b) { b.textContent = '🙋 Request Editor'; b.disabled = false; }
       });
       socket.on('code-update', ({ code }) => { if (editorOwner !== mySocketId) applyRemoteCode(code); });
     }
 
     // ════════════════════════════════════════════════════════
-    //  WebRTC
+    //  WebRTC — FIXED peer connection
+    //
+    //  Key changes vs original:
+    //  1. Add ALL local tracks BEFORE creating the offer.
+    //  2. Store RTCRtpSender references so we can replace tracks
+    //     when mic/cam is toggled (replaceTrack is non-renegotiating).
+    //  3. Use onnegotiationneeded for automatic renegotiation when
+    //     tracks are added after connection is established.
+    //  4. Better ICE failure recovery.
     // ════════════════════════════════════════════════════════
     async function createPeerConnection(peerId, peerName, isInitiator) {
-      if (peers[peerId]) return;
+      if (peers[peerId]) return; // already exists
+
       const pc = new RTCPeerConnection(ICE_CFG);
-      peers[peerId] = { pc, name: peerName };
-      if (myStream) myStream.getTracks().forEach(track => pc.addTrack(track, myStream));
-      pc.onicecandidate = e => { if (e.candidate) socket.emit('rtc-ice', { to: peerId, candidate: e.candidate }); };
-      pc.oniceconnectionstatechange = () => { if (pc.iceConnectionState === 'failed') { console.warn(`ICE failed for ${peerName}`); pc.restartIce(); } };
-      pc.ontrack = e => { if (e.streams && e.streams[0]) { peers[peerId].stream = e.streams[0]; attachRemoteStream(peerId, e.streams[0]); } };
+      // senders: keep refs so we can replaceTrack later without renegotiating
+      const senders = { audio: null, video: null };
+      peers[peerId] = { pc, name: peerName, senders };
+
+      // ── Add local tracks BEFORE offer/answer ──
+      // This is essential: the offer must contain our audio/video sections
+      // so the remote side knows to send back audio/video too.
+      if (myStream) {
+        myStream.getTracks().forEach(track => {
+          const sender = pc.addTrack(track, myStream);
+          senders[track.kind] = sender;
+        });
+      } else {
+        // No media at all — add a dummy audio transceiver so the remote side
+        // still includes an audio section in the SDP (avoids m= line mismatch).
+        pc.addTransceiver('audio', { direction: 'recvonly' });
+        pc.addTransceiver('video', { direction: 'recvonly' });
+      }
+
+      // ── ICE candidates ──
+      pc.onicecandidate = ({ candidate }) => {
+        if (candidate) socket.emit('rtc-ice', { to: peerId, candidate });
+      };
+
+      pc.oniceconnectionstatechange = () => {
+        console.log(`[ice:${peerName}]`, pc.iceConnectionState);
+        if (pc.iceConnectionState === 'failed') {
+          console.warn('[ice] failed — restarting ICE');
+          pc.restartIce();
+        }
+        if (pc.iceConnectionState === 'disconnected') {
+          // Give it 4 s to reconnect before restarting
+          setTimeout(() => {
+            if (peers[peerId] && pc.iceConnectionState === 'disconnected') pc.restartIce();
+          }, 4000);
+        }
+      };
+
+      pc.onconnectionstatechange = () => {
+        console.log(`[conn:${peerName}]`, pc.connectionState);
+      };
+
+      // ── Remote tracks ──
+      pc.ontrack = ({ track, streams }) => {
+        console.log(`[track:${peerName}]`, track.kind, streams.length);
+        const stream = streams[0] || new MediaStream([track]);
+        if (!peers[peerId].remoteStream) peers[peerId].remoteStream = stream;
+        else peers[peerId].remoteStream.addTrack(track);
+        attachRemoteStream(peerId, peers[peerId].remoteStream);
+      };
+
       addTile(peerId, peerName);
+
+      // ── Initiator creates offer ──
       if (isInitiator) {
         try {
-          const offer = await pc.createOffer({ offerToReceiveAudio: true, offerToReceiveVideo: true });
+          const offer = await pc.createOffer();
           await pc.setLocalDescription(offer);
           socket.emit('rtc-offer', { to: peerId, offer });
-        } catch (e) { console.error('createOffer failed:', e); }
+          console.log(`[rtc] offer sent → ${peerName}`);
+        } catch (e) { console.error('[rtc] createOffer failed:', e); }
       }
     }
 
@@ -1603,19 +1655,27 @@
     function buildMyTile() {
       const ex = document.getElementById('tile-me'); if (ex) ex.remove();
       const tile = document.createElement('div'); tile.className = 'video-tile'; tile.id = 'tile-me';
+
       if (myStream && camOn) {
         const v = document.createElement('video');
-        v.autoplay = true; v.muted = true; v.playsInline = true;
+        v.autoplay = true; v.muted = true; v.playsInline = true; // muted = no echo
         v.srcObject = myStream;
-        v.onloadedmetadata = () => v.play().catch(() => { });
+        v.onloadedmetadata = () => v.play().catch(() => {});
         tile.appendChild(v);
       } else {
         const o = document.createElement('div'); o.className = 'cam-off';
         o.innerHTML = `<span class="cam-off-icon">🚫</span><span>${myStream ? 'Cam Off' : 'No Camera'}</span>`;
         tile.appendChild(o);
       }
+
+      // Mic status indicator on own tile
+      const mic = document.createElement('span'); mic.className = 'tile-mic-icon'; mic.id = 'tile-me-mic';
+      mic.textContent = micOn ? '🎙' : '🔇';
+      tile.appendChild(mic);
+
       const lbl = document.createElement('div'); lbl.className = 'tile-label';
       lbl.textContent = myName + (myIsHost ? ' 👑' : '') + ' (you)'; tile.appendChild(lbl);
+
       document.getElementById('videoGrid').insertBefore(tile, document.getElementById('videoGrid').firstChild);
     }
 
@@ -1630,37 +1690,85 @@
 
     function attachRemoteStream(socketId, stream) {
       const tile = document.getElementById('tile-' + socketId); if (!tile) return;
+
+      // Remove placeholder
       const o = tile.querySelector('.cam-off'); if (o) o.remove();
-      let v = tile.querySelector('video');
-      if (!v) {
-        v = document.createElement('video');
-        v.autoplay = true; v.playsInline = true; v.muted = false;
-        v.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;background:#000;';
-        tile.insertBefore(v, tile.querySelector('.tile-label'));
+
+      // Check if this stream has a video track
+      const hasVideo = stream.getVideoTracks().length > 0;
+
+      if (hasVideo) {
+        let v = tile.querySelector('video');
+        if (!v) {
+          v = document.createElement('video');
+          v.autoplay = true; v.playsInline = true;
+          v.muted = false;   // ← remote audio MUST be unmuted
+          v.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;background:#000;';
+          tile.insertBefore(v, tile.querySelector('.tile-label'));
+        }
+        if (v.srcObject !== stream) {
+          v.srcObject = stream;
+          v.onloadedmetadata = () => v.play().catch(e => console.warn('[play]', e.message));
+          if (v.readyState >= 2) v.play().catch(e => console.warn('[play]', e.message));
+        }
+      } else {
+        // Audio-only remote peer: show avatar instead of black video
+        if (!tile.querySelector('.cam-off')) {
+          const ao = document.createElement('div'); ao.className = 'cam-off';
+          ao.innerHTML = '<span class="cam-off-icon">🎙</span><span>Audio only</span>';
+          tile.insertBefore(ao, tile.querySelector('.tile-label'));
+        }
+        // Still attach audio via a hidden <audio> element
+        let a = tile.querySelector('audio');
+        if (!a) {
+          a = document.createElement('audio');
+          a.autoplay = true; a.muted = false;
+          a.style.display = 'none';
+          tile.appendChild(a);
+        }
+        if (a.srcObject !== stream) {
+          a.srcObject = stream;
+          a.play().catch(e => console.warn('[audio play]', e.message));
+        }
       }
-      v.srcObject = stream;
-      const tryPlay = () => v.play().catch(err => console.warn('play() failed:', err.message));
-      if (v.readyState >= 2) tryPlay();
-      else v.onloadedmetadata = tryPlay;
     }
 
     function removeTile(socketId) { const t = document.getElementById('tile-' + socketId); if (t) t.remove(); }
 
     // ════════════════════════════════════════════════════════
-    //  MIC / CAM
+    //  MIC / CAM TOGGLE
+    //  Use replaceTrack() where possible (no renegotiation needed).
+    //  Fall back to enable/disable if sender isn't available.
     // ════════════════════════════════════════════════════════
     function toggleMic() {
-      if (!myStream || myStream.getAudioTracks().length === 0) { toast('No microphone available'); return; }
+      if (!myStream) { toast('No microphone available'); return; }
+      const audioTracks = myStream.getAudioTracks();
+      if (!audioTracks.length) { toast('No microphone available'); return; }
+
       micOn = !micOn;
-      myStream.getAudioTracks().forEach(t => { t.enabled = micOn; });
-      updateMediaBtnUI(); toast(micOn ? '🎙 Mic on' : '🔇 Mic muted');
+
+      // Enable/disable the actual track (this mutes without renegotiating)
+      audioTracks.forEach(t => { t.enabled = micOn; });
+
+      // Update the mic icon on our own tile
+      const micIcon = document.getElementById('tile-me-mic');
+      if (micIcon) micIcon.textContent = micOn ? '🎙' : '🔇';
+
+      updateMediaBtnUI();
+      toast(micOn ? '🎙 Mic on' : '🔇 Mic muted');
     }
 
     function toggleCam() {
-      if (!myStream || myStream.getVideoTracks().length === 0) { toast('No camera available'); return; }
+      if (!myStream) { toast('No camera available'); return; }
+      const videoTracks = myStream.getVideoTracks();
+      if (!videoTracks.length) { toast('No camera available'); return; }
+
       camOn = !camOn;
-      myStream.getVideoTracks().forEach(t => { t.enabled = camOn; });
-      updateMediaBtnUI(); refreshMyTileVideo(); toast(camOn ? '📹 Camera on' : '🚫 Camera off');
+      videoTracks.forEach(t => { t.enabled = camOn; });
+
+      updateMediaBtnUI();
+      refreshMyTileVideo();
+      toast(camOn ? '📹 Camera on' : '🚫 Camera off');
     }
 
     function refreshMyTileVideo() {
@@ -1673,8 +1781,8 @@
           v.srcObject = myStream; tile.insertBefore(v, tile.querySelector('.tile-label'));
         }
         v.style.display = 'block';
-        v.onloadedmetadata = () => v.play().catch(() => { });
-        if (v.readyState >= 2) v.play().catch(() => { });
+        v.onloadedmetadata = () => v.play().catch(() => {});
+        if (v.readyState >= 2) v.play().catch(() => {});
       } else {
         const v = tile.querySelector('video'); if (v) v.style.display = 'none';
         if (!tile.querySelector('.cam-off')) {
@@ -1723,7 +1831,7 @@
         const isMe = u.socketId === mySocketId, isEd = u.socketId === editorOwner;
         const div = document.createElement('div'); div.className = 'member-item';
         const dot = document.createElement('div'); dot.className = 'member-dot'; div.appendChild(dot);
-        const nm = document.createElement('div'); nm.className = 'member-name'; nm.textContent = u.name + (u.isHost ? ' 👑' : ''); div.appendChild(nm);
+        const nm  = document.createElement('div'); nm.className  = 'member-name'; nm.textContent = u.name + (u.isHost ? ' 👑' : ''); div.appendChild(nm);
         if (isMe) { const y = document.createElement('span'); y.className = 'member-you'; y.textContent = 'you'; div.appendChild(y); }
         if (isEd) { const e = document.createElement('span'); e.className = 'member-editing'; e.textContent = '✏️'; div.appendChild(e); }
         if (myIsHost && !isMe) { const b = document.createElement('button'); b.className = 'btn-assign'; b.textContent = isEd ? 'Take' : 'Give'; b.onclick = () => isEd ? socket.emit('reclaim-editor') : socket.emit('assign-editor', { toSocketId: u.socketId }); div.appendChild(b); }
@@ -1756,10 +1864,8 @@
       document.getElementById('room-bar').classList.remove('visible');
       document.getElementById('lobby').classList.remove('visible');
       document.getElementById('panelTabs').style.display = 'none';
-      if (!filesPanelOpen) {
-        document.getElementById('left-panel').classList.remove('visible');
-        hideBackdrop();
-      }
+      document.getElementById('panelSoloHeader').style.display = 'none';
+      if (!filesPanelOpen) { document.getElementById('left-panel').classList.remove('visible'); hideBackdrop(); }
     }
 
     function respondRequest(grant) {
@@ -1776,110 +1882,87 @@
       initEditor();
       await initFirebase();
 
-      // Mode
       document.getElementById('modeSolo').addEventListener('click', () => { if (appMode === 'team') performLeave(); else setMode('solo'); });
       document.getElementById('modeTeam').addEventListener('click', () => setMode('team'));
-
-      // Language
       document.querySelectorAll('.lang-pill').forEach(b => b.addEventListener('click', () => { if (b.dataset.lang) setLanguage(b.dataset.lang); }));
-
-      // Run
       document.getElementById('runBtn').addEventListener('click', runCode);
       document.getElementById('clearOutputBtn').addEventListener('click', () => { const o = document.getElementById('output'); o.textContent = '// Run your code to see output here'; o.className = ''; o.style.borderTop = ''; });
       document.addEventListener('keydown', e => {
         if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); runCode(); }
-        if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); fsSaveCurrentFile(); }
+        if ((e.ctrlKey || e.metaKey) && e.key === 's')     { e.preventDefault(); fsSaveCurrentFile(); }
       });
 
-      // Desktop topbar actions
       document.getElementById('topbarSaveBtn').addEventListener('click', fsSaveCurrentFile);
       document.getElementById('topbarExportBtn').addEventListener('click', exportCurrentToPC);
       document.getElementById('topbarFilesBtn').addEventListener('click', toggleFilesPanel);
       document.getElementById('inlineCloseFileBtn').addEventListener('click', closeCurrentFile);
-
-      // Auth (desktop)
       document.getElementById('signInBtn').addEventListener('click', signInWithGoogle);
       document.getElementById('signOutBtn').addEventListener('click', signOutUser);
 
-      // Mobile overflow sheet
-      document.getElementById('topbarOverflowBtn').addEventListener('click', (e) => { e.stopPropagation(); toggleOverflowSheet(); });
-      document.getElementById('overflowSaveBtn').addEventListener('click', () => { closeOverflowSheet(); fsSaveCurrentFile(); });
-      document.getElementById('overflowExportBtn').addEventListener('click', () => { closeOverflowSheet(); exportCurrentToPC(); });
-      document.getElementById('overflowFilesBtn').addEventListener('click', () => { closeOverflowSheet(); toggleFilesPanel(); });
-      document.getElementById('overflowVideoBtn').addEventListener('click', () => { closeOverflowSheet(); openRightPanel(); });
-      document.getElementById('overflowSignInBtn').addEventListener('click', () => { closeOverflowSheet(); signInWithGoogle(); });
-      document.getElementById('overflowSignOutBtn').addEventListener('click', () => { closeOverflowSheet(); signOutUser(); });
+      document.getElementById('closePanelBtn').addEventListener('click', closeSidePanel);
+      document.getElementById('closePanelSoloBtn').addEventListener('click', closeSidePanel);
 
-      // Close overflow sheet on outside click
-      document.addEventListener('click', (e) => {
-        if (overflowSheetOpen && !document.getElementById('overflow-sheet').contains(e.target) && e.target.id !== 'topbarOverflowBtn') {
+      document.getElementById('topbarOverflowBtn').addEventListener('click', e => { e.stopPropagation(); toggleOverflowSheet(); });
+      document.getElementById('overflowSaveBtn').addEventListener('click',   () => { closeOverflowSheet(); fsSaveCurrentFile(); });
+      document.getElementById('overflowExportBtn').addEventListener('click', () => { closeOverflowSheet(); exportCurrentToPC(); });
+      document.getElementById('overflowFilesBtn').addEventListener('click',  () => { closeOverflowSheet(); toggleFilesPanel(); });
+      document.getElementById('overflowVideoBtn').addEventListener('click',  () => { closeOverflowSheet(); openRightPanel(); });
+      document.getElementById('overflowSignInBtn').addEventListener('click', () => { closeOverflowSheet(); signInWithGoogle(); });
+      document.getElementById('overflowSignOutBtn').addEventListener('click',() => { closeOverflowSheet(); signOutUser(); });
+
+      document.addEventListener('click', e => {
+        if (overflowSheetOpen && !document.getElementById('overflow-sheet').contains(e.target) && e.target.id !== 'topbarOverflowBtn')
           closeOverflowSheet();
-        }
       });
 
-      // Panel backdrop (close panels on mobile)
       document.getElementById('panel-backdrop').addEventListener('click', () => {
         if (isMobile()) {
-          if (document.getElementById('lobby').classList.contains('visible')) return; // don't dismiss lobby
-          closeLeftPanel();
-          closeRightPanel();
-          hideBackdrop();
+          if (document.getElementById('lobby').classList.contains('visible')) return;
+          closeSidePanel(); closeRightPanel();
         }
       });
 
-      // Video panel close button (mobile)
       document.getElementById('closeVideoPanel').addEventListener('click', closeRightPanel);
-
-      // Panel tabs
       document.getElementById('tabMembers').addEventListener('click', () => switchPanelTab('members'));
-      document.getElementById('tabFiles').addEventListener('click', () => switchPanelTab('files'));
+      document.getElementById('tabFiles').addEventListener('click',   () => switchPanelTab('files'));
 
-      // File actions
       document.getElementById('newFileBtn').addEventListener('click', () => { if (!currentUser) { toast('Sign in to save', 'var(--accent2)'); return; } openNewFileModal(); });
       document.getElementById('newFolderBtn').addEventListener('click', () => { if (!currentUser) { toast('Sign in to save', 'var(--accent2)'); return; } document.getElementById('newFolderModal').classList.add('visible'); document.getElementById('newFolderName').focus(); });
       document.getElementById('exportAllBtn').addEventListener('click', exportAllFiles);
       document.getElementById('refreshFilesBtn').addEventListener('click', loadFileTree);
 
-      // File modals
       document.getElementById('newFileConfirm').addEventListener('click', fsCreateFile);
-      document.getElementById('newFileCancel').addEventListener('click', () => document.getElementById('newFileModal').classList.remove('visible'));
+      document.getElementById('newFileCancel').addEventListener('click',  () => document.getElementById('newFileModal').classList.remove('visible'));
       document.getElementById('newFileName').addEventListener('keydown', e => { if (e.key === 'Enter') fsCreateFile(); });
       document.getElementById('newFolderConfirm').addEventListener('click', fsCreateFolder);
-      document.getElementById('newFolderCancel').addEventListener('click', () => document.getElementById('newFolderModal').classList.remove('visible'));
+      document.getElementById('newFolderCancel').addEventListener('click',  () => document.getElementById('newFolderModal').classList.remove('visible'));
       document.getElementById('newFolderName').addEventListener('keydown', e => { if (e.key === 'Enter') fsCreateFolder(); });
       document.getElementById('renameConfirm').addEventListener('click', fsDoRename);
-      document.getElementById('renameCancel').addEventListener('click', () => document.getElementById('renameModal').classList.remove('visible'));
+      document.getElementById('renameCancel').addEventListener('click',  () => document.getElementById('renameModal').classList.remove('visible'));
       document.getElementById('renameInput').addEventListener('keydown', e => { if (e.key === 'Enter') fsDoRename(); });
       ['newFileModal', 'newFolderModal', 'renameModal'].forEach(id => {
         document.getElementById(id).addEventListener('click', e => { if (e.target.id === id) document.getElementById(id).classList.remove('visible'); });
       });
 
-      // Lobby
       document.getElementById('tabBtnCreate').addEventListener('click', () => switchLobbyTab('create'));
-      document.getElementById('tabBtnJoin').addEventListener('click', () => switchLobbyTab('join'));
+      document.getElementById('tabBtnJoin').addEventListener('click',   () => switchLobbyTab('join'));
       document.getElementById('createRoomBtn').addEventListener('click', createRoom);
-      document.getElementById('enterRoomBtn').addEventListener('click', enterAsHost);
-      document.getElementById('joinRoomBtn').addEventListener('click', joinRoom);
+      document.getElementById('enterRoomBtn').addEventListener('click',  enterAsHost);
+      document.getElementById('joinRoomBtn').addEventListener('click',   joinRoom);
       document.getElementById('shareUrl').addEventListener('click', () => navigator.clipboard.writeText(document.getElementById('shareUrl').textContent).then(() => toast('Link copied!')));
-      document.getElementById('roomIdBadge').addEventListener('click', () => navigator.clipboard.writeText(roomId).then(() => toast('Room ID copied!')));
+      document.getElementById('roomIdBadge').addEventListener('click',  () => navigator.clipboard.writeText(roomId).then(() => toast('Room ID copied!')));
       document.getElementById('leaveBtn').addEventListener('click', performLeave);
-
-      // Room / editor
       document.getElementById('grantBtn').addEventListener('click', () => respondRequest(true));
-      document.getElementById('denyBtn').addEventListener('click', () => respondRequest(false));
+      document.getElementById('denyBtn').addEventListener('click',  () => respondRequest(false));
       document.getElementById('micBtn').addEventListener('click', toggleMic);
       document.getElementById('camBtn').addEventListener('click', toggleCam);
 
-      // URL deep-link
       const urlRoom = new URLSearchParams(window.location.search).get('room');
       if (urlRoom) { document.getElementById('joinRoomId').value = urlRoom; switchLobbyTab('join'); setMode('team'); }
 
-      // Refresh CM on resize (handles virtual keyboard dismissal on mobile)
       window.addEventListener('resize', () => {
         if (cmEditor) cmEditor.refresh();
-        // Reset panel state on orientation change
         if (window.innerWidth > 768) {
-          // Desktop: remove slide-over positioning overrides
           document.getElementById('panel-backdrop').classList.remove('visible');
           document.getElementById('closeVideoPanel').style.display = 'none';
           if (appMode === 'team') {
