@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://coding-vibes.onrender.com/sitemap.xml
+Sitemap: https://codeforge.world/sitemap.xml
