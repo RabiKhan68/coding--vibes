@@ -704,15 +704,62 @@
     </div>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
-        const res = await fetch('/api/firebase-config');
-        const firebaseConfig = await res.json();
+import {
+    getAuth,
+    GoogleAuthProvider,
+    signInWithPopup
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-        const app = initializeApp(firebaseConfig);
+const res = await fetch('/api/firebase-config');
+const firebaseConfig = await res.json();
 
-        console.log("Firebase initialized");
-    </script>
+const app = initializeApp(firebaseConfig);
+
+const auth = getAuth(app);
+
+window.handleGoogleLogin = async function () {
+
+    try {
+
+        const provider = new GoogleAuthProvider();
+
+        const result = await signInWithPopup(
+            auth,
+            provider
+        );
+
+        const user = result.user;
+
+        console.log(user);
+
+        localStorage.setItem(
+            "user",
+            JSON.stringify({
+                uid: user.uid,
+                name: user.displayName,
+                email: user.email,
+                photo: user.photoURL
+            })
+        );
+
+        window.location.href = "index.html";
+
+    } catch (error) {
+
+        console.error(error);
+
+        document.getElementById('errorText').textContent =
+            error.message;
+
+        document.getElementById('errorMsg')
+            .classList.add('show');
+    }
+}
+</script>
 
     <script>
         document.getElementById('togglePass').addEventListener('click', () => {
