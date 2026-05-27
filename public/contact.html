@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Contact | CodeForge</title>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
 <style>
 body{
@@ -54,17 +55,11 @@ Need help, found a bug, or have a suggestion?
 Send us a message.
 </p>
 
-<form action="mailto:r97041725@gmail.com" method="post">
-<label>Name</label>
-<input type="text" required>
-
-<label>Email</label>
-<input type="email" required>
-
-<label>Message</label>
-<textarea rows="8" required></textarea>
-
-<button type="submit">Send Message</button>
+<form id="contactForm">
+    <input type="text" name="name" placeholder="Name" required>
+    <input type="email" name="email" placeholder="Email" required>
+    <textarea name="message" required></textarea>
+    <button type="submit">Send Message</button>
 </form>
 
 <p style="margin-top:30px;">
@@ -73,5 +68,22 @@ Email: r97041725@gmail.com
 
 </div>
 
+<script>
+emailjs.init("dwoo8C_7R9pmCh0f5");
+
+document.getElementById("contactForm")
+.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    await emailjs.sendForm(
+        "service_nqhmyoo",
+        "template_dyrvkvr",
+        e.target
+    );
+
+    alert("Message sent!");
+    e.target.reset();
+});
+</script>
 </body>
 </html>
