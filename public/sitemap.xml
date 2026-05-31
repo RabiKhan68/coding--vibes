@@ -2,31 +2,31 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
   <url>
-    <loc>https://codeforge.world/</loc>
+    <loc>https://www.codeforge.world/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
 
   <url>
-    <loc>https://codeforge.world/documentation.html</loc>
+    <loc>https://www.codeforge.world/documentation.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://codeforge.world/privacy.html</loc>
+    <loc>https://www.codeforge.world/privacy.html</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
 
   <url>
-    <loc>https://codeforge.world/terms.html</loc>
+    <loc>https://www.codeforge.world/terms.html</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
 
   <url>
-    <loc>https://codeforge.world/contact.html</loc>
+    <loc>https://www.codeforge.world/contact.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
