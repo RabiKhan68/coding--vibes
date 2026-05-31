@@ -14,15 +14,21 @@
   </url>
 
   <url>
-  <loc>https://codeforge.world/privacy.html</loc>
-</url>
+    <loc>https://codeforge.world/privacy.html</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
 
-<url>
-  <loc>https://codeforge.world/terms.html</loc>
-</url>
+  <url>
+    <loc>https://codeforge.world/terms.html</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
 
-<url>
-  <loc>https://codeforge.world/contact.html</loc>
-</url>
+  <url>
+    <loc>https://codeforge.world/contact.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
 
 </urlset>
