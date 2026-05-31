@@ -12,6 +12,7 @@ const path = require('path');
 const fetch = (...args) => import('node-fetch').then(({ default: f }) => f(...args));
 
 const app = express();
+
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: { origin: '*', methods: ['GET', 'POST'] }
@@ -285,7 +286,7 @@ io.on('connection', (socket) => {
 //  ROUTES — order matters: specific before catch-all
 // ════════════════════════════════════════════════════════
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'landing.html'));
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 app.get('*', (req, res) => {
